@@ -1,0 +1,48 @@
+export const questions_bank = {
+  1: {
+    id: 1,
+    question: 'question 1',
+    answerfirst: "answer 1",
+    answersecond: "answer 2",
+    answerthird: "answer 3",
+    answerfourth: "answer4",
+    correctanswer: "D",
+  },
+
+  2: {
+    id: 2,
+    question: 'question 2',
+    answerfirst: "answer 1",
+    answersecond: "answer 2",
+    answerthird: "answer 3",
+    answerfourth: "answer4",
+    correctanswer: "D",
+  },
+  3: {
+    id: 3,
+    question: 'question 3',
+    answerfirst: "answer 1",
+    answersecond: "answer 2",
+    answerthird: "answer 3",
+    answerfourth: "answer4",
+    correctanswer: "D",
+  },
+  4: {
+    id: 4,
+    question: 'question 4',
+    answerfirst: "answer 1",
+    answersecond: "answer 2",
+    answerthird: "answer 3",
+    answerfourth: "answer4",
+    correctanswer: "D",
+  },
+  5: {
+    id: 5,
+    question: 'question 5',
+    answerfirst: "answer 5",
+    answersecond: "answer 2",
+    answerthird: "answer 3",
+    answerfourth: "answer4",
+    correctanswer: "D",
+  },
+};

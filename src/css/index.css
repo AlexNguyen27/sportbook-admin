@@ -1,0 +1,107 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: "Montserrat", sans-serif;
+}
+body {
+  font-family: "Montserrat", sans-serif;
+}
+.test {
+  color: red;
+}
+footer {
+  position: "absolute";
+  margin-top: 20px;
+  text-align: center;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+}
+
+.MuiContainer-root .MuiContainer-maxWidthLg {
+  /* @media (min-width: 1280px) {
+    .MuiContainer-maxWidth {
+      max-width: 1500px !important;
+    }
+  } */
+}
+footer p {
+  color: #ccc;
+}
+
+button:focus {
+  outline: 0px !important;
+}
+
+/** View text editor mode */
+.viewMode .ql-toolbar {
+  display: none;
+}
+
+.viewMode .ql-container {
+  /* height: 800px !important; */
+  border: none !important;
+}
+
+.viewPost .ql-editor {
+  /* height: 800px !important; */
+  /* border: none !important;
+   */
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+
+.ql-container {
+  font-size: 15px !important;
+}
+
+.editMode .ql-editor {
+  min-height: 600px !important;
+}
+
+.userImage {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+}
+
+.aSubText {
+  color: #888 !important;
+  text-decoration: none !important;
+}
+
+.like {
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+.MuiTreeItem-iconContainer {
+  width: 0 !important;
+}
+
+.MuiTreeItem-label {
+  /* padding: 0 0 20px 0 !important; */
+  font-size: 16px !important;
+  background-color: none !important;
+}
+
+.MuiTreeItem-label:hover {
+  background-color: white !important;
+}
+
+@media (min-width: 1280px) {
+  .MuiContainer-maxWidthLg {
+    max-width: 1500px !important;
+  }
+}
+
+.userCard .MuiPaper-rounded {
+  height: 100%;
+}
+
+.MuiCollapse-container .MuiTreeItem-group .MuiCollapse-entered {
+  width: 100% !important;
+}
