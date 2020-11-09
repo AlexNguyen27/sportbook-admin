@@ -9,7 +9,7 @@ import setAuthToken from "../../utils/setAuthToken";
 
 const initialState = {
   isAuthenticated: false,
-  isUser: false,
+  isManager: false,
   isAdmin: false,
   token: null,
   user: {},
@@ -24,10 +24,10 @@ export default function (state = initialState, action) {
       //Save Token to Local Storage
       localStorage.setItem("token", token);
 
-      const { isAdmin, isUser, userInfo } = user;
+      const { isAdmin, isManager, userInfo } = user;
       return {
         isAuthenticated: true,
-        isUser,
+        isManager,
         isAdmin,
         token,
         user: userInfo,

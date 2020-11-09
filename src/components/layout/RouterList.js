@@ -20,8 +20,20 @@ const RouterList = (props) => {
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/reset-password" component={ResetPassword} />
+        {/* Manager */}
+        <ProtectedRoute
+          exact
+          path="/dashboard"
+          component={DashBoard}
+        />
+        <ProtectedRoute exact path="/ground-management" component={DashBoard} />
+        <ProtectedRoute exact path="/subGroundManagement" component={DashBoard} />
+        <ProtectedRoute exact path="/customer" component={DashBoard} />
+        <ProtectedRoute exact path="/statistics" component={DashBoard} />
+
+
         {/* Admin */}
-        <ProtectedRoute exact path="/edit-user/:userId" component={DashBoard} />
+        {/* <ProtectedRoute exact path="/edit-user/:userId" component={DashBoard} />
         <ProtectedRoute
           exact
           path="/user-profile/:userId"
@@ -30,29 +42,22 @@ const RouterList = (props) => {
         <ProtectedRoute exact path="/posts-list" component={DashBoard} />
         <ProtectedRoute exact path="/users-list" component={DashBoard} />
         <ProtectedRoute exact path="/reports-list" component={DashBoard} />
-        <ProtectedRoute exact path="/categories-list" component={DashBoard} />
-        {/* User */}
-        <ProtectedRoute
-          exact
-          path="/user-profile/:userId"
-          component={DashBoard}
-        />
-        <ProtectedRoute exact path="/news-feed" component={DashBoard} />
-        <ProtectedRoute exact path="/people" component={DashBoard} />
+        <ProtectedRoute exact path="/categories-list" component={DashBoard} /> */}
+
         {/* common */}
-        <ProtectedRoute exact path="/user-info" component={DashBoard} />
+        {/* <ProtectedRoute exact path="/user-info" component={DashBoard} />
         <ProtectedRoute exact path="/add-new-post" component={DashBoard} />
         <ProtectedRoute exact path="/view-post/:postId" component={DashBoard} />
-        <ProtectedRoute exact path="/edit-post/:postId" component={DashBoard} />
+        <ProtectedRoute exact path="/edit-post/:postId" component={DashBoard} /> */}
 
-        <ProtectedRoute
+        {/* <ProtectedRoute
           exact
           path="/statistics/:userId"
           component={DashBoard}
-        />
+        />*/}
         <ProtectedRoute exact path="/help" component={DashBoard} />
         <ProtectedRoute exact path="/notifications" component={DashBoard} />
-        <ProtectedRoute exact path="/mails" component={DashBoard} />
+        <ProtectedRoute exact path="/mails" component={DashBoard} /> 
         <ProtectedRoute component={() => <NotFound center />} />
       </Switch>
     </Container>

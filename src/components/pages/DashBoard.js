@@ -67,7 +67,7 @@ import UsersList from "./admin/UsersList";
 import ViewPost from "./post/component/ViewPost";
 import { getUserProfile } from "../../store/actions/user";
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -148,6 +148,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
+    minHeight: '52px !important',
   },
   header: {
     background: Colors.light_purple,
@@ -207,7 +208,8 @@ const DashBoard = ({
     //   logoutUser();
     // }
   }
-  const [drawerId, setDrawerId] = useState(isAdmin ? "usersList" : "newsFeed");
+  const [drawerId, setDrawerId] = useState(isAdmin ? "admin/dashboard" : "manager/dashboard");
+  const [menuName, setMenuName] = useState(isAdmin ? "User Management" : "Ground management");
 
   const classes = useStyles();
   const theme = useTheme();
@@ -310,94 +312,102 @@ const DashBoard = ({
   );
 
   const renderContent = (drawerId) => {
-    if (match.params.userId && match.path.includes("edit-user")) {
-      return (
-        <>
-          <UserInfo />
-        </>
-      );
-    }
+    const adminContent = [
+      {
 
-    if (match.params.userId && match.path.includes("user-profile")) {
-      return (
-        <>
-          <UserProfile userId={match.params.userId} />
-        </>
-      );
-    }
+      }
+    ]
+    // if (match.params.userId && match.path.includes("edit-user")) {
+    //   return (
+    //     <>
+    //       <UserInfo />
+    //     </>
+    //   );
+    // }
 
-    if (match.params.userId && match.path.includes("statistics")) {
-      return (
-        <>
-          <StatisticsPost userId={match.params.userId} />
-        </>
-      );
-    }
+    // if (match.params.userId && match.path.includes("user-profile")) {
+    //   return (
+    //     <>
+    //       <UserProfile userId={match.params.userId} />
+    //     </>
+    //   );
+    // }
 
-    if (match.params.postId && match.path.includes("view-post")) {
-      return (
-        <>
-          <ViewPost postId={match.params.postId} />
-        </>
-      );
-    }
+    // if (match.params.userId && match.path.includes("statistics")) {
+    //   return (
+    //     <>
+    //       <StatisticsPost userId={match.params.userId} />
+    //     </>
+    //   );
+    // }
 
-    if (match.params.postId && match.path.includes("edit-post")) {
-      return (
-        <>
-          <EditPost postId={match.params.postId} />
-        </>
-      );
+    // if (match.params.postId && match.path.includes("view-post")) {
+    //   return (
+    //     <>
+    //       <ViewPost postId={match.params.postId} />
+    //     </>
+    //   );
+    // }
+
+    // if (match.params.postId && match.path.includes("edit-post")) {
+    //   return (
+    //     <>
+    //       <EditPost postId={match.params.postId} />
+    //     </>
+    //   );
+    // }
+    if (isAdmin) {
+
     }
     switch (match.path) {
-      case "/users-list":
+      case "/dashboard":
         return (
           <>
             <UsersList />
           </>
         );
-      case "/posts-list":
-        return (
-          <>
-            <PostsList />
-          </>
-        );
-      case "/reports-list":
-        return (
-          <>
-            <ReportsList />
-          </>
-        );
-      case "/categories-list":
-        return (
-          <>
-            <CategoryList />
-          </>
-        );
-      case "/news-feed":
-        return (
-          <>
-            <NewsFeed location={location} />
-          </>
-        );
-      case "/add-new-post":
-        return (
-          <>
-            <AddPost />
-          </>
-        );
-      case "/people":
-        return (
-          <>
-            <Users location={location} />
-          </>
-        );
-      case "/user-info":
-        return (
-          <>
-            <UserInfo />
-          </>
-        );
+      // case "/posts-list":
+      //   return (
+      //     <>
+      //       <PostsList />
+      //     </>
+      //   );
+      // case "/reports-list":
+      //   return (
+      //     <>
+      //       <ReportsList />
+      //     </>
+      //   );
+      // case "/categories-list":
+      //   return (
+      //     <>
+      //       <CategoryList />
+      //     </>
+      //   );
+      // case "/news-feed":
+      //   return (
+      //     <>
+      //       <NewsFeed location={location} />
+      //     </>
+      //   );
+      // case "/add-new-post":
+      //   return (
+      //     <>
+      //       <AddPost />
+      //     </>
+      //   );
+      // case "/people":
+      //   return (
+      //     <>
+      //       <Users location={location} />
+      //     </>
+      //   );
+      // case "/user-info":
+      //   return (
+      //     <>
+      //       <UserInfo />
+      //     </>
+      //   );
       default:
         return (
           <Fragment>
@@ -440,34 +450,34 @@ const DashBoard = ({
     return <Redirect to="/login" />;
   }
 
-  const navList1 = [
+  const navLinkMananager = [
     {
-      key: "newsFeed",
+      key: "groundManagement",
       icon: <HomeIcon />,
-      to: "/news-feed",
-      title: "News Feed",
+      to: "/ground-management",
+      title: "Ground management",
     },
     {
-      key: "people",
+      key: "subGroundManagement",
       icon: <PeopleAltIcon />,
-      to: "/people",
-      title: "People",
+      to: "/subGroundManagement",
+      title: "Sub Ground & Pricing",
     },
     {
-      key: "userProfile",
+      key: "customer",
       icon: <ArtTrackIcon />,
-      to: `/user-profile/${user.id}`,
-      title: "Your Profile",
+      to: `/customer`,
+      title: "Loyal customers",
     },
     {
       key: "statistics",
       icon: <BarChartIcon />,
-      to: `/statistics/${user.id}`,
-      title: "Statistics",
+      to: `/statistics`,
+      title: "Statistics and tables",
     },
   ];
 
-  const navList3 = [
+  const navLinkAdmin = [
     {
       key: "usersList",
       icon: <PeopleAltIcon />,
@@ -545,7 +555,7 @@ const DashBoard = ({
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
+        <Toolbar style={{ maxHeight: '52px', minHeight: '0px' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -556,7 +566,7 @@ const DashBoard = ({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {formatUrl(match.path)}
+            {menuName}
           </Typography>
           <div
             className={classes.search}
@@ -639,25 +649,28 @@ const DashBoard = ({
         }}
       >
         <div className={classes.drawerHeader}>
-          <strong>DEV TROOPS</strong>
-          {/* <IconButton onClick={handleDrawerClose}>
+          <strong>MANAGER</strong>
+          <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
               <ChevronRightIcon />
             )}
-          </IconButton> */}
+          </IconButton>
         </div>
         <Divider />
         {console.log(drawerId)}
         <List>
-          {(isAdmin ? navList3 : navList1).map((item) => (
+          {(isAdmin ? navLinkAdmin : navLinkMananager).map((item) => (
             <ListItem
               button
               key={item.key}
               component={Link}
               to={item.to}
-              onClick={() => setDrawerId(item.key)}
+              onClick={() => {
+                setMenuName(item.title)
+                setDrawerId(item.key)
+              }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText>
@@ -678,7 +691,10 @@ const DashBoard = ({
               key={item.key}
               component={Link}
               to={item.to}
-              onClick={item.onClick || (() => setDrawerId(item.key))}
+              onClick={item.onClick || (() => {
+                setMenuName(item.title)
+                setDrawerId(item.key)
+              })}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.title} />

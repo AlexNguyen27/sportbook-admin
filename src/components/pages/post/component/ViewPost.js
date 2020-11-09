@@ -226,7 +226,7 @@ const ViewPost = ({
             </Grid>
             <Grid item xs={12}>
               <Typography className="mb-2 mt-1" variant="h5">
-                More from Dev Troops
+                More from Love Sports
               </Typography>
               <Divider />
 

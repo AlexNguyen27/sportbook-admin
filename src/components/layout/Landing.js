@@ -7,10 +7,9 @@ const Landing = () => {
       <img
         className="center-block"
         width="647px"
-        style={{ marginRight: "149px" }}
         height="300px"
         src={white_logo}
-        alt="Dev troops"
+        alt="Love Sports"
       />
     </div>
   );

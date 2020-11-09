@@ -6,21 +6,15 @@ import NotFound from "../layout/NotFound";
 const ProtectedRoute = ({
   component: Component,
   authorized,
-  auth: { isAuthenticated, isUser, isAdmin },
+  auth: { isAuthenticated, isManager, isAdmin },
   dispatch,
   path,
   ...rest
 }) => {
-  const teacherUnauthorized = [
-    "/users-list",
-    "/edit-user/:userId",
-    "/posts-list",
-    "/reports-list",
-    "/categories-list",
-  ];
+  console.log('paht------', path);
   const page = (props) => {
     if (isAuthenticated) {
-      if (isAdmin || (isUser && !teacherUnauthorized.includes(path))) {
+      if (isAdmin || (isManager && path && !path.includes('/admin'))) {
         return <Component {...props} dispatch={dispatch} />;
       }
 

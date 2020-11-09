@@ -48,10 +48,10 @@ const Navbar = ({ logoutUser }) => {
     <>
       <nav
         className="navbar navbar-expand-md navbar-dark"
-        style={{ background: Colors.purple }}
+        style={{ background: Colors.purple, maxHeight: '50px' }}
       >
         <Link className="navbar-brand" to="/login">
-          Dev Troops
+          Love Sports
         </Link>
 
         <button
