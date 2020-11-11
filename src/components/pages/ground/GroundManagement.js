@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import MyCalendar from '../../custom/MyCalendar';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -25,12 +26,12 @@ const GroundManagement = (props) => {
 
     return (
         <Grid container type="flex" justify="center">
-            <Grid item>
-                <Grid container>
-                <Button className={classes.btn} variant="contained" color="secondary">
+            <Grid item xs={12}>
+                {/* <Grid container> */}
+                <Button className={classes.btn} variant="contained" color="primary">
                     Add new order
                 </Button>
-                 <form className={classes.container} noValidate>
+                <form className={classes.container} noValidate>
                     <TextField
                         id="datetime-local"
                         label="Next appointment"
@@ -42,12 +43,12 @@ const GroundManagement = (props) => {
                         }}
                     />
                 </form>
-                <Button className={classes.btnRight} color="secondary">
+                {/* <Button className={classes.btnRight} color="primary">
                     Today
-                </Button>
-                </Grid>
-               
-              
+                </Button> */}
+                <div className="mt-4"></div>
+                <MyCalendar />
+                {/* </Grid> */}
             </Grid>
             <Grid item>
 
