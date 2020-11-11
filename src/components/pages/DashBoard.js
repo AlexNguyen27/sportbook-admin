@@ -21,7 +21,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Badge from "@material-ui/core/Badge";
 import ReportIcon from "@material-ui/icons/Report";
 import CategoryIcon from "@material-ui/icons/Category";
+import Collapse from '@material-ui/core/Collapse';
 import "../../css/index.css";
+
 
 // MATERIAL ICONS
 import MenuIcon from "@material-ui/icons/Menu";
@@ -29,22 +31,26 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import MailIcon from "@material-ui/icons/Mail";
 import Colors from "../../constants/Colors";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import BarChartIcon from "@material-ui/icons/BarChart";
-import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import ArtTrackIcon from "@material-ui/icons/ArtTrack";
 import HelpIcon from "@material-ui/icons/Help";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
+import EventNoteIcon from '@material-ui/icons/EventNote';
+import StarBorder from '@material-ui/icons/StarBorder';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import LockIcon from '@material-ui/icons/Lock';
 
 import jwt_decode from "jwt-decode";
 import HomeIcon from "@material-ui/icons/Home";
-// import { Breadcrumbs, BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, NavLink } from "react-router-dom";
 
 // COMPONENT
@@ -190,6 +196,9 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
 }));
 
 const DashBoard = ({
@@ -221,6 +230,7 @@ const DashBoard = ({
     getUserProfile(user.id, setLoading);
   }, []);
 
+
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
@@ -240,6 +250,11 @@ const DashBoard = ({
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  const [openDrawer, setOpenDrawer] = React.useState(false);
+
+  const handleClick = () => {
+    setOpenDrawer(!openDrawer);
+  };
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -444,14 +459,14 @@ const DashBoard = ({
             </Fragment>
           );
       }
-    }else {
+    } else {
       console.log('d-=-----------------------', match.path);
 
       switch (match.path) {
         case "/ground-management":
           return (
             <>
-              <GroundManagement/>
+              <GroundManagement />
               {/* <UsersList /> */}
             </>
           );
@@ -534,7 +549,7 @@ const DashBoard = ({
           );
       }
     }
-   
+
   };
 
   if (!isAuthenticated) {
@@ -544,27 +559,27 @@ const DashBoard = ({
   const navLinkMananager = [
     {
       key: "groundManagement",
-      icon: <HomeIcon />,
+      icon: <EventNoteIcon />,
       to: "/ground-management",
       title: "Ground management",
     },
     {
       key: "subGroundManagement",
-      icon: <PeopleAltIcon />,
+      icon: <ArtTrackIcon />,
       to: "/subGroundManagement",
       title: "Sub Ground & Pricing",
-    },
-    {
-      key: "customer",
-      icon: <ArtTrackIcon />,
-      to: `/customer`,
-      title: "Loyal customers",
     },
     {
       key: "statistics",
       icon: <BarChartIcon />,
       to: `/statistics`,
       title: "Statistics and tables",
+    },
+    {
+      key: "customer",
+      icon: <PeopleAltIcon />,
+      to: `/customer`,
+      title: "Loyal customers",
     },
   ];
 
@@ -595,15 +610,15 @@ const DashBoard = ({
     },
   ];
 
-  const navList2 = [
-    { key: "help", icon: <HelpIcon />, to: "/help", title: "Help" },
+  const navExtraInfo = [
     {
       key: "Notifications",
       icon: <NotificationsIcon />,
       to: "/notifications",
       title: "Notifications",
     },
-    { key: "Mails", icon: <MailIcon />, to: "/mails", title: "Mails" },
+    { key: "help", icon: <HelpIcon />, to: "/help", title: "Help" },
+    // { key: "Mails", icon: <MailIcon />, to: "/mails", title: "Mails" },
     {
       key: "Logout",
       icon: <ExitToAppIcon />,
@@ -745,8 +760,8 @@ const DashBoard = ({
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-              <ChevronRightIcon />
-            )}
+                <ChevronRightIcon />
+              )}
           </IconButton>
         </div>
         <Divider />
@@ -775,8 +790,35 @@ const DashBoard = ({
           ))}
         </List>
         <Divider />
+        {/* Setting */}
+        <ListItem button onClick={handleClick}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Setting" />
+          {openDrawer ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={openDrawer} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary="My account" />
+            </ListItem>
+            <ListItem button className={classes.nested}
+              onClick={handeOnChangePassword}>
+              <ListItemIcon>
+                <LockIcon />
+              </ListItemIcon>
+              <ListItemText primary="Change password" />
+            </ListItem>
+          </List>
+        </Collapse>
+
+        {/* Helper */}
         <List>
-          {navList2.map((item) => (
+          {navExtraInfo.map((item) => (
             <ListItem
               button
               key={item.key}
@@ -791,6 +833,8 @@ const DashBoard = ({
               <ListItemText primary={item.title} />
             </ListItem>
           ))}
+
+
         </List>
       </Drawer>
       <main
