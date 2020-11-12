@@ -35,44 +35,48 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import BarChartIcon from "@material-ui/icons/BarChart";
-import ArtTrackIcon from "@material-ui/icons/ArtTrack";
+// import BarChartIcon from "@material-ui/icons/BarChart";
+import LoyaltyIcon from '@material-ui/icons/Loyalty';
+import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import HelpIcon from "@material-ui/icons/Help";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
 import EventNoteIcon from '@material-ui/icons/EventNote';
-import StarBorder from '@material-ui/icons/StarBorder';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LockIcon from '@material-ui/icons/Lock';
+import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 
 import jwt_decode from "jwt-decode";
-import HomeIcon from "@material-ui/icons/Home";
+// import HomeIcon from "@material-ui/icons/Home";
 import { Link, NavLink } from "react-router-dom";
 
 // COMPONENT
 // ACTION
 import { logoutUser } from "../../store/actions/auth";
 import { Avatar } from "@material-ui/core";
-import UserInfo from "./user/UserInfo";
+// import UserInfo from "./user/UserInfo";
 import ChangePasswordModal from "./user/component/ChangePasswordModal";
-import { BASE_URL } from "../../store/actions/types";
-import PostsList from "./post/PostsList";
-import UserProfile from "./userProfile/UserProfile";
-import CategoryList from "./category/CategoryList";
-import ReportsList from "./report/ReportsList";
-import StatisticsPost from "./statistics/user/StatisticsPost";
-import NewsFeed from "./newsFeed/NewsFeed";
-import Users from "./user/Users";
-import AddPost from "./post/component/AddPost";
-import EditPost from "./post/component/EditPost";
+// import { BASE_URL } from "../../store/actions/types";
+// import PostsList from "./post/PostsList";
+// import UserProfile from "./userProfile/UserProfile";
+// import CategoryList from "./category/CategoryList";
+// import ReportsList from "./report/ReportsList";
+// import StatisticsPost from "./statistics/user/StatisticsPost";
+// import NewsFeed from "./newsFeed/NewsFeed";
+// import Users from "./user/Users";
+// import AddPost from "./post/component/AddPost";
+// import EditPost from "./post/component/EditPost";
 import UsersList from "./admin/UsersList";
-import ViewPost from "./post/component/ViewPost";
+// import ViewPost from "./post/component/ViewPost";
 import { getUserProfile } from "../../store/actions/user";
 import GroundManagement from "./ground/GroundManagement";
+import OrderManagement from "./order/OrderManagement";
+import SubGroundManagement from "./subGround/SubGroundManagement";
 
 const drawerWidth = 260;
 
@@ -218,7 +222,7 @@ const DashBoard = ({
     //   logoutUser();
     // }
   }
-  const [drawerId, setDrawerId] = useState(isAdmin ? "admin/dashboard" : "manager/ground-management");
+  const [drawerId, setDrawerId] = useState(isAdmin ? "dashboard" : "order-management");
   const [menuName, setMenuName] = useState(isAdmin ? "User Management" : "Ground management");
 
   const classes = useStyles();
@@ -328,11 +332,12 @@ const DashBoard = ({
   );
 
   const renderContent = (drawerId) => {
-    const adminContent = [
-      {
+    console.log('redarar----------------------', drawerId);
+    // const adminContent = [
+    //   {
 
-      }
-    ]
+    //   }
+    // ]
     // if (match.params.userId && match.path.includes("edit-user")) {
     //   return (
     //     <>
@@ -460,9 +465,16 @@ const DashBoard = ({
           );
       }
     } else {
-      console.log('d-=-----------------------', match.path);
+      console.log('d-=----------esle-------------', match.path);
 
       switch (match.path) {
+        case "/order-management":
+          return (
+            <>
+              <OrderManagement />
+              {/* <UsersList /> */}
+            </>
+          );
         case "/ground-management":
           return (
             <>
@@ -470,7 +482,13 @@ const DashBoard = ({
               {/* <UsersList /> */}
             </>
           );
-        // case "/posts-list":
+        case "/sub-ground-management":
+          return (
+            <>
+              <SubGroundManagement />
+              {/* <UsersList /> */}
+            </>
+          );
         //   return (
         //     <>
         //       <PostsList />
@@ -558,28 +576,34 @@ const DashBoard = ({
 
   const navLinkMananager = [
     {
-      key: "groundManagement",
+      key: "orderManagement",
       icon: <EventNoteIcon />,
+      to: "/order-management",
+      title: "Order Management",
+    },
+    {
+      key: "groundManagement",
+      icon: <DashboardIcon />,
       to: "/ground-management",
-      title: "Ground management",
+      title: "Ground Management",
     },
     {
       key: "subGroundManagement",
-      icon: <ArtTrackIcon />,
-      to: "/subGroundManagement",
+      icon: <DeviceHubIcon />,
+      to: "/sub-ground-management",
       title: "Sub Ground & Pricing",
     },
     {
       key: "statistics",
-      icon: <BarChartIcon />,
+      icon: <MultilineChartIcon />,
       to: `/statistics`,
-      title: "Statistics and tables",
+      title: "Statistics And Tables",
     },
     {
       key: "customer",
-      icon: <PeopleAltIcon />,
-      to: `/customer`,
-      title: "Loyal customers",
+      icon: <LoyaltyIcon />,
+      to: `/loyal-customer`,
+      title: "Loyal Customers",
     },
   ];
 
@@ -627,16 +651,16 @@ const DashBoard = ({
     },
   ];
 
-  const formatUrl = (url) => {
-    const test = url.split("/");
-    const res = test[1]
-      .replace(/[^a-zA-Z0-9]/g, " ")
-      .toLowerCase()
-      .split(" ")
-      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-      .join(" ");
-    return res.replace("id", "");
-  };
+  // const formatUrl = (url) => {
+  //   const test = url.split("/");
+  //   const res = test[1]
+  //     .replace(/[^a-zA-Z0-9]/g, " ")
+  //     .toLowerCase()
+  //     .split(" ")
+  //     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+  //     .join(" ");
+  //   return res.replace("id", "");
+  // };
 
   const setSearchText = (search) => {
     if (match.path === "/people" || match.path === "/news-feed") {
@@ -672,7 +696,9 @@ const DashBoard = ({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {menuName}
+            {isAdmin
+              ? navLinkAdmin.find(item => item.to.includes(match.path)).title
+              : navLinkMananager.find(item => item.to.includes(match.path)).title}
           </Typography>
           <div
             className={classes.search}
@@ -765,7 +791,6 @@ const DashBoard = ({
           </IconButton>
         </div>
         <Divider />
-        {console.log(drawerId)}
         <List>
           {(isAdmin ? navLinkAdmin : navLinkMananager).map((item) => (
             <ListItem
@@ -781,7 +806,7 @@ const DashBoard = ({
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText>
                 <span
-                  style={{ fontWeight: drawerId === item.key ? "bold" : "" }}
+                  style={{ fontWeight: match.path === item.to ? "bold" : "" }}
                 >
                   {item.title}
                 </span>
@@ -800,11 +825,24 @@ const DashBoard = ({
         </ListItem>
         <Collapse in={openDrawer} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button className={classes.nested}>
-              <ListItemIcon>
+            <ListItem
+              component={Link}
+              button
+              className={classes.nested}
+              to={"/my-account"} onClick={() => {
+                setMenuName("My Account")
+                setDrawerId('myAccount')
+              }}>
+              <ListItemIcon >
                 <AccountCircleIcon />
               </ListItemIcon>
-              <ListItemText primary="My account" />
+              <ListItemText>
+                <span
+                  style={{ fontWeight: match.path === '/my-account' ? "bold" : "" }}
+                >
+                  My account
+                </span>
+              </ListItemText>
             </ListItem>
             <ListItem button className={classes.nested}
               onClick={handeOnChangePassword}>
