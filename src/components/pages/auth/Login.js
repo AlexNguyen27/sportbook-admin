@@ -75,7 +75,7 @@ const Login = ({
   };
 
   if (isAuthenticated) {
-      return <Redirect to="/dashboard" />;
+      return isAdmin ? <Redirect to="/dashboard" /> : <Redirect to="/order-management" />;;
   }
 
   return (

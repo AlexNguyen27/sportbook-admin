@@ -125,8 +125,8 @@ const UserInfo = ({
   };
 
   useEffect(() => {
-    setInit();
-    getGithubAvatar();
+    // setInit();
+    // getGithubAvatar();
   }, []);
 
   const getGithubAvatar = () => {
@@ -156,20 +156,18 @@ const UserInfo = ({
     }
   };
   useEffect(() => {
-    setInit();
+    // setInit();
   }, []);
 
   // useEffect(() => {
   //   getGithubAvatar();
   // }, [current_user && current_user.imageUrl]);
 
-  let imageUrl =
-    window.location.pathname === "/user-info"
-      ? user.imageUrl
-      : current_user.imageUrl;
-  if (!imageUrl) {
-    imageUrl = BASE_IMAGE_URL;
-  }
+  // let imageUrl =
+  //   window.location.pathname === "/user-info"
+  //     ? user.imageUrl
+  //     : current_user.imageUrl;
+  const imageUrl = BASE_IMAGE_URL;
 
   // const handleCapture = ({ target }) => {
   //   const fileName = target.files[0].name;
@@ -185,7 +183,7 @@ const UserInfo = ({
 
   const onCancel = () => {
     setIsEdit(false);
-    setInit();
+    // setInit();
     dispatch({
       type: CLEAR_ERRORS,
     });
@@ -279,8 +277,6 @@ const UserInfo = ({
 };
 
 const mapStateToProps = (state) => ({
-  current_user: state.user.current_user,
-  user: state.auth.user,
   errors: state.errors,
 });
 export default connect(mapStateToProps, { getGithubProfile, editUserInfo })(
