@@ -77,6 +77,10 @@ import { getUserProfile } from "../../store/actions/user";
 import GroundManagement from "./ground/GroundManagement";
 import OrderManagement from "./order/OrderManagement";
 import SubGroundManagement from "./subGround/SubGroundManagement";
+import MultipleSummary from "./statistics/MultipleSummary";
+import Statistic from "./statistics/Statistic";
+import LoyalCustomer from "./loyalCustomer/LoyalCustomer";
+import UserInfo from "./user/UserInfo";
 
 const drawerWidth = 260;
 
@@ -472,23 +476,41 @@ const DashBoard = ({
           return (
             <>
               <OrderManagement />
-              {/* <UsersList /> */}
             </>
           );
         case "/ground-management":
           return (
             <>
               <GroundManagement />
-              {/* <UsersList /> */}
             </>
           );
         case "/sub-ground-management":
           return (
             <>
               <SubGroundManagement />
-              {/* <UsersList /> */}
             </>
           );
+        case "/statistics":
+          return (
+            <>
+              {/* FILER CHAR BY MONTH AND DAY */}
+              <Statistic />
+            </>
+          );
+          case "/loyal-customer":
+            return (
+              <>
+                {/* FILER CHAR BY MONTH AND DAY */}
+                <LoyalCustomer />
+              </>
+            );
+            case "/my-account":
+              return (
+                <>
+                  {/* FILER CHAR BY MONTH AND DAY */}
+                  <UserInfo />
+                </>
+              );
         //   return (
         //     <>
         //       <PostsList />
@@ -597,7 +619,7 @@ const DashBoard = ({
       key: "statistics",
       icon: <MultilineChartIcon />,
       to: `/statistics`,
-      title: "Statistics And Tables",
+      title: "Statistics And Charts",
     },
     {
       key: "customer",
@@ -697,8 +719,8 @@ const DashBoard = ({
           </IconButton>
           <Typography variant="h6" noWrap>
             {isAdmin
-              ? navLinkAdmin.find(item => item.to.includes(match.path)).title
-              : navLinkMananager.find(item => item.to.includes(match.path)).title}
+              ? navLinkAdmin.find(item => item.to.includes(match.path)) ? navLinkAdmin.find(item => item.to.includes(match.path)).title : ''
+              : navLinkMananager.find(item => item.to.includes(match.path)) ? navLinkMananager.find(item => item.to.includes(match.path)).title : ''}
           </Typography>
           <div
             className={classes.search}
@@ -838,7 +860,7 @@ const DashBoard = ({
               </ListItemIcon>
               <ListItemText>
                 <span
-                  style={{ fontWeight: match.path === '/my-account' ? "bold" : "" }}
+                  style={{ fontWeight: match.path === '/my-account' && !modalChangePassword ? "bold" : "" }}
                 >
                   My account
                 </span>
@@ -849,7 +871,13 @@ const DashBoard = ({
               <ListItemIcon>
                 <LockIcon />
               </ListItemIcon>
-              <ListItemText primary="Change password" />
+              <ListItemText>
+                <span
+                  style={{ fontWeight: modalChangePassword ? "bold" : "" }}
+                >
+                  Change password
+                </span>
+              </ListItemText>
             </ListItem>
           </List>
         </Collapse>

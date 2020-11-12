@@ -51,9 +51,6 @@ const OrderManagement = (props) => {
                 <MyCalendar />
                 {/* </Grid> */}
             </Grid>
-            <Grid item>
-
-            </Grid>s
         </Grid>
     );
 }
