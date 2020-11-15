@@ -3,20 +3,20 @@ import MaterialTable from "material-table";
 import moment from "moment";
 import { connect, useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
-import {
-  getUsers,
-  editUserInfo,
-  deleteUser,
-} from "../../../store/actions/user";
-import { SAVE_CURRENT_USER } from "../../../store/actions/types";
+// import { SAVE_CURRENT_USER } from "../../../store/actions/types";
 import { DATE_TIME } from "../../../utils/common";
+import {
+  getCategories,
+  addCategory,
+  deleteCatgory,
+  updateCategory,
+} from "../../../store/actions/category";
 
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
-import EqualizerTwoToneIcon from "@material-ui/icons/EqualizerTwoTone";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import Clear from "@material-ui/icons/Clear";
@@ -29,7 +29,6 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import Visibility from "@material-ui/icons/Visibility";
 
 import PageLoader from "../../custom/PageLoader";
 import Swal from "sweetalert2";
@@ -43,7 +42,9 @@ const tableIcons = {
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
-  // Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => (
+    <Edit {...props} ref={ref} style={{ color: Colors.orange }} />
+  )),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -59,85 +60,60 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const UsersList = ({
-  getUsers,
-  history,
-  editUserInfo,
-  deleteUser,
+const BenefitsList = ({
+  categories,
+  getCategories,
+  addCategory,
+  updateCategory,
+  deleteCatgory,
 }) => {
-  const users =[];
   const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
-      { title: "Username", field: "username" },
-      { title: "Fullname", field: "fullname" },
-      { title: "Email", field: "email", type: "email" },
       {
-        title: "Role",
-        field: "role",
+        title: "Name",
+        field: "name",
+
+        validate: (rowData) =>
+          rowData.name === ""
+            ? { isValid: false, helperText: "Name cannot be empty" }
+            : true,
       },
       {
-        title: "Total Posts",
-        field: "totalPosts",
-        editable: "never",
+        title: "Status",
+        field: "status",
+        lookup: { public: "Public", private: "Private" },
+        initialEditValue: "public",
       },
-      {
-        title: "Created at",
-        field: "createdAt",
-        editable: "never",
-      },
-      {
-        title: "Updated at",
-        field: "updatedAt",
-        editable: "never",
-      },
+      { title: "Created At", field: "createdAt", editable: "never" },
     ],
     data: [
       {
-        username: "thanh_teacher",
-        fullname: "Nguyen le Ngocj thanh ",
-        email: "thanh@gmail.com",
-        createdDate: moment("2020-05-29T14:49:05.661Z").format("MMM DD h:mm A"),
-        role: 'user',
-        totalPosts: 10,
-        createdAt: '12/12/2020',
-        updatedAt: '12/12/2020'
+        name: "home",
+        status: "public",
+        createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
       },
     ],
   });
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    // getUsers(setLoading);
-  }, []);
-
-  const getFullname = (firstname, lastname) => {
-    // console.log(firstname, lastname);
-    let fullname = "";
-    if (firstname) {
-      fullname += firstname + " ";
-    }
-    if (lastname) {
-      fullname += lastname;
-    }
-    return fullname;
-  };
+    getCategories(setLoading);
+  }, [loading]);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
 
-  const usersArray = Object.keys(users).map((userId) => ({
-    ...users[userId],
-    createdAt: getDateTime(users[userId].createdAt),
-    updatedAt: getDateTime(users[userId].updatedAt),
-    fullname: getFullname(users[userId].firstName, users[userId].lastName),
-  }));
+  // const categoryArr = Object.keys(categories).map((cateId) => ({
+  //   ...categories[cateId],
+  //   createdAt: getDateTime(categories[cateId].createdAt),
+  // }));
 
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
         <MaterialTable
           icons={tableIcons}
-          title="List Of Users"
+          title="List Of Benefits"
           columns={state.columns}
           data={state.data || []}
           options={{
@@ -151,29 +127,8 @@ const UsersList = ({
           }}
           actions={[
             {
-              icon: () => <Visibility style={{ color: Colors.view }} />,
-              tooltip: "View user profile",
-              onClick: (event, rowData) => {
-                history.push(`user-profile/${rowData.id}`);
-                // Do save operation
-              },
-            },
-            {
-              icon: () => <Edit style={{ color: Colors.orange }}/>,
-              tooltip: "Edit User",
-              onClick: (event, rowData) => {
-                // console.log("edit---", rowData);
-                dispatch({
-                  type: SAVE_CURRENT_USER,
-                  currentUser: rowData,
-                });
-                history.push(`/edit-user/${rowData.id}`);
-                // Do save operation
-              },
-            },
-            {
-              icon: () => <Delete style={{ color: Colors.red }}/>,
-              tooltip: "Delete User",
+              icon: () => <Delete style={{ color: Colors.red }} />,
+              tooltip: "Delete Category",
               onClick: (event, rowData) => {
                 Swal.fire({
                   title: `Are you sure to delete ?`,
@@ -186,31 +141,52 @@ const UsersList = ({
                 }).then((result) => {
                   if (result.value) {
                     setLoading(true);
-                    deleteUser(setLoading, rowData.id);
+                    deleteCatgory(setLoading, rowData.id);
+                    // deleteUser(setLoading, rowData.id);
                   }
                 });
               },
             },
-            rowData => ({
-              icon: (props) => <EqualizerTwoToneIcon  />,
-              tooltip: "Statictis",
-              onClick: (event, rowData) => {
-                history.push(`statistics/${rowData.id}`);
-              },
-              // disabled: !rowData.posts.length
-            }),
-            
           ]}
+          editable={{
+            onRowAdd: (newData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const { name, status } = newData;
+                  setLoading(true);
+                  addCategory(setLoading, name, status);
+                  resolve();
+                }, 1000);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve();
+                  // edit categories
+                  setLoading(true);
+                  const { name, status, id } = newData;
+                  updateCategory(setLoading, name, status, id);
+                  if (oldData) {
+                    setState((prevState) => {
+                      const data = [...prevState.data];
+                      data[data.indexOf(oldData)] = newData;
+                      return { ...prevState, data };
+                    });
+                  }
+                }, 100);
+              }),
+          }}
         />
       </div>
     </PageLoader>
   );
 };
 const mapStateToProps = (state) => ({
-  user: state.user,
+  categories: state?.category?.categories,
 });
 export default connect(mapStateToProps, {
-  getUsers,
-  editUserInfo,
-  deleteUser,
-})(withRouter(UsersList));
+  getCategories,
+  addCategory,
+  deleteCatgory,
+  updateCategory,
+})(withRouter(BenefitsList));

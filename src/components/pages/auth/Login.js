@@ -68,7 +68,7 @@ const Login = ({
   };
 
   if (isAuthenticated) {
-      return isAdmin ? <Redirect to="/order-list" /> : <Redirect to="/order-management" />;;
+      return isAdmin ? <Redirect to="/orders-list" /> : <Redirect to="/order-management" />;;
   }
 
   return (

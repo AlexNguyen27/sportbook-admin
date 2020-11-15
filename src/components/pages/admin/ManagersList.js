@@ -59,7 +59,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const UsersList = ({
+const ManagersList = ({
   getUsers,
   history,
   editUserInfo,
@@ -137,7 +137,7 @@ const UsersList = ({
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
         <MaterialTable
           icons={tableIcons}
-          title="List Of Users"
+          title="List Of Managers"
           columns={state.columns}
           data={state.data || []}
           options={{
@@ -213,4 +213,4 @@ export default connect(mapStateToProps, {
   getUsers,
   editUserInfo,
   deleteUser,
-})(withRouter(UsersList));
+})(withRouter(ManagersList));

@@ -103,10 +103,10 @@ const CategoriesList = ({
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
 
-  const categoryArr = Object.keys(categories).map((cateId) => ({
-    ...categories[cateId],
-    createdAt: getDateTime(categories[cateId].createdAt),
-  }));
+  // const categoryArr = Object.keys(categories).map((cateId) => ({
+  //   ...categories[cateId],
+  //   createdAt: getDateTime(categories[cateId].createdAt),
+  // }));
 
   return (
     <PageLoader loading={loading}>
@@ -115,7 +115,7 @@ const CategoriesList = ({
           icons={tableIcons}
           title="List Of Categories"
           columns={state.columns}
-          data={categoryArr || []}
+          data={state.data || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -182,7 +182,7 @@ const CategoriesList = ({
   );
 };
 const mapStateToProps = (state) => ({
-  categories: state.category.categories,
+  categories: state?.category?.categories,
 });
 export default connect(mapStateToProps, {
   getCategories,
