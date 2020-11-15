@@ -97,14 +97,13 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
     },
     query: `
         mutation {
-          register(email: $email, password: $password, role: $role ) {
+          createUser(email: $email, password: $password, role: $role ) {
             id,
-            token,
             email,
             firstName,
             lastName,
-            email,
             phone,
+            gender,
             address,
             dob,
             avatar,
@@ -119,15 +118,10 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
     variables: {
       email,
       password,
-      role: "user",
+      role: "admin",
     },
   });
-
-  console.log(data);
   if (errors) {
-    // console.log('error---------', errors);
-    // logoutUser(dispatch, errors);
-
     const formatedError = {};
     const error = errors[0].message;
     if (error.includes("Password")) {
