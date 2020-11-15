@@ -14,7 +14,7 @@ const ProtectedRoute = ({
   console.log('paht------', path);
   const page = (props) => {
     if (isAuthenticated) {
-      if (isAdmin || (isManager && path && !path.includes('/admin'))) {
+      if (isAdmin || (isManager && path && !path.includes('list'))) {
         return <Component {...props} dispatch={dispatch} />;
       }
 

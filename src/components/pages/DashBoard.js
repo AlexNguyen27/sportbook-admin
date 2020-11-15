@@ -35,7 +35,9 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import CardGiftcardIcon from '@material-ui/icons/CardGiftcard';
 // import BarChartIcon from "@material-ui/icons/BarChart";
+import ContactsIcon from '@material-ui/icons/Contacts';
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
 import MultilineChartIcon from '@material-ui/icons/MultilineChart';
 import HelpIcon from "@material-ui/icons/Help";
@@ -77,10 +79,14 @@ import { getUserProfile } from "../../store/actions/user";
 import GroundManagement from "./ground/GroundManagement";
 import OrderManagement from "./order/OrderManagement";
 import SubGroundManagement from "./subGround/SubGroundManagement";
-import MultipleSummary from "./statistics/MultipleSummary";
+// import MultipleSummary from "./statistics/MultipleSummary";
 import Statistic from "./statistics/Statistic";
 import LoyalCustomer from "./loyalCustomer/LoyalCustomer";
 import UserInfo from "./user/UserInfo";
+import CategoryList from "./category/CategoryList";
+import ManagersList from "./admin/ManagersList";
+import BenefitsList from "./benefit/BenefitsList";
+import OrdersList from "./admin/OrdersList";
 
 const drawerWidth = 260;
 
@@ -219,15 +225,15 @@ const DashBoard = ({
 }) => {
   // Check if token is expired
   if (token) {
-    const decoded = jwt_decode(token);
+    // const decoded = jwt_decode(token);
     // console.log(decoded);
-    const currentTime = Date.now() / 1000;
+    // const currentTime = Date.now() / 1000;
     // if (decoded.iat <= currentTime) {
     //   logoutUser();
     // }
   }
   const [drawerId, setDrawerId] = useState(isAdmin ? "dashboard" : "order-management");
-  const [menuName, setMenuName] = useState(isAdmin ? "User Management" : "Ground management");
+  // const [menuName, setMenuName] = useState(isAdmin ? "User Management" : "Ground management");
 
   const classes = useStyles();
   const theme = useTheme();
@@ -276,7 +282,7 @@ const DashBoard = ({
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
-    history.push("/user-info");
+    history.push("/my-account");
   };
 
   const handeOnChangePassword = () => {
@@ -335,142 +341,89 @@ const DashBoard = ({
     </Menu>
   );
 
+  const defaultTabContent = () => {
+    return (
+      <Fragment>
+        <Typography paragraph>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
+          Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
+          gravida rutrum quisque non tellus. Convallis convallis tellus id
+          interdum velit laoreet id donec ultrices. Odio morbi quis commodo
+          odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
+          est ultricies integer quis. Cursus euismod quis viverra nibh cras.
+          Metus vulputate eu scelerisque felis imperdiet proin fermentum
+          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
+          lobortis feugiat vivamus at augue. At augue eget arcu dictum
+          varius duis at consectetur lorem. Velit sed ullamcorper morbi
+          tincidunt. Lorem donec massa sapien faucibus et molestie ac.
+        </Typography>
+        <Typography paragraph>
+          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
+          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
+          elementum integer enim neque volutpat ac tincidunt. Ornare
+          suspendisse sed nisi lacus sed viverra tellus. Purus sit amet
+          volutpat consequat mauris. Elementum eu facilisis sed odio morbi.
+          Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
+          ornare massa eget egestas purus viverra accumsan in. In hendrerit
+          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam
+          aliquam sem et tortor. Habitant morbi tristique senectus et.
+          Adipiscing elit duis tristique sollicitudin nibh sit. Ornare
+          aenean euismod elementum nisi quis eleifend. Commodo viverra
+          maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin
+          aliquam ultrices sagittis orci a.
+        </Typography>
+      </Fragment>
+    )
+  }
+
   const renderContent = (drawerId) => {
-    console.log('redarar----------------------', drawerId);
-    // const adminContent = [
-    //   {
-
-    //   }
-    // ]
-    // if (match.params.userId && match.path.includes("edit-user")) {
-    //   return (
-    //     <>
-    //       <UserInfo />
-    //     </>
-    //   );
-    // }
-
-    // if (match.params.userId && match.path.includes("user-profile")) {
-    //   return (
-    //     <>
-    //       <UserProfile userId={match.params.userId} />
-    //     </>
-    //   );
-    // }
-
-    // if (match.params.userId && match.path.includes("statistics")) {
-    //   return (
-    //     <>
-    //       <StatisticsPost userId={match.params.userId} />
-    //     </>
-    //   );
-    // }
-
-    // if (match.params.postId && match.path.includes("view-post")) {
-    //   return (
-    //     <>
-    //       <ViewPost postId={match.params.postId} />
-    //     </>
-    //   );
-    // }
-
-    // if (match.params.postId && match.path.includes("edit-post")) {
-    //   return (
-    //     <>
-    //       <EditPost postId={match.params.postId} />
-    //     </>
-    //   );
-    // }
     if (isAdmin) {
-      console.log('d-=-----------------------', drawerId);
       switch (match.path) {
-        case "":
+        case "/orders-list":
+          return (
+            <>
+              <OrdersList />
+            </>
+          );
+
+        case "/users-list":
           return (
             <>
               <UsersList />
             </>
           );
-        // case "/posts-list":
-        //   return (
-        //     <>
-        //       <PostsList />
-        //     </>
-        //   );
-        // case "/reports-list":
-        //   return (
-        //     <>
-        //       <ReportsList />
-        //     </>
-        //   );
-        // case "/categories-list":
-        //   return (
-        //     <>
-        //       <CategoryList />
-        //     </>
-        //   );
-        // case "/news-feed":
-        //   return (
-        //     <>
-        //       <NewsFeed location={location} />
-        //     </>
-        //   );
-        // case "/add-new-post":
-        //   return (
-        //     <>
-        //       <AddPost />
-        //     </>
-        //   );
-        // case "/people":
-        //   return (
-        //     <>
-        //       <Users location={location} />
-        //     </>
-        //   );
-        // case "/user-info":
-        //   return (
-        //     <>
-        //       <UserInfo />
-        //     </>
-        //   );
-        default:
+        case "/managers-list":
           return (
-            <Fragment>
-              <Typography paragraph>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
-                Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-                gravida rutrum quisque non tellus. Convallis convallis tellus id
-                interdum velit laoreet id donec ultrices. Odio morbi quis commodo
-                odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
-                est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-                Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-                lobortis feugiat vivamus at augue. At augue eget arcu dictum
-                varius duis at consectetur lorem. Velit sed ullamcorper morbi
-                tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-              </Typography>
-              <Typography paragraph>
-                Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-                ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-                elementum integer enim neque volutpat ac tincidunt. Ornare
-                suspendisse sed nisi lacus sed viverra tellus. Purus sit amet
-                volutpat consequat mauris. Elementum eu facilisis sed odio morbi.
-                Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
-                ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                gravida rutrum quisque non tellus orci ac. Pellentesque nec nam
-                aliquam sem et tortor. Habitant morbi tristique senectus et.
-                Adipiscing elit duis tristique sollicitudin nibh sit. Ornare
-                aenean euismod elementum nisi quis eleifend. Commodo viverra
-                maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin
-                aliquam ultrices sagittis orci a.
-              </Typography>
-            </Fragment>
+            <>
+              <ManagersList />
+            </>
           );
+        case "/categories-list":
+          return (
+            <>
+              <CategoryList />
+            </>
+          );
+        case "/benefits-list":
+          return (
+            <>
+              <BenefitsList />
+            </>
+          );
+        case "/my-account":
+          return (
+            <>
+              <UserInfo />
+            </>
+          );
+        default:
+          return defaultTabContent();
+
       }
     } else {
       console.log('d-=----------esle-------------', match.path);
-
       switch (match.path) {
         case "/order-management":
           return (
@@ -497,96 +450,20 @@ const DashBoard = ({
               <Statistic />
             </>
           );
-          case "/loyal-customer":
-            return (
-              <>
-                {/* FILER CHAR BY MONTH AND DAY */}
-                <LoyalCustomer />
-              </>
-            );
-            case "/my-account":
-              return (
-                <>
-                  {/* FILER CHAR BY MONTH AND DAY */}
-                  <UserInfo />
-                </>
-              );
-        //   return (
-        //     <>
-        //       <PostsList />
-        //     </>
-        //   );
-        // case "/reports-list":
-        //   return (
-        //     <>
-        //       <ReportsList />
-        //     </>
-        //   );
-        // case "/categories-list":
-        //   return (
-        //     <>
-        //       <CategoryList />
-        //     </>
-        //   );
-        // case "/news-feed":
-        //   return (
-        //     <>
-        //       <NewsFeed location={location} />
-        //     </>
-        //   );
-        // case "/add-new-post":
-        //   return (
-        //     <>
-        //       <AddPost />
-        //     </>
-        //   );
-        // case "/people":
-        //   return (
-        //     <>
-        //       <Users location={location} />
-        //     </>
-        //   );
-        // case "/user-info":
-        //   return (
-        //     <>
-        //       <UserInfo />
-        //     </>
-        //   );
-        default:
+        case "/loyal-customer":
           return (
-            <Fragment>
-              <Typography paragraph>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
-                Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-                gravida rutrum quisque non tellus. Convallis convallis tellus id
-                interdum velit laoreet id donec ultrices. Odio morbi quis commodo
-                odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
-                est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-                Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-                lobortis feugiat vivamus at augue. At augue eget arcu dictum
-                varius duis at consectetur lorem. Velit sed ullamcorper morbi
-                tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-              </Typography>
-              <Typography paragraph>
-                Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-                ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-                elementum integer enim neque volutpat ac tincidunt. Ornare
-                suspendisse sed nisi lacus sed viverra tellus. Purus sit amet
-                volutpat consequat mauris. Elementum eu facilisis sed odio morbi.
-                Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
-                ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                gravida rutrum quisque non tellus orci ac. Pellentesque nec nam
-                aliquam sem et tortor. Habitant morbi tristique senectus et.
-                Adipiscing elit duis tristique sollicitudin nibh sit. Ornare
-                aenean euismod elementum nisi quis eleifend. Commodo viverra
-                maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin
-                aliquam ultrices sagittis orci a.
-              </Typography>
-            </Fragment>
+            <>
+              <LoyalCustomer />
+            </>
           );
+        case "/my-account":
+          return (
+            <>
+              <UserInfo />
+            </>
+          );
+        default:
+          return defaultTabContent();
       }
     }
 
@@ -631,22 +508,22 @@ const DashBoard = ({
 
   const navLinkAdmin = [
     {
+      key: "orderList",
+      icon: <EventNoteIcon />,
+      to: "/orders-list",
+      title: "Order Management",
+    },
+    {
       key: "usersList",
       icon: <PeopleAltIcon />,
       to: "/users-list",
-      title: "User",
+      title: "User Management",
     },
     {
-      key: "posts",
-      icon: <ChromeReaderModeIcon />,
-      to: "/posts-list",
-      title: "Post",
-    },
-    {
-      key: "report",
-      icon: <ReportIcon />,
-      to: "/reports-list",
-      title: "Report",
+      key: "managerList",
+      icon: <ContactsIcon />,
+      to: "/managers-list",
+      title: "Manager Management",
     },
     {
       key: "category",
@@ -654,6 +531,18 @@ const DashBoard = ({
       to: "/categories-list",
       title: "Category",
     },
+    {
+      key: "benefit",
+      icon: <CardGiftcardIcon />,
+      to: "/benefits-list",
+      title: "Benefit",
+    },
+    // {
+    //   key: "report",
+    //   icon: <ReportIcon />,
+    //   to: "/reports-list",
+    //   title: "Report",
+    // },
   ];
 
   const navExtraInfo = [
@@ -664,7 +553,6 @@ const DashBoard = ({
       title: "Notifications",
     },
     { key: "help", icon: <HelpIcon />, to: "/help", title: "Help" },
-    // { key: "Mails", icon: <MailIcon />, to: "/mails", title: "Mails" },
     {
       key: "Logout",
       icon: <ExitToAppIcon />,
@@ -694,6 +582,18 @@ const DashBoard = ({
     }
   };
 
+  const getHeaderTitle = () => {
+    if (match.path.includes('my-account')) {
+      return 'My Account'
+    }
+    let found = isAdmin
+      ? navLinkAdmin.find(item => item.to.includes(match.path)) : navLinkMananager.find(item => item.to.includes(match.path));
+    if (!found) {
+      found = navExtraInfo.find(item => item.to.includes(match.path));
+    }
+    return found?.title || '';
+  }
+
   return (
     <div className={classes.root}>
       <ChangePasswordModal
@@ -718,10 +618,9 @@ const DashBoard = ({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {isAdmin
-              ? navLinkAdmin.find(item => item.to.includes(match.path)) ? navLinkAdmin.find(item => item.to.includes(match.path)).title : ''
-              : navLinkMananager.find(item => item.to.includes(match.path)) ? navLinkMananager.find(item => item.to.includes(match.path)).title : ''}
+            {getHeaderTitle()}
           </Typography>
+          {/* TODO: SEARCH */}
           <div
             className={classes.search}
             style={{
@@ -754,7 +653,7 @@ const DashBoard = ({
               </Badge>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={10} color="secondary">
+              <Badge badgeContent={9} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -802,8 +701,9 @@ const DashBoard = ({
           paper: classes.drawerPaper,
         }}
       >
+        {/* Header title */}
         <div className={classes.drawerHeader}>
-          <strong>MANAGER</strong>
+          <strong>{isAdmin ? "ADMIN" : 'MANAGER'}</strong>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
@@ -813,6 +713,7 @@ const DashBoard = ({
           </IconButton>
         </div>
         <Divider />
+        {/* Main */}
         <List>
           {(isAdmin ? navLinkAdmin : navLinkMananager).map((item) => (
             <ListItem
@@ -821,7 +722,6 @@ const DashBoard = ({
               component={Link}
               to={item.to}
               onClick={() => {
-                setMenuName(item.title)
                 setDrawerId(item.key)
               }}
             >
@@ -837,6 +737,7 @@ const DashBoard = ({
           ))}
         </List>
         <Divider />
+
         {/* Setting */}
         <ListItem button onClick={handleClick}>
           <ListItemIcon>
@@ -852,7 +753,6 @@ const DashBoard = ({
               button
               className={classes.nested}
               to={"/my-account"} onClick={() => {
-                setMenuName("My Account")
                 setDrawerId('myAccount')
               }}>
               <ListItemIcon >
@@ -891,12 +791,17 @@ const DashBoard = ({
               component={Link}
               to={item.to}
               onClick={item.onClick || (() => {
-                setMenuName(item.title)
                 setDrawerId(item.key)
               })}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
+              <ListItemText>
+                <span
+                  style={{ fontWeight: match.path.includes(item.to) ? "bold" : "" }}
+                >
+                  {item.title}
+                </span>
+              </ListItemText>
             </ListItem>
           ))}
 
