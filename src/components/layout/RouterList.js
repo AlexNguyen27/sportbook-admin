@@ -35,6 +35,8 @@ const RouterList = (props) => {
 
 
         {/* Admin */}
+        <ProtectedRoute exact path="/order-list" component={DashBoard} />
+
         {/* <ProtectedRoute exact path="/edit-user/:userId" component={DashBoard} />
         <ProtectedRoute
           exact

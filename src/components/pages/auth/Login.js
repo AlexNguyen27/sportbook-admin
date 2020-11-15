@@ -12,6 +12,7 @@ import Landing from "../../layout/Landing";
 // ACTION
 import { loginUser } from "../../../store/actions/auth";
 import { GET_ERRORS } from "../../../store/actions/types";
+import { validateEmail } from "../../../utils/commonFunction";
 const Login = ({
   errors,
   history,
@@ -28,20 +29,12 @@ const Login = ({
 
   const { email, password } = formData;
 
-  const validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  };
-
   // Click button Login
   const onSubmit = (e) => {
     e.preventDefault();
-    // history.push('/user/info')
     const error = {};
 
     Object.keys(formData).map((key) => {
-      // console.log("-------------------", formData);
-      // console.log(key);
       if (!formData[key] || (formData[key] && formData[key].trim() === "")) {
         error[key] = "This field is required";
       }
@@ -75,7 +68,7 @@ const Login = ({
   };
 
   if (isAuthenticated) {
-      return isAdmin ? <Redirect to="/dashboard" /> : <Redirect to="/order-management" />;;
+      return isAdmin ? <Redirect to="/order-list" /> : <Redirect to="/order-management" />;;
   }
 
   return (
@@ -132,8 +125,6 @@ const Login = ({
                   onChange={onChange}
                   variant="outlined"
                 />
-                {/* <Grid container justify="center" spacing={4}> */}
-                {/* <Grid item> */}
                 <Button
                   className="mt-3 w-100"
                   variant="contained"
@@ -142,9 +133,6 @@ const Login = ({
                 >
                   Login
                 </Button>
-
-                {/* </Grid> */}
-                {/* </Grid> */}
               </form>
               <div className="text-center">
                 <p
