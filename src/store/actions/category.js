@@ -12,7 +12,6 @@ import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
 import Swal from "sweetalert2";
 
-//LOGIN User
 export const getCategories = (setLoading) => async (dispatch, getState) => {
   const { token } = getState().auth;
 
