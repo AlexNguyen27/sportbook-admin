@@ -25,21 +25,21 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
     },
     query: `
             query {
-                getCategories {
+                categories {
                     id, 
                     name,
-                    status, 
                     createdAt,
-                    # posts {
-                    #   id
-                    # }
+                    grounds {
+                      id
+                      title
+                    }
                   }
             }
         `,
     variables: {},
   });
   if (!errors) {
-    const categories = arrayToObject(data.getCategories);
+    const categories = arrayToObject(data.categories);
 
     dispatch({
       type: GET_CATEGORIES,
@@ -55,7 +55,7 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
   }
 };
 
-export const addCategory = (setLoading, name, status) => async (dispatch, getState) => {
+export const addCategory = (setLoading, name) => async (dispatch, getState) => {
   const { token } = getState().auth;
 
   const { data, errors } = await hera({
@@ -68,21 +68,17 @@ export const addCategory = (setLoading, name, status) => async (dispatch, getSta
     },
     query: `
       mutation {
-        createCategory(name: $name, status: $status) {
+        createCategory(name: $name) {
           id, 
           name,
-          status,
           createdAt
         }
       } 
     `,
     variables: {
       name,
-      status,
     },
   });
-
-  console.log(data);
 
   if (!errors) {
     dispatch({
@@ -119,7 +115,6 @@ export const addCategory = (setLoading, name, status) => async (dispatch, getSta
 };
 
 export const deleteCatgory = (setLoading, id) => async (dispatch, getState) => {
-  console.log("-deleteCatgory----------");
   const { token } = getState().auth;
   const { data, errors } = await hera({
     options: {
@@ -175,11 +170,10 @@ export const deleteCatgory = (setLoading, id) => async (dispatch, getState) => {
   }
 };
 
-export const updateCategory = (setLoading, name, status, id) => async (
+export const updateCategory = (setLoading, name, id) => async (
   dispatch,
   getState
 ) => {
-  console.log("-deleteCatgory----------");
   const { token } = getState().auth;
   const { data, errors } = await hera({
     options: {
@@ -191,10 +185,9 @@ export const updateCategory = (setLoading, name, status, id) => async (
     },
     query: `
       mutation {
-        updateCategory(id: $id, name: $name, status: $status) {
+        updateCategory(id: $id, name: $name) {
           id
           name
-          status
           createdAt
         }
       } 
@@ -202,7 +195,6 @@ export const updateCategory = (setLoading, name, status, id) => async (
     variables: {
       id,
       name,
-      status,
     },
   });
   if (!errors) {
