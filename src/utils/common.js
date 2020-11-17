@@ -28,3 +28,8 @@ export const POST_STATUS_OBJECT = {
   public: "PUBLIC",
   private: "PRIVATE",
 };
+
+export const GENDER = {
+  male: 'male',
+  female: 'female',
+};
