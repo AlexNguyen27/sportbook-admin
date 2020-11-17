@@ -79,18 +79,18 @@ const CategoriesList = ({
             ? { isValid: false, helperText: "Name cannot be empty" }
             : true,
       },
-      {
-        title: "Status",
-        field: "status",
-        lookup: { public: "Public", private: "Private" },
-        initialEditValue: "public",
-      },
+      // {
+      //   title: "Status",
+      //   field: "status",
+      //   lookup: { public: "Public", private: "Private" },
+      //   initialEditValue: "public",
+      // },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
     data: [
       {
         name: "home",
-        status: "public",
+        // status: "public",
         createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
       },
     ],
@@ -99,14 +99,14 @@ const CategoriesList = ({
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     getCategories(setLoading);
-  }, [loading]);
+  }, [getCategories, loading]);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
 
-  // const categoryArr = Object.keys(categories).map((cateId) => ({
-  //   ...categories[cateId],
-  //   createdAt: getDateTime(categories[cateId].createdAt),
-  // }));
+  const categoryArr = Object.keys(categories).map((cateId) => ({
+    ...categories[cateId],
+    createdAt: getDateTime(categories[cateId].createdAt),
+  }));
 
   return (
     <PageLoader loading={loading}>
@@ -115,7 +115,7 @@ const CategoriesList = ({
           icons={tableIcons}
           title="List Of Categories"
           columns={state.columns}
-          data={state.data || []}
+          data={categoryArr || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -124,6 +124,7 @@ const CategoriesList = ({
             rowStyle: {
               overflowX: "auto",
             },
+            actionsColumnIndex: -1
           }}
           actions={[
             {
@@ -152,9 +153,9 @@ const CategoriesList = ({
             onRowAdd: (newData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const { name, status } = newData;
+                  const { name } = newData;
                   setLoading(true);
-                  addCategory(setLoading, name, status);
+                  addCategory(setLoading, name);
                   resolve();
                 }, 1000);
               }),
@@ -165,7 +166,7 @@ const CategoriesList = ({
                   // edit categories
                   setLoading(true);
                   const { name, status, id } = newData;
-                  updateCategory(setLoading, name, status, id);
+                  updateCategory(setLoading, name, id);
                   if (oldData) {
                     setState((prevState) => {
                       const data = [...prevState.data];
