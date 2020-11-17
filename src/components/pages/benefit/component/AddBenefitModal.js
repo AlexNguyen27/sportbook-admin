@@ -45,7 +45,7 @@ const AddBenefitModal = ({
   clearErrors,
   modal,
   setModal,
-  addNewLecture,
+  addBenefit,
 }) => {
   const dispatch = useDispatch();
 
@@ -56,15 +56,15 @@ const AddBenefitModal = ({
     description: "",
   });
 
-//   const [image, setImage] = useState({
-//     name: "",
-//     file: "",
-//   });
+  //   const [image, setImage] = useState({
+  //     name: "",
+  //     file: "",
+  //   });
 
-//   const [video, setVideo] = useState({
-//     name: "",
-//     file: "",
-//   });
+  //   const [video, setVideo] = useState({
+  //     name: "",
+  //     file: "",
+  //   });
 
   const { title, description } = formData;
 
@@ -92,11 +92,11 @@ const AddBenefitModal = ({
 
     const error = {};
 
-    Object.keys(formData).map((key) => {
-      if (formData[key].trim() === "") {
-        error[key] = "This field is required";
-      }
-    });
+    // Object.keys(formData).map((key) => {
+    if (formData.title.trim() === "") {
+      error.title = "This field is required";
+    }
+    // });
 
     // if (image.name.trim() === "") {
     //   error.image = "Please select an image!";
@@ -128,20 +128,20 @@ const AddBenefitModal = ({
     });
   };
 
-//   const handleCapture = ({ target }) => {
-//     const fileName = target.files[0].name;
-//     if (target.accept.includes("image")) {
-//       setImage({
-//         name: fileName,
-//         file: target.files[0],
-//       });
-//     } else {
-//       setVideo({
-//         name: fileName,
-//         file: target.files[0],
-//       });
-//     }
-//   };
+  //   const handleCapture = ({ target }) => {
+  //     const fileName = target.files[0].name;
+  //     if (target.accept.includes("image")) {
+  //       setImage({
+  //         name: fileName,
+  //         file: target.files[0],
+  //       });
+  //     } else {
+  //       setVideo({
+  //         name: fileName,
+  //         file: target.files[0],
+  //       });
+  //     }
+  //   };
 
   return (
     <Modal isOpen={modal} toggle={() => closeModal()} centered={true}>
@@ -174,7 +174,6 @@ const AddBenefitModal = ({
                   rows={4}
                   onChange={onChange}
                   variant="outlined"
-                  error={errors.description}
                 />
               </Col>
             </Row>
@@ -248,4 +247,5 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   clearErrors,
+  addBenefit
 })(AddBenefitModal);

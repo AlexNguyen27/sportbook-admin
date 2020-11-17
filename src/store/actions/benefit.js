@@ -118,7 +118,7 @@ export const addBenefit = (setLoading, title, description) => async (dispatch, g
 // can not delete benefit
 export const deleteBenefit = (setLoading, id) => async (dispatch, getState) => {
     const { token } = getState().auth;
-    const { data, errors } = await hera({
+    const { errors } = await hera({
         options: {
             url: BASE_URL,
             headers: {
@@ -171,11 +171,10 @@ export const deleteBenefit = (setLoading, id) => async (dispatch, getState) => {
     }
 };
 
-export const updateBenefit = (setLoading, title, description, id) => async (
+export const updateBenefit = (setLoading, { title, description, id }) => async (
     dispatch,
     getState
 ) => {
-    console.log("-deleteCatgory----------");
     const { token } = getState().auth;
     const { data, errors } = await hera({
         options: {

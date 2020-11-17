@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useDispatch } from "react-redux";
 
 import { TextField } from "@material-ui/core";
 // COMPONENTS
 import Button from "@material-ui/core/Button";
-import { clearErrors, REPORT_STATUS_ARRAY } from "../../../../utils/common";
-import TextFieldInputWithHeader from "../../../custom/TextFieldInputWithheader";
+import { clearErrors } from "../../../../utils/common";
 
 import {
   Row,
@@ -18,8 +16,7 @@ import {
   Form,
 } from "reactstrap";
 import PageLoader from "../../../custom/PageLoader";
-import DropdownV2 from "../../../custom/DropdownV2";
-import { updateReport } from "../../../../store/actions/report";
+import { updateBenefit } from "../../../../store/actions/benefit";
 
 const EditBenefitModal = ({
   errors,
@@ -27,27 +24,23 @@ const EditBenefitModal = ({
   modal,
   setModal,
   editedData,
-  updateReport,
+  updateBenefit,
 }) => {
-    console.log('00000000000000000000', editedData);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     description: editedData ? editedData.description : "",
     title: editedData ? editedData.title : "",
   });
 
-//   const [selectedStatusValue, setSelectedStatusValue] = useState(
-//     editedData ? editedData.status : ""
-//   );
   const { title, description } = formData;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const initFormData = () => {
     setFormData({
       description: editedData ? editedData.description : "",
       title: editedData ? editedData.title : "",
     });
-    // setSelectedStatusValue(editedData ? editedData.status : "");
-  };
+  }
   useEffect(() => {
     initFormData();
   }, [editedData]);
@@ -65,12 +58,14 @@ const EditBenefitModal = ({
     setLoading(true);
     const { id } = editedData;
     const { title, description } = formData;
-    // updateReport(
-    //   setLoading,
-    //   reportedBy,
-    //   postId,
-    //   description,
-    // );
+    updateBenefit(
+      setLoading,
+     {
+      id,
+      title,
+      description,
+     }
+    );
   };
 
   // Save on change input value
@@ -140,6 +135,6 @@ const EditBenefitModal = ({
 const mapStateToProps = (state) => ({
   errors: state.errors,
 });
-export default connect(mapStateToProps, { clearErrors, updateReport })(
+export default connect(mapStateToProps, { clearErrors, updateBenefit })(
   EditBenefitModal
 );

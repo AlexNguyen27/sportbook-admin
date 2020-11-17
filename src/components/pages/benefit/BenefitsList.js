@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import MaterialTable from "material-table";
-import moment from "moment";
-import { connect, useDispatch } from "react-redux";
-import { withRouter } from "react-router-dom";
-// import { SAVE_CURRENT_USER } from "../../../store/actions/types";
-import { DATE_TIME } from "../../../utils/common";
-// import {
-//   getCategories,
-//   addCategory,
-//   deleteCatgory,
-//   updateCategory,
-// } from "../../../store/actions/category";
-
 import { forwardRef } from "react";
+import moment from "moment";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import MaterialTable from "material-table";
 
+
+import Tooltip from '@material-ui/core/Tooltip';
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import Clear from "@material-ui/icons/Clear";
-import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import FilterList from "@material-ui/icons/FilterList";
 import FirstPage from "@material-ui/icons/FirstPage";
@@ -29,21 +21,20 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import Visibility from "@material-ui/icons/Visibility";
 
 import PageLoader from "../../custom/PageLoader";
-import Swal from "sweetalert2";
-import Colors from "../../../constants/Colors";
 import AddBenefitModal from "./component/AddBenefitModal";
-
-import { getBenefits, addBenefit, updateBenefit } from "../../../store/actions/benefit";
 import EditBenefitModal from "./component/EditBenefitModal";
+
+import Colors from "../../../constants/Colors";
+import { DATE_TIME } from "../../../utils/common";
+import { getBenefits, addBenefit, updateBenefit } from "../../../store/actions/benefit";
+import { truncateMultilineString } from "../../../utils/formatString";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  // Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
@@ -68,10 +59,7 @@ const tableIcons = {
 const BenefitsList = ({
   benefits,
   getBenefits,
-  addBenefit,
-  updateBenefit,
 }) => {
-  const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
       {
@@ -81,6 +69,10 @@ const BenefitsList = ({
       {
         title: "Description",
         field: "description",
+        render: ({ description }) => description.length <= 50 ? <p style={{ margin: 0 }}>{description}</p>
+          : <Tooltip placement="top" title={description}>
+            <p style={{ margin: 0 }}>{truncateMultilineString(description, 50)}</p>
+          </Tooltip>
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -106,7 +98,7 @@ const BenefitsList = ({
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const benefitArr = Object.keys(benefits).map((benefitId) => ({
     ...benefits[benefitId],
-    createdAt: getDateTime(benefits[benefitId].createdAt),
+    createdAt: getDateTime(benefits[benefitId].createdAt)
   }));
 
   const onEditBenefit = (benefit) => {
@@ -133,13 +125,13 @@ const BenefitsList = ({
             actionsColumnIndex: -1
           }}
           actions={[
-            {
-              icon: () => <Visibility style={{ color: Colors.view }} />,
-              tooltip: "View benefit",
-              onClick: (event, rowData) => {
-                console.log(rowData);
-              },
-            },
+            // {
+            //   icon: () => <Visibility style={{ color: Colors.view }} />,
+            //   tooltip: "View benefit",
+            //   onClick: (event, rowData) => {
+            //     console.log(rowData);
+            //   },
+            // },
             {
               icon: () => <AddBox style={{ color: Colors.primary }} />,
               tooltip: 'Add benefit',
@@ -149,7 +141,7 @@ const BenefitsList = ({
               }
             },
             {
-              icon: () => <Edit style={{ color: Colors.orange }}/>,
+              icon: () => <Edit style={{ color: Colors.orange }} />,
               tooltip: "Edit benefit",
               onClick: (event, rowData) => {
                 onEditBenefit(rowData);
