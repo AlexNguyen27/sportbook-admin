@@ -5,12 +5,12 @@ import { connect, useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
 // import { SAVE_CURRENT_USER } from "../../../store/actions/types";
 import { DATE_TIME } from "../../../utils/common";
-import {
-  getCategories,
-  addCategory,
-  deleteCatgory,
-  updateCategory,
-} from "../../../store/actions/category";
+// import {
+//   getCategories,
+//   addCategory,
+//   deleteCatgory,
+//   updateCategory,
+// } from "../../../store/actions/category";
 
 import { forwardRef } from "react";
 
@@ -29,10 +29,15 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import Visibility from "@material-ui/icons/Visibility";
 
 import PageLoader from "../../custom/PageLoader";
 import Swal from "sweetalert2";
 import Colors from "../../../constants/Colors";
+import AddBenefitModal from "./component/AddBenefitModal";
+
+import { getBenefits, addBenefit, updateBenefit } from "../../../store/actions/benefit";
+import EditBenefitModal from "./component/EditBenefitModal";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -61,29 +66,21 @@ const tableIcons = {
 };
 
 const BenefitsList = ({
-  categories,
-  getCategories,
-  addCategory,
-  updateCategory,
-  deleteCatgory,
+  benefits,
+  getBenefits,
+  addBenefit,
+  updateBenefit,
 }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
       {
-        title: "Name",
-        field: "name",
-
-        validate: (rowData) =>
-          rowData.name === ""
-            ? { isValid: false, helperText: "Name cannot be empty" }
-            : true,
+        title: "Title",
+        field: "title",
       },
       {
-        title: "Status",
-        field: "status",
-        lookup: { public: "Public", private: "Private" },
-        initialEditValue: "public",
+        title: "Description",
+        field: "description",
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -97,16 +94,25 @@ const BenefitsList = ({
   });
 
   const [loading, setLoading] = useState(false);
+  const [modelAdd, setModelAdd] = useState(false);
+  const [modelEdit, setModelEdit] = useState(false);
+  const [benefit, setBenefit] = useState();
+
   useEffect(() => {
-    getCategories(setLoading);
-  }, [loading]);
+    // getCategories(setLoading);
+    getBenefits(setLoading);
+  }, [getBenefits, loading]);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
+  const benefitArr = Object.keys(benefits).map((benefitId) => ({
+    ...benefits[benefitId],
+    createdAt: getDateTime(benefits[benefitId].createdAt),
+  }));
 
-  // const categoryArr = Object.keys(categories).map((cateId) => ({
-  //   ...categories[cateId],
-  //   createdAt: getDateTime(categories[cateId].createdAt),
-  // }));
+  const onEditBenefit = (benefit) => {
+    setModelEdit(true);
+    setBenefit(benefit);
+  };
 
   return (
     <PageLoader loading={loading}>
@@ -115,7 +121,7 @@ const BenefitsList = ({
           icons={tableIcons}
           title="List Of Benefits"
           columns={state.columns}
-          data={state.data || []}
+          data={benefitArr || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -124,69 +130,44 @@ const BenefitsList = ({
             rowStyle: {
               overflowX: "auto",
             },
+            actionsColumnIndex: -1
           }}
           actions={[
             {
-              icon: () => <Delete style={{ color: Colors.red }} />,
-              tooltip: "Delete Category",
+              icon: () => <Visibility style={{ color: Colors.view }} />,
+              tooltip: "View benefit",
               onClick: (event, rowData) => {
-                Swal.fire({
-                  title: `Are you sure to delete ?`,
-                  text: "You won't be able to revert this!",
-                  type: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#3085d6",
-                  cancelButtonColor: "#d33",
-                  confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                  if (result.value) {
-                    setLoading(true);
-                    deleteCatgory(setLoading, rowData.id);
-                    // deleteUser(setLoading, rowData.id);
-                  }
-                });
+                console.log(rowData);
+              },
+            },
+            {
+              icon: () => <AddBox style={{ color: Colors.primary }} />,
+              tooltip: 'Add benefit',
+              isFreeAction: true,
+              onClick: (event) => {
+                setModelAdd(true);
+              }
+            },
+            {
+              icon: () => <Edit style={{ color: Colors.orange }}/>,
+              tooltip: "Edit benefit",
+              onClick: (event, rowData) => {
+                onEditBenefit(rowData);
               },
             },
           ]}
-          editable={{
-            onRowAdd: (newData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const { name, status } = newData;
-                  setLoading(true);
-                  addCategory(setLoading, name, status);
-                  resolve();
-                }, 1000);
-              }),
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                  // edit categories
-                  setLoading(true);
-                  const { name, status, id } = newData;
-                  updateCategory(setLoading, name, status, id);
-                  if (oldData) {
-                    setState((prevState) => {
-                      const data = [...prevState.data];
-                      data[data.indexOf(oldData)] = newData;
-                      return { ...prevState, data };
-                    });
-                  }
-                }, 100);
-              }),
-          }}
         />
       </div>
+      <AddBenefitModal modal={modelAdd} setModal={setModelAdd} />
+      <EditBenefitModal modal={modelEdit} setModal={setModelEdit} editedData={benefit} />
     </PageLoader>
   );
 };
 const mapStateToProps = (state) => ({
-  categories: state?.category?.categories,
+  benefits: state?.benefit?.benefits,
 });
 export default connect(mapStateToProps, {
-  getCategories,
-  addCategory,
-  deleteCatgory,
-  updateCategory,
+  getBenefits,
+  addBenefit,
+  updateBenefit,
 })(withRouter(BenefitsList));

@@ -7,8 +7,10 @@ import auth from "./auth";
 // import category from "./category";
 // import report from "./report";
 // import reactionType from "./reactionType";
+import benefit from "./benefit";
 
 export default combineReducers({
   errors,
   auth,
+  benefit,
 });
