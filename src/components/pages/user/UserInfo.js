@@ -13,6 +13,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
+  DatePicker,
 } from '@material-ui/pickers';
 import Select from '@material-ui/core/Select';
 import DateFnsUtils from '@date-io/date-fns';
@@ -31,8 +32,11 @@ import {
 import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
 import ImageIcon from "@material-ui/icons/Image";
-import { editUserInfo, getGithubProfile } from "../../../store/actions/user";
+import { editUserInfo } from "../../../store/actions/user";
 import { dateFnsLocalizer } from "react-big-calendar";
+import DropdownV2 from "../../custom/DropdownV2";
+import { GENDER } from "../../../utils/common";
+import REGIONS from '../../locales/regions.json';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +65,6 @@ const UserInfo = ({
   user,
   errors,
   location,
-  getGithubProfile,
   editUserInfo,
 }) => {
   const classes = useStyles();
@@ -76,11 +79,33 @@ const UserInfo = ({
     address: "",
     dob: '',
     avatar: '',
+    gender: '',
     favoriteFoot: '',
     playRole: '',
     createdAt: '',
     updatedAt: '',
   });
+
+  const genderArr = Object.keys(GENDER).map(key => ({
+    key: key,
+    value: GENDER[key]
+  }))
+
+  // const regionObj = JSON.parse(REGIONS);
+  // console.log('SDF00000000000000000000000000000', JSON.parse(REGIONS))
+  const regionArr = Object.keys(REGIONS).map(key => ({
+    code: REGIONS[key].code,
+    name: REGIONS[key].name_with_type,
+  }))
+
+  console.log(regionArr);
+  // status: 0: private, 1: public
+  const [selectedDropdownData, setSelectedDropdownData] = useState({
+    selectedGenderKey: user.gender ? GENDER[user.gender] : genderArr[0].id || "",
+    selectedRegionCode: user.address ? JSON.parse(user.address).region_code : '',
+  });
+
+  const { selectedGenderKey, selectedRegionCode } = selectedDropdownData;
 
   const [image, setImage] = useState({
     name: "",
@@ -96,6 +121,7 @@ const UserInfo = ({
     address,
     dob,
     avatar,
+    gender,
     favoriteFoot,
     playRole,
     createdAt,
@@ -107,6 +133,13 @@ const UserInfo = ({
     setformData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const onSelectGender = (genderKey) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedGenderKey: genderKey,
     });
   };
 
@@ -163,19 +196,30 @@ const UserInfo = ({
   //     getGithubProfile(user.id, user.githubUsername);
   //   }
   // };
-  const onSubmit = () => {
+  const onSubmit = (e) => {
     const formatData = trimObjProperties(formData);
 
     let error = {};
-    Object.keys(formatData).map((key) => {
-      if (formatData[key].trim() === "") {
-        error[key] = "This field is required";
-      }
-    });
+    const notRequired = ['dob', 'avatar'];
+    // Object.keys(formatData).map((key) => {
+    //   if (formatData[key].trim() === "" && !notRequired.includes(key)) {
+    //     error[key] = "This field is required";
+    //   }
+    // });
     dispatch({
       type: GET_ERRORS,
       errors: error,
     });
+
+    console.log(error);
+    if (GENDER[selectedGenderKey]) {
+      formatData.gender = selectedGenderKey;
+    }
+
+    formatData.dob = moment(selectedDate).format('DD/MM/YYYY');
+    formatData.address = {
+      region_code: selectedRegionCode,
+    }
 
     if (JSON.stringify(error) === "{}") {
       editUserInfo(setLoading, formatData);
@@ -213,11 +257,20 @@ const UserInfo = ({
     });
   };
 
-  const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+  const [selectedDate, setSelectedDate] = useState(new Date(user.dob || ''));
 
   const handleDateChange = (date) => {
+    console.log(selectedDate, 'sdfsdfsdfsdf', moment(date).format('DD/MM/YYYY'))
+    console.log('date-', date);
     setSelectedDate(date);
   };
+
+  const onChangeRegion = (code) =>  {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedRegionCode: code,
+    });
+  }
 
   return (
     <PageLoader loading={loading}>
@@ -296,18 +349,27 @@ const UserInfo = ({
                       />
                     </Col>
                     <Col className="mt-4">
-                    <InputLabel id="demo-simple-select-outlined-label">Gender</InputLabel>
+                      <DropdownV2
+                        fullWidth
+                        label="Gender"
+                        value={selectedGenderKey.toString()}
+                        options={genderArr || []}
+                        valueBasedOnProperty="key"
+                        displayProperty="value"
+                        onChange={(genderKey) => onSelectGender(genderKey)}
+                      />
+                      {/* <InputLabel id="demo-simple-select-outlined-label">Gender</InputLabel>
                       <Select
                         labelId="demo-simple-select-outlined-label"
                         id="demo-simple-select-required"
-                        value={address}
+                        value={gender}
                         onChange={() => { }}
                         style={{ width: '100%' }}
                         className={classes.selectEmpty}
                       >
                         <MenuItem value='male'>Male</MenuItem>
                         <MenuItem value='female'>Female</MenuItem>
-                      </Select>
+                      </Select> */}
                     </Col>
                   </Row>
 
@@ -329,26 +391,14 @@ const UserInfo = ({
                     {/* TODO: JSON FOR ADDRESS */}
                     <Col xs={6}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        {/* <TextFieldInputWithHeader
-                          id="outlined-multiline-flexible"
-                          name="dob"
-                          label="Date of birth"
-                          fullWidth
-                          value={dob}
-                          onChange={onChange}
-                          placeHolder="Enter Date of birth"
-                          error={errors.dob}
-                          variant="outlined"
-                        /> */}
-                        <KeyboardDatePicker
-                          disableToolbar
+                        <DatePicker
                           variant="inline"
                           style={{ width: '100%', margin: 0 }}
-                          format="dd/mm/yyyy"
+                          format="dd/MM/yyyy"
                           margin="normal"
                           id="date-picker-inline"
-                          label="Date picker inline"
-                          value={selectedDate || moment()}
+                          label="Date of birth"
+                          value={selectedDate}
                           onChange={handleDateChange}
                           KeyboardButtonProps={{
                             'aria-label': 'change date',
@@ -360,30 +410,22 @@ const UserInfo = ({
                   {/* <FormControl className={classes.formControl}> */}
                   <Row className="mt-4">
                     <Col xs={4}>
-                      <InputLabel id="demo-simple-select-outlined-label">City / Province / Region</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-required"
-                        value={address}
-                        onChange={() => { }}
-                        style={{ width: '100%' }}
-
-                        className={classes.selectEmpty}
-                      >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
+                      <DropdownV2
+                        fullWidth
+                        label="City / Province / Region"
+                        value={selectedRegionCode.toString()}
+                        options={regionArr || []}
+                        valueBasedOnProperty="code"
+                        displayProperty="name"
+                        onChange={(code) => onChangeRegion(code)}
+                      />
                     </Col>
                     <Col xs={4}>
                       <InputLabel id="demo-simple-select-outlined-label">District</InputLabel>
                       <Select
                         labelId="demo-simple-select-outlined-label"
                         id="demo-simple-select-required"
-                        value={address}
+                        value={''}
                         onChange={() => { }}
                         style={{ width: '100%' }}
                         className={classes.selectEmpty}
@@ -401,7 +443,7 @@ const UserInfo = ({
                       <Select
                         labelId="demo-simple-select-outlined-label"
                         id="demo-simple-select-required"
-                        value={address}
+                        value={''}
                         onChange={() => { }}
                         style={{ width: '100%' }}
                         className={classes.selectEmpty}
@@ -503,7 +545,7 @@ const UserInfo = ({
             <Button
               variant="contained"
               color="primary"
-              onClick={() => { }}
+              onClick={(e) => onSubmit(e)}
             >
               <SaveIcon className="mr-2" /> Save
             </Button>
@@ -525,6 +567,6 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
   user: state.auth.user
 });
-export default connect(mapStateToProps, { getGithubProfile, editUserInfo })(
+export default connect(mapStateToProps, { editUserInfo })(
   UserInfo
 );

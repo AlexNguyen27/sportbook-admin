@@ -100,7 +100,7 @@ const EditPost = ({
         />
         <Grid container justify="flex-end">
           <Grid item xs={4}>
-            <DropdownV2
+          <DropdownV2
               fullWidth
               label="Category"
               value={selectedCategoryIndex.toString()}

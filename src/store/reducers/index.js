@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import errors from "./errors";
 import auth from "./auth";
 // import user_profile from "./user_profile";
-// import user from "./user";
+import user from "./user";
 // import post from "./post";
 import category from "./category";
 // import report from "./report";
@@ -13,5 +13,6 @@ export default combineReducers({
   errors,
   auth,
   benefit,
-  category
+  category,
+  user,
 });
