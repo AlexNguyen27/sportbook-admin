@@ -105,3 +105,10 @@ button:focus {
 .MuiCollapse-container .MuiTreeItem-group .MuiCollapse-entered {
   width: 100% !important;
 }
+
+/* IMAGE UPLOAD */
+
+/* .MuiDropzoneArea-root {
+  width: 50% !important;
+  min-height: 200px !important;
+} */

@@ -398,18 +398,6 @@ const UserInfo = ({
                         onChange={(genderKey) => onSelectGender(genderKey)}
                         error={errors.gender || ''}
                       />
-                      {/* <InputLabel id="demo-simple-select-outlined-label">Gender</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-required"
-                        value={gender}
-                        onChange={() => { }}
-                        style={{ width: '100%' }}
-                        className={classes.selectEmpty}
-                      >
-                        <MenuItem value='male'>Male</MenuItem>
-                        <MenuItem value='female'>Female</MenuItem>
-                      </Select> */}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -491,7 +479,6 @@ const UserInfo = ({
                         variant="outlined"
                       />
                     </Col>
-
                   </Row>
                   {/* Extra information */}
                   <h6 className="font-weight-bold mt-4">Extra information: </h6>
