@@ -1,43 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Button, InputLabel, FormControl } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 import { Row, Col } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
-import EditIcon from "@material-ui/icons/Edit";
+import _ from 'lodash';
 import SaveIcon from '@material-ui/icons/Save';
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
-import MenuItem from '@material-ui/core/MenuItem';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
   DatePicker,
 } from '@material-ui/pickers';
-import Select from '@material-ui/core/Select';
-import DateFnsUtils from '@date-io/date-fns';
-
 import {
-  BASE_URL,
   GET_ERRORS,
   CLEAR_ERRORS,
   BASE_IMAGE_URL,
 } from "../../../store/actions/types";
 import {
-  capitalizeSnakeCase,
   trimObjProperties,
 } from "../../../utils/formatString";
-
 import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
-import ImageIcon from "@material-ui/icons/Image";
-import { editUserInfo } from "../../../store/actions/user";
-import { dateFnsLocalizer } from "react-big-calendar";
+import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
-import { GENDER } from "../../../utils/common";
+import { GENDER, FAVORITE_FOOT } from "../../../utils/common";
 import REGIONS from '../../locales/regions.json';
+import DISTRICTS from '../../locales/districts.json';
+import WARDS from '../../locales/wards.json';
 
+import { validateEmail } from "../../../utils/commonFunction";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -49,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   info: {
     padding: theme.spacing(2),
-    // textAlign: "",
     fontSize: "16px",
     color: theme.palette.text.secondary,
   },
@@ -64,23 +56,21 @@ const UserInfo = ({
   current_user,
   user,
   errors,
-  location,
   editUserInfo,
+  getUserInfo
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setformData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     address: "",
-    dob: '',
     avatar: '',
     gender: '',
-    favoriteFoot: '',
     playRole: '',
     createdAt: '',
     updatedAt: '',
@@ -91,38 +81,75 @@ const UserInfo = ({
     value: GENDER[key]
   }))
 
-  // const regionObj = JSON.parse(REGIONS);
-  // console.log('SDF00000000000000000000000000000', JSON.parse(REGIONS))
+  const favoriteFootArr = Object.keys(FAVORITE_FOOT).map(key => ({
+    key: key,
+    value: FAVORITE_FOOT[key]
+  }))
+
+  const [selectedDropdownData, setSelectedDropdownData] = useState({
+    selectedGenderKey: "",
+    selectedFavoriteFootKey: "",
+    selectedRegionCode: '',
+    selectedDistrictCode: '',
+    selectedWardCode: ''
+  });
+
+  const { 
+    selectedGenderKey,
+    selectedRegionCode,
+    selectedDistrictCode,
+    selectedWardCode,
+    selectedFavoriteFootKey
+  } = selectedDropdownData;
+
   const regionArr = Object.keys(REGIONS).map(key => ({
     code: REGIONS[key].code,
     name: REGIONS[key].name_with_type,
-  }))
+  }));
 
-  console.log(regionArr);
-  // status: 0: private, 1: public
-  const [selectedDropdownData, setSelectedDropdownData] = useState({
-    selectedGenderKey: user.gender ? GENDER[user.gender] : genderArr[0].id || "",
-    selectedRegionCode: user.address ? JSON.parse(user.address).region_code : '',
-  });
+  const getDistricts = () => {
+    let districts = [];
+    if (!selectedRegionCode.trim()) {
+      return districts;
+    }
 
-  const { selectedGenderKey, selectedRegionCode } = selectedDropdownData;
+    const districtArray = _.map(DISTRICTS, (district) => {
+      const newDistrict = {
+        code: district.code,
+        name: district.name_with_type,
+        parent_code: district.parent_code,
+      };
+      return newDistrict;
+    });
 
-  const [image, setImage] = useState({
-    name: "",
-    file: "",
-  });
+    districts = _.filter(districtArray, ['parent_code', selectedRegionCode]);
+    return districts;
+  };
 
-  // const [isEdit, setIsEdit] = useState(false);
+  const getWards = () => {
+    let wards = [];
+    if (!selectedDistrictCode.trim()) {
+      return wards;
+    }
+    const wardArray = _.map(WARDS, (ward) => {
+      const newWard = {
+        code: ward.code,
+        name: ward.name_with_type,
+        parent_code: ward.parent_code,
+      };
+      return newWard;
+    });
+    wards = _.filter(wardArray, ['parent_code', selectedDistrictCode]);
+    return wards;
+  };
+
   const {
     firstName,
     lastName,
     email,
     phone,
     address,
-    dob,
     avatar,
-    gender,
-    favoriteFoot,
     playRole,
     createdAt,
     updatedAt,
@@ -143,33 +170,27 @@ const UserInfo = ({
     });
   };
 
-  // const [selectedDate, setSelectedDate] = React.useState(
-  //   new Date("2014-08-18T21:11:54")
-  // );
-
-  // const handleDateChange = (date) => {
-  //   setSelectedDate(date);
-  //   setformData({
-  //     ...formData,
-  //     dob: date,
-  //   });
-  // };
-
   const setInit = () => {
     if (window.location.pathname === "/my-account") {
+      const address = JSON.parse(_.get(current_user, 'address') || user.address);
       setformData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        address: user.address || "",
-        dob: user.dob || '',
-        avatar: user.avatar || '',
-        favoriteFoot: user.favoriteFoot || '',
-        playRole: user.playRole || '',
-        createdAt: user.createdAt || '',
-        updatedAt: user.updatedAt || '',
+        firstName: _.get(current_user, 'firstName') || user.firstName || "",
+        lastName:  _.get(current_user, 'lastName') || user.lastName || "",
+        email:  _.get(current_user, 'email') || user.email || "",
+        phone:  _.get(current_user, 'phone') || user.phone || "",
+        address:  _.get(current_user, 'address') || user.address ? address.address : '',
+        avatar:  _.get(current_user, 'avatar') || user.avatar || '',
+        playRole: _.get(current_user, 'playRole') ||  user.playRole || '',
+        createdAt:  _.get(current_user, 'createdAt') || user.createdAt || '',
+        updatedAt:  _.get(current_user, 'updatedAt') || user.updatedAt || '',
       });
+      setSelectedDropdownData({
+        selectedRegionCode: _.get(address, 'regionCode'),
+        selectedDistrictCode: _.get(address, 'districtCode'),
+        selectedWardCode: _.get(address, 'wardCode'),
+        selectedFavoriteFootKey: _.get(user, 'favoriteFoot') || '',
+        selectedGenderKey: _.get(user, 'gender', '') || '',
+      })
     } else {
       // setformData({
       //   username: current_user.username || "",
@@ -185,90 +206,91 @@ const UserInfo = ({
   };
 
   useEffect(() => {
+    getUserInfo(user.id, setLoading);
     setInit();
-    // getGithubAvatar();
   }, []);
 
-  // const getGithubAvatar = () => {
-  //   if (current_user && JSON.stringify(current_user) !== "{}") {
-  //     getGithubProfile(current_user.id, current_user.githubUsername);
-  //   } else {
-  //     getGithubProfile(user.id, user.githubUsername);
-  //   }
-  // };
   const onSubmit = (e) => {
     const formatData = trimObjProperties(formData);
 
     let error = {};
-    const notRequired = ['dob', 'avatar'];
-    // Object.keys(formatData).map((key) => {
-    //   if (formatData[key].trim() === "" && !notRequired.includes(key)) {
-    //     error[key] = "This field is required";
-    //   }
-    // });
+    const notRequired = ['avatar', 'firstName', 'lastName'];
+    Object.keys(formatData).map((key) => {
+      if (formatData[key].trim() === "" && !notRequired.includes(key)) {
+        error[key] = "This field is required";
+      }
+    });
+
+    if (JSON.stringify(error) === "{}" && !validateEmail(email)) {
+      error.email = "Email is invalid!";
+    }
+    if(!selectedFavoriteFootKey.trim()) {
+      error.favoriteFoot = 'This field is required';
+    }
+    if(!selectedGenderKey.trim()) {
+      error.gender = 'This field is required';
+    }
+
     dispatch({
       type: GET_ERRORS,
       errors: error,
     });
 
-    console.log(error);
     if (GENDER[selectedGenderKey]) {
       formatData.gender = selectedGenderKey;
     }
 
     formatData.dob = moment(selectedDate).format('DD/MM/YYYY');
-    formatData.address = {
-      region_code: selectedRegionCode,
-    }
+    formatData.regionCode = selectedRegionCode;
+    formatData.districtCode = selectedDistrictCode;
+    formatData.wardCode = selectedWardCode;
+    formatData.favoriteFoot = selectedFavoriteFootKey;
 
     if (JSON.stringify(error) === "{}") {
+      console.log('--------------------formated data', formatData);
       editUserInfo(setLoading, formatData);
-      // getGithubAvatar();
     }
   };
 
-  // useEffect(() => {
-  //   getGithubAvatar();
-  // }, [current_user && current_user.imageUrl]);
-
-  // let imageUrl =
-  //   window.location.pathname === "/user-info"
-  //     ? user.imageUrl
-  //     : current_user.imageUrl;
   const imageUrl = BASE_IMAGE_URL;
 
-  // const handleCapture = ({ target }) => {
-  //   const fileName = target.files[0].name;
-  //   setLoading(true);
-  //   editUserInfo(setLoading, {}, target.files[0]);
-  //   if (target.accept.includes("image")) {
-  //     setImage({
-  //       name: fileName,
-  //       file: target.files[0],
-  //     });
-  //   }
-  // };
-
   const onCancel = () => {
-    // setIsEdit(false);
     setInit();
     dispatch({
       type: CLEAR_ERRORS,
     });
   };
 
-  const [selectedDate, setSelectedDate] = useState(new Date(user.dob || ''));
+  const [selectedDate, setSelectedDate] = useState(new Date(_.get(current_user, 'dob') || user.dob || ''));
 
-  const handleDateChange = (date) => {
-    console.log(selectedDate, 'sdfsdfsdfsdf', moment(date).format('DD/MM/YYYY'))
-    console.log('date-', date);
-    setSelectedDate(date);
-  };
-
-  const onChangeRegion = (code) =>  {
+  const onChangeRegion = (code) => {
     setSelectedDropdownData({
       ...selectedDropdownData,
       selectedRegionCode: code,
+      selectedWardCode: '',
+      selectedDistrictCode: ''
+    });
+  }
+
+  const onChangeDistrict = (code) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedDistrictCode: code,
+      selectedWardCode: ''
+    });
+  }
+
+  const onChangeWard = (code) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedWardCode: code,
+    });
+  }
+
+  const onChangeFavoriteFoot = (code) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedFavoriteFootKey: code,
     });
   }
 
@@ -357,6 +379,7 @@ const UserInfo = ({
                         valueBasedOnProperty="key"
                         displayProperty="value"
                         onChange={(genderKey) => onSelectGender(genderKey)}
+                        error={errors.gender || '' }
                       />
                       {/* <InputLabel id="demo-simple-select-outlined-label">Gender</InputLabel>
                       <Select
@@ -372,8 +395,6 @@ const UserInfo = ({
                       </Select> */}
                     </Col>
                   </Row>
-
-
                   <Row className="mt-4">
                     <Col xs={6}>
                       <TextFieldInputWithHeader
@@ -388,7 +409,6 @@ const UserInfo = ({
                         variant="outlined"
                       />
                     </Col>
-                    {/* TODO: JSON FOR ADDRESS */}
                     <Col xs={6}>
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <DatePicker
@@ -399,7 +419,7 @@ const UserInfo = ({
                           id="date-picker-inline"
                           label="Date of birth"
                           value={selectedDate}
-                          onChange={handleDateChange}
+                          onChange={(date) => setSelectedDate(date)}
                           KeyboardButtonProps={{
                             'aria-label': 'change date',
                           }}
@@ -407,7 +427,7 @@ const UserInfo = ({
                       </MuiPickersUtilsProvider>
                     </Col>
                   </Row>
-                  {/* <FormControl className={classes.formControl}> */}
+                  {/* ADDRESS */}
                   <Row className="mt-4">
                     <Col xs={4}>
                       <DropdownV2
@@ -421,40 +441,26 @@ const UserInfo = ({
                       />
                     </Col>
                     <Col xs={4}>
-                      <InputLabel id="demo-simple-select-outlined-label">District</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-required"
-                        value={''}
-                        onChange={() => { }}
-                        style={{ width: '100%' }}
-                        className={classes.selectEmpty}
-                      >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
+                      <DropdownV2
+                        fullWidth
+                        label="District"
+                        value={selectedDistrictCode.toString()}
+                        options={getDistricts() || []}
+                        valueBasedOnProperty="code"
+                        displayProperty="name"
+                        onChange={(code) => onChangeDistrict(code)}
+                      />
                     </Col>
                     <Col xs={4}>
-                      <InputLabel id="demo-simple-select-outlined-label">Ward</InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-required"
-                        value={''}
-                        onChange={() => { }}
-                        style={{ width: '100%' }}
-                        className={classes.selectEmpty}
-                      >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
-                      </Select>
+                      <DropdownV2
+                        fullWidth
+                        label="Ward"
+                        value={selectedWardCode.toString()}
+                        options={getWards() || []}
+                        valueBasedOnProperty="code"
+                        displayProperty="name"
+                        onChange={(code) => onChangeWard(code)}
+                      />
                     </Col>
                     <Col className="mt-4">
                       <TextFieldInputWithHeader
@@ -470,24 +476,22 @@ const UserInfo = ({
                     </Col>
 
                   </Row>
-                  {/* </FormControl> */}
                   {/* Extra information */}
                   <h6 className="font-weight-bold mt-4">Extra information: </h6>
                   <Row className="mt-2">
                     <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name='favoriteFoot'
-                        label="Farovite Foot"
+                       <DropdownV2
                         fullWidth
-                        value={favoriteFoot}
-                        onChange={onChange}
-                        placeHolder="Enter Favorite foot"
-                        error={errors.favoriteFoot}
-                        variant="outlined"
+                        label="Farovite Foot"
+                        disabledPlaceholder="None"
+                        value={selectedFavoriteFootKey.toString()}
+                        options={favoriteFootArr|| []}
+                        valueBasedOnProperty="key"
+                        displayProperty="value"
+                        onChange={(code) => onChangeFavoriteFoot(code)}
+                        error={errors.favoriteFoot || '' }
                       />
                     </Col>
-                    {/* TODO: JSON FOR ADDRESS */}
                     <Col xs={6}>
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
@@ -519,7 +523,6 @@ const UserInfo = ({
                         variant="outlined"
                       />
                     </Col>
-                    {/* TODO: JSON FOR ADDRESS */}
                     <Col xs={6}>
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
@@ -567,6 +570,6 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
   user: state.auth.user
 });
-export default connect(mapStateToProps, { editUserInfo })(
+export default connect(mapStateToProps, { editUserInfo, getUserInfo })(
   UserInfo
 );

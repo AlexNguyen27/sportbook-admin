@@ -6,18 +6,16 @@ import {
   EDIT_USER,
   BASE_URL,
   GET_USER_PROFILE,
-  GET_FRIEND_PROFILE,
   EDIT_USER_INFO,
   GET_GITHUB_AVATAR,
   GET_CURRENT_USER_AVATAR,
-  BASE_IMAGE_URL,
 } from "./types";
 import { arrayToObject } from "../../utils/commonFunction";
 import { hera } from "hera-js";
 import Swal from "sweetalert2";
 import logoutDispatch from "../../utils/logoutDispatch";
 import Axios from "axios";
-import moment from 'moment';
+import { ROLE } from "../../utils/common";
 
 // GET majors data
 export const getUsers = (setLoading) => async (dispatch, getState) => {
@@ -71,130 +69,78 @@ export const getUsers = (setLoading) => async (dispatch, getState) => {
 };
 
 // GET majors data
-export const getUserProfile = (userId, setLoading) => async (
+export const getUserInfo = (id, setLoading) => async (
   dispatch,
   getState
 ) => {
   const {
     token,
-    user: { id: authUserId },
+    user: { id: authUserId, role },
   } = getState().auth;
 
-  // const { data, errors } = await hera({
-  //   options: {
-  //     url: BASE_URL,
-  //     headers: {
-  //       token,
-  //       "Content-Type": "application/json",
-  //     },
-  //   },
-  //   query: `
-  //         query {
-  //           getUserProfile(userId: $userId) {
-  //             id
-  //             username
-  //             firstName,
-  //             lastName,
-  //             quote
-  //             email,
-  //             phone,
-  //             address,
-  //             githubUsername,
-  //             imageUrl
-  //             totalFollowers
-  //             posts {
-  //               id
-  //               title,
-  //               description
-  //               status
-  //               userId
-  //               view
-  //               user {
-  //                 id
-  //                 username
-  //                 imageUrl
-  //                 firstName
-  //                 lastName
-  //                 githubUsername
-  //               }
-  //               categoryId
-  //               createdAt
-  //               updatedAt
-  //               comments {
-  //                 id
-  //                 comment
-  //                 userId
-  //                 parentId
-  //                 createdAt
-  //                 updatedAt
-  //               }
-  //               reactions {
-  //                 userId
-  //                 reactionTypeId
-  //                 postId
-  //               }
-  //             }
-  //             followed {
-  //               fromUserId,
-  //               toUserId
-  //               createdAt
-  //             }
-  //             userFavoritePosts {
-  //               id
-  //               userId
-  //               categoryId
-  //               title
-  //               view
-  //               user {
-  //                 id
-  //                 imageUrl
-  //                 firstName
-  //                 lastName
-  //                 githubUsername
-  //               }
-  //               description
-  //               reactions {
-  //                 userId
-  //                 reactionTypeId
-  //                 postId
-  //               }
-  //               comments {
-  //                 id
-  //                 comment
-  //                 userId
-  //                 parentId
-  //               }
-  //             }
-  //           }
-  //         }
-  //       `,
-  //   variables: {
-  //     userId,
-  //   },
-  // });
+  let userId = id;
+  // manager role
+  if (role === ROLE.owner) {
+    userId = authUserId
+  }
+  
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+          query {
+            getUserById(id: $id) {
+              id,
+              email,
+              firstName,
+              lastName,
+              email,
+              gender,
+              phone,
+              address,
+              dob,
+              avatar,
+              role,
+              favoriteFoot
+              playRole
+              createdAt,
+              updatedAt
+            }   
+          }
+        `,
+    variables: {
+      id: userId,
+    },
+  });
 
-  // if (!errors) {
-  //   if (authUserId === userId) {
-  //     dispatch({
-  //       type: GET_USER_PROFILE,
-  //       user_profile: data.getUserProfile,
-  //     });
-  //   } else {
-  //     dispatch({
-  //       type: GET_FRIEND_PROFILE,
-  //       friend_profile: data.getUserProfile,
-  //     });
-  //   }
+  if (!errors) {
+    if (authUserId === userId) {
+      dispatch({
+        type: GET_USER_PROFILE,
+        user_profile: data.getUserProfile,
+      });
+    } 
+    // else {
+    //   dispatch({
+    //     type: GET_FRIEND_PROFILE,
+    //     friend_profile: data.getUserProfile,
+    //   });
+    // }
 
-  //   setLoading(false);
-  // } else {
-  //   console.log(errors);
-  //   logoutDispatch(dispatch, errors);
-  //   dispatch({
-  //     type: GET_ERRORS,
-  //     errors: errors[0].message,
-  //   });
-  // }
+    setLoading(false);
+  } else {
+    console.log(errors);
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
 };
 
 export const updatePassword = (
@@ -293,13 +239,20 @@ export const editUserInfo = (setLoading, userData) => async (
       user: { id: userId },
     },
   } = state;
-  const { user } = state;
-  console.log(userData)
 
-  const { firstName, lastName, address, dob, email, favoriteFoot, phone, playRole, gender } = userData;
-  
-  console.log(`'${JSON.stringify(address)}'`)
-  try {
+  const {
+    firstName,
+    lastName, address,
+    dob,
+    email,
+    favoriteFoot,
+    phone,
+    playRole,
+    gender,
+    regionCode,
+    districtCode,
+    wardCode,
+  } = userData;
     const { data, errors } = await hera({
       options: {
         url: BASE_URL,
@@ -315,9 +268,15 @@ export const editUserInfo = (setLoading, userData) => async (
               firstName: $firstName,
               lastName: $lastName,
               phone: $phone, 
-              gender: $gender,
+              email: $email,
               dob: $dob,
               address: $address
+              playRole: $playRole
+              regionCode: $regionCode,
+              districtCode: $districtCode, 
+              wardCode: $wardCode
+              favoriteFoot: $favoriteFoot
+              gender: $gender
               ) {
                 id
                 email
@@ -327,6 +286,7 @@ export const editUserInfo = (setLoading, userData) => async (
                 gender
                 address
                 dob
+                favoriteFoot
                 avatar
                 playRole
                 createdAt
@@ -339,12 +299,18 @@ export const editUserInfo = (setLoading, userData) => async (
         firstName,
         lastName,
         phone,
-        gender,
         dob,
-        address: `'${JSON.stringify(address)}'`,
+        address,
+        playRole,
+        email,
+        regionCode,
+        districtCode,
+        wardCode,
+        favoriteFoot, 
+        gender
       },
     });
-  
+
     if (!errors) {
       const res = data.updateUser;
       dispatch({
@@ -361,7 +327,7 @@ export const editUserInfo = (setLoading, userData) => async (
       dispatch({
         type: CLEAR_ERRORS,
       });
-  
+
       setLoading(false);
       Swal.fire({
         position: "center",
@@ -380,17 +346,13 @@ export const editUserInfo = (setLoading, userData) => async (
         Object.keys(error).map((key) => {
           formatedError[key] = error[key].message;
         });
-  
+
       logoutDispatch(dispatch, errors);
       dispatch({
         type: GET_ERRORS,
         errors: { ...formatedError },
       });
     }
-  } catch(error) {
-    console.log('err-----------------------', error);
-  }
-  
 };
 
 // DELETE GROUP
@@ -449,33 +411,33 @@ export const deleteUser = (setLoading, userId) => async (
   }
 };
 
-export const getGithubProfile = (userId, githubUsername) => async (
-  dispatch,
-  getState
-) => {
-  try {
-    const state = getState();
-    const gitHubInfo = await Axios.get(
-      `https://api.github.com/users/${githubUsername}/repos?per_page=5&sort=created:asc`
-    );
+// export const getGithubProfile = (userId, githubUsername) => async (
+//   dispatch,
+//   getState
+// ) => {
+//   try {
+//     const state = getState();
+//     const gitHubInfo = await Axios.get(
+//       `https://api.github.com/users/${githubUsername}/repos?per_page=5&sort=created:asc`
+//     );
 
-    if (gitHubInfo.data.length > 0) {
-      if (state.auth.user.id === userId) {
-        dispatch({
-          type: GET_GITHUB_AVATAR,
-          imageUrl: gitHubInfo.data[0].owner.avatar_url,
-        });
-      }
-      // UPDATE CURRENT USER DATA
-      if (state.auth.isAdmin) {
-        dispatch({
-          type: GET_CURRENT_USER_AVATAR,
-          imageUrl: gitHubInfo.data[0].owner.avatar_url,
-        });
-      }
-    }
-    console.log(gitHubInfo);
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     if (gitHubInfo.data.length > 0) {
+//       if (state.auth.user.id === userId) {
+//         dispatch({
+//           type: GET_GITHUB_AVATAR,
+//           imageUrl: gitHubInfo.data[0].owner.avatar_url,
+//         });
+//       }
+//       // UPDATE CURRENT USER DATA
+//       if (state.auth.isAdmin) {
+//         dispatch({
+//           type: GET_CURRENT_USER_AVATAR,
+//           imageUrl: gitHubInfo.data[0].owner.avatar_url,
+//         });
+//       }
+//     }
+//     console.log(gitHubInfo);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

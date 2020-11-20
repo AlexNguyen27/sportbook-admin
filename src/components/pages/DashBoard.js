@@ -52,30 +52,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LockIcon from '@material-ui/icons/Lock';
 import DeviceHubIcon from '@material-ui/icons/DeviceHub';
-
-// import jwt_decode from "jwt-decode";
-// import HomeIcon from "@material-ui/icons/Home";
 import { Link, NavLink } from "react-router-dom";
 
-// COMPONENT
-// ACTION
 import { logoutUser } from "../../store/actions/auth";
 import { Avatar } from "@material-ui/core";
-// import UserInfo from "./user/UserInfo";
 import ChangePasswordModal from "./user/component/ChangePasswordModal";
-// import { BASE_URL } from "../../store/actions/types";
-// import PostsList from "./post/PostsList";
-// import UserProfile from "./userProfile/UserProfile";
-// import CategoryList from "./category/CategoryList";
-// import ReportsList from "./report/ReportsList";
-// import StatisticsPost from "./statistics/user/StatisticsPost";
-// import NewsFeed from "./newsFeed/NewsFeed";
-// import Users from "./user/Users";
-// import AddPost from "./post/component/AddPost";
-// import EditPost from "./post/component/EditPost";
 import UsersList from "./admin/UsersList";
 // import ViewPost from "./post/component/ViewPost";
-import { getUserProfile } from "../../store/actions/user";
 import GroundManagement from "./ground/GroundManagement";
 import OrderManagement from "./order/OrderManagement";
 import SubGroundManagement from "./subGround/SubGroundManagement";
@@ -219,7 +202,6 @@ const DashBoard = ({
   history,
   location,
   logoutUser,
-  getUserProfile,
   auth: { isAuthenticated, user, isAdmin, token },
   match,
 }) => {
@@ -241,7 +223,7 @@ const DashBoard = ({
   const [loading, setLoading] = useState(true);
   // get user profile after get into dashboard
   useEffect(() => {
-    getUserProfile(user.id, setLoading);
+    // getUserProfile(user.id, setLoading);
   }, []);
 
 
@@ -821,6 +803,6 @@ const DashBoard = ({
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
-export default connect(mapStateToProps, { logoutUser, getUserProfile })(
+export default connect(mapStateToProps, { logoutUser })(
   DashBoard
 );
