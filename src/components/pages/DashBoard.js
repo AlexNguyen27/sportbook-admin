@@ -447,7 +447,7 @@ const DashBoard = ({
         case "/my-account":
           return (
             <>
-              <UserInfo key={'1'}/>
+              <UserInfo viewType={'user'}/>
             </>
           );
         default:
