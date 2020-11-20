@@ -117,7 +117,7 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
     variables: {
       email,
       password,
-      role: "admin",
+      role: "owner",
     },
   });
   if (errors) {

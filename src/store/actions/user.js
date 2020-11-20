@@ -7,8 +7,6 @@ import {
   BASE_URL,
   GET_USER_PROFILE,
   EDIT_USER_INFO,
-  GET_GITHUB_AVATAR,
-  GET_CURRENT_USER_AVATAR,
 } from "./types";
 import { arrayToObject } from "../../utils/commonFunction";
 import { hera } from "hera-js";
@@ -18,7 +16,7 @@ import Axios from "axios";
 import { ROLE } from "../../utils/common";
 
 // GET majors data
-export const getUsers = (setLoading) => async (dispatch, getState) => {
+export const getUsers = ({ role }, setLoading) => async (dispatch, getState) => {
   const { token } = getState().auth;
 
   const { data, errors } = await hera({
@@ -31,12 +29,13 @@ export const getUsers = (setLoading) => async (dispatch, getState) => {
     },
     query: `
           query {
-            users{
+            users(role: $role){
               id
               email
               firstName
               lastName
               phone
+              role
               gender
               address
               dob
@@ -46,7 +45,9 @@ export const getUsers = (setLoading) => async (dispatch, getState) => {
             }
           }
         `,
-    variables: {},
+    variables: {
+      role
+    },
   });
 
   if (!errors) {
@@ -83,7 +84,7 @@ export const getUserInfo = (id, setLoading) => async (
   if (role === ROLE.owner) {
     userId = authUserId
   }
-  
+
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
@@ -124,7 +125,7 @@ export const getUserInfo = (id, setLoading) => async (
         type: GET_USER_PROFILE,
         user_profile: data.getUserProfile,
       });
-    } 
+    }
     // else {
     //   dispatch({
     //     type: GET_FRIEND_PROFILE,
@@ -228,7 +229,7 @@ export const updatePassword = (
   }
 };
 
-export const editUserInfo = (setLoading, userData) => async (
+export const editUserInfo = (setLoading, userData, userId) => async (
   dispatch,
   getState
 ) => {
@@ -236,8 +237,8 @@ export const editUserInfo = (setLoading, userData) => async (
   const {
     auth: {
       token,
-      user: { id: userId },
     },
+    user: { id: authId}
   } = state;
 
   const {
@@ -253,15 +254,15 @@ export const editUserInfo = (setLoading, userData) => async (
     districtCode,
     wardCode,
   } = userData;
-    const { data, errors } = await hera({
-      options: {
-        url: BASE_URL,
-        headers: {
-          token,
-          "Content-Type": "application/json",
-        },
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
       },
-      query: `
+    },
+    query: `
           mutation {
             updateUser(
               id: $id,
@@ -294,65 +295,65 @@ export const editUserInfo = (setLoading, userData) => async (
             }
           }
         `,
-      variables: {
-        id: userId,
-        firstName,
-        lastName,
-        phone,
-        dob,
-        address,
-        playRole,
-        email,
-        regionCode,
-        districtCode,
-        wardCode,
-        favoriteFoot, 
-        gender
-      },
-    });
+    variables: {
+      id: userId,
+      firstName,
+      lastName,
+      phone,
+      dob,
+      address,
+      playRole,
+      email,
+      regionCode,
+      districtCode,
+      wardCode,
+      favoriteFoot,
+      gender
+    },
+  });
 
-    if (!errors) {
-      const res = data.updateUser;
+  if (!errors) {
+    const res = data.updateUser;
+    dispatch({
+      type: EDIT_USER,
+      selectedId: res.id,
+      newUser: res,
+    });
+    if (authId === userId) {
       dispatch({
-        type: EDIT_USER,
-        selectedId: res.id,
+        type: EDIT_USER_INFO,
         newUser: res,
       });
-      if (res.id === userId) {
-        dispatch({
-          type: EDIT_USER_INFO,
-          newUser: res,
-        });
-      }
-      dispatch({
-        type: CLEAR_ERRORS,
-      });
-
-      setLoading(false);
-      Swal.fire({
-        position: "center",
-        type: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
-      console.log(errors);
-      const error = errors[0].extensions.payload
-        ? errors[0].extensions.payload
-        : errors[0].message;
-      const formatedError = {};
-      errors[0].extensions.payload &&
-        Object.keys(error).map((key) => {
-          formatedError[key] = error[key].message;
-        });
-
-      logoutDispatch(dispatch, errors);
-      dispatch({
-        type: GET_ERRORS,
-        errors: { ...formatedError },
-      });
     }
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
+
+    setLoading(false);
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } else {
+    console.log(errors);
+    const error = errors[0].extensions.payload
+      ? errors[0].extensions.payload
+      : errors[0].message;
+    const formatedError = {};
+    errors[0].extensions.payload &&
+      Object.keys(error).map((key) => {
+        formatedError[key] = error[key].message;
+      });
+
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: { ...formatedError },
+    });
+  }
 };
 
 // DELETE GROUP

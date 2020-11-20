@@ -9,7 +9,7 @@ import {
   deleteUser,
 } from "../../../store/actions/user";
 import { SAVE_CURRENT_USER } from "../../../store/actions/types";
-import { DATE_TIME } from "../../../utils/common";
+import { DATE_TIME, ROLE } from "../../../utils/common";
 
 import { forwardRef } from "react";
 
@@ -64,22 +64,16 @@ const ManagersList = ({
   history,
   editUserInfo,
   deleteUser,
+  user: { users }
 }) => {
-  const users =[];
   const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
-      { title: "Username", field: "username" },
-      { title: "Fullname", field: "fullname" },
       { title: "Email", field: "email", type: "email" },
+      { title: "Fullname", field: "fullname" },
       {
         title: "Role",
         field: "role",
-      },
-      {
-        title: "Total Posts",
-        field: "totalPosts",
-        editable: "never",
       },
       {
         title: "Created at",
@@ -94,7 +88,6 @@ const ManagersList = ({
     ],
     data: [
       {
-        username: "thanh_teacher",
         fullname: "Nguyen le Ngocj thanh ",
         email: "thanh@gmail.com",
         createdDate: moment("2020-05-29T14:49:05.661Z").format("MMM DD h:mm A"),
@@ -106,13 +99,12 @@ const ManagersList = ({
     ],
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    // getUsers(setLoading);
+    getUsers({ role: ROLE.owner }, setLoading);
   }, []);
 
   const getFullname = (firstname, lastname) => {
-    // console.log(firstname, lastname);
     let fullname = "";
     if (firstname) {
       fullname += firstname + " ";
@@ -132,6 +124,9 @@ const ManagersList = ({
     fullname: getFullname(users[userId].firstName, users[userId].lastName),
   }));
 
+
+  console.log(usersArray);
+
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -139,7 +134,7 @@ const ManagersList = ({
           icons={tableIcons}
           title="List Of Managers"
           columns={state.columns}
-          data={state.data || []}
+          data={usersArray || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -148,18 +143,11 @@ const ManagersList = ({
             rowStyle: {
               overflowX: "auto",
             },
+            actionsColumnIndex: -1
           }}
           actions={[
             {
-              icon: () => <Visibility style={{ color: Colors.view }} />,
-              tooltip: "View user profile",
-              onClick: (event, rowData) => {
-                history.push(`user-profile/${rowData.id}`);
-                // Do save operation
-              },
-            },
-            {
-              icon: () => <Edit style={{ color: Colors.orange }}/>,
+              icon: () => <Edit style={{ color: Colors.orange }} />,
               tooltip: "Edit User",
               onClick: (event, rowData) => {
                 // console.log("edit---", rowData);
@@ -167,12 +155,12 @@ const ManagersList = ({
                   type: SAVE_CURRENT_USER,
                   currentUser: rowData,
                 });
-                history.push(`/edit-user/${rowData.id}`);
+                history.push(`/users/${rowData.id}`);
                 // Do save operation
               },
             },
             {
-              icon: () => <Delete style={{ color: Colors.red }}/>,
+              icon: () => <Delete style={{ color: Colors.red }} />,
               tooltip: "Delete User",
               onClick: (event, rowData) => {
                 Swal.fire({
@@ -192,14 +180,14 @@ const ManagersList = ({
               },
             },
             rowData => ({
-              icon: (props) => <EqualizerTwoToneIcon  />,
+              icon: () => <EqualizerTwoToneIcon />,
               tooltip: "Statictis",
               onClick: (event, rowData) => {
                 history.push(`statistics/${rowData.id}`);
               },
               // disabled: !rowData.posts.length
             }),
-            
+
           ]}
         />
       </div>

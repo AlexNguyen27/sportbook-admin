@@ -9,7 +9,7 @@ import {
   deleteUser,
 } from "../../../store/actions/user";
 import { SAVE_CURRENT_USER } from "../../../store/actions/types";
-import { DATE_TIME } from "../../../utils/common";
+import { DATE_TIME, ROLE } from "../../../utils/common";
 
 import { forwardRef } from "react";
 
@@ -64,23 +64,22 @@ const UsersList = ({
   history,
   editUserInfo,
   deleteUser,
+  user: { users }
 }) => {
-  const users =[];
   const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
-      { title: "Username", field: "username" },
-      { title: "Fullname", field: "fullname" },
       { title: "Email", field: "email", type: "email" },
+      { title: "Full name", field: "fullname" },
       {
         title: "Role",
         field: "role",
       },
-      {
-        title: "Total Posts",
-        field: "totalPosts",
-        editable: "never",
-      },
+      // {
+      //   title: "Total Posts",
+      //   field: "totalPosts",
+      //   editable: "never",
+      // },
       {
         title: "Created at",
         field: "createdAt",
@@ -94,7 +93,6 @@ const UsersList = ({
     ],
     data: [
       {
-        username: "thanh_teacher",
         fullname: "Nguyen le Ngocj thanh ",
         email: "thanh@gmail.com",
         createdDate: moment("2020-05-29T14:49:05.661Z").format("MMM DD h:mm A"),
@@ -106,9 +104,9 @@ const UsersList = ({
     ],
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    // getUsers(setLoading);
+    getUsers({role: ROLE.user}, setLoading);
   }, []);
 
   const getFullname = (firstname, lastname) => {
@@ -132,6 +130,9 @@ const UsersList = ({
     fullname: getFullname(users[userId].firstName, users[userId].lastName),
   }));
 
+
+  console.log(usersArray);
+
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -139,7 +140,7 @@ const UsersList = ({
           icons={tableIcons}
           title="List Of Users"
           columns={state.columns}
-          data={state.data || []}
+          data={usersArray || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -148,16 +149,9 @@ const UsersList = ({
             rowStyle: {
               overflowX: "auto",
             },
+            actionsColumnIndex: -1
           }}
           actions={[
-            {
-              icon: () => <Visibility style={{ color: Colors.view }} />,
-              tooltip: "View user profile",
-              onClick: (event, rowData) => {
-                history.push(`user-profile/${rowData.id}`);
-                // Do save operation
-              },
-            },
             {
               icon: () => <Edit style={{ color: Colors.orange }}/>,
               tooltip: "Edit User",
@@ -167,7 +161,7 @@ const UsersList = ({
                   type: SAVE_CURRENT_USER,
                   currentUser: rowData,
                 });
-                history.push(`/edit-user/${rowData.id}`);
+                history.push(`/users/${rowData.id}`);
                 // Do save operation
               },
             },
