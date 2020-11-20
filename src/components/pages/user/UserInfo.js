@@ -57,7 +57,8 @@ const UserInfo = ({
   user,
   errors,
   editUserInfo,
-  getUserInfo
+  getUserInfo,
+  viewType,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -94,7 +95,7 @@ const UserInfo = ({
     selectedWardCode: ''
   });
 
-  const { 
+  const {
     selectedGenderKey,
     selectedRegionCode,
     selectedDistrictCode,
@@ -156,7 +157,6 @@ const UserInfo = ({
   } = formData;
   // Save on change input value
   const onChange = (e) => {
-    console.log('cons sdfsd')
     setformData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -171,18 +171,18 @@ const UserInfo = ({
   };
 
   const setInit = () => {
-    if (window.location.pathname === "/my-account") {
-      const address = JSON.parse(_.get(current_user, 'address') || user.address);
+    if (viewType === 'user') {
+      const address = JSON.parse(user.address);
       setformData({
-        firstName: _.get(current_user, 'firstName') || user.firstName || "",
-        lastName:  _.get(current_user, 'lastName') || user.lastName || "",
-        email:  _.get(current_user, 'email') || user.email || "",
-        phone:  _.get(current_user, 'phone') || user.phone || "",
-        address:  _.get(current_user, 'address') || user.address ? address.address : '',
-        avatar:  _.get(current_user, 'avatar') || user.avatar || '',
-        playRole: _.get(current_user, 'playRole') ||  user.playRole || '',
-        createdAt:  _.get(current_user, 'createdAt') || user.createdAt || '',
-        updatedAt:  _.get(current_user, 'updatedAt') || user.updatedAt || '',
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: user.address ? address.address : '',
+        avatar: user.avatar || '',
+        playRole: user.playRole || '',
+        createdAt: user.createdAt || '',
+        updatedAt: user.updatedAt || '',
       });
       setSelectedDropdownData({
         selectedRegionCode: _.get(address, 'regionCode'),
@@ -192,29 +192,38 @@ const UserInfo = ({
         selectedGenderKey: _.get(user, 'gender', '') || '',
       })
     } else {
-      // setformData({
-      //   username: current_user.username || "",
-      //   firstName: current_user.firstName || "",
-      //   lastName: current_user.lastName || "",
-      //   quote: current_user.quote || "",
-      //   email: current_user.email || "",
-      //   phone: current_user.phone || "",
-      //   address: current_user.address || "",
-      //   githubUsername: current_user.githubUsername || "",
-      // });
-    }
-  };
+      const address = JSON.parse(_.get(current_user, 'address'));
+      setformData({
+        firstName: _.get(current_user, 'firstName') || "",
+        lastName: _.get(current_user, 'lastName') || "",
+        email: _.get(current_user, 'email') || "",
+        phone: _.get(current_user, 'phone') || "",
+        address: _.get(current_user, 'address') ? address.address : '',
+        avatar: _.get(current_user, 'avatar') || '',
+        playRole: _.get(current_user, 'playRole') || '',
+        createdAt: _.get(current_user, 'createdAt') || '',
+        updatedAt: _.get(current_user, 'updatedAt') || '',
+      });
+      setSelectedDropdownData({
+        selectedRegionCode: _.get(address, 'regionCode') || '',
+        selectedDistrictCode: _.get(address, 'districtCode') || '',
+        selectedWardCode: _.get(address, 'wardCode') || '',
+        selectedFavoriteFootKey: _.get(current_user, 'favoriteFoot') || '',
+        selectedGenderKey: _.get(current_user, 'gender', '') || '',
+      })
+    };
+  }
 
   useEffect(() => {
     getUserInfo(user.id, setLoading);
     setInit();
-  }, []);
+  }, [viewType]);
 
   const onSubmit = (e) => {
     const formatData = trimObjProperties(formData);
 
     let error = {};
-    const notRequired = ['avatar', 'firstName', 'lastName'];
+    const notRequired = ['avatar'];
     Object.keys(formatData).map((key) => {
       if (formatData[key].trim() === "" && !notRequired.includes(key)) {
         error[key] = "This field is required";
@@ -224,10 +233,10 @@ const UserInfo = ({
     if (JSON.stringify(error) === "{}" && !validateEmail(email)) {
       error.email = "Email is invalid!";
     }
-    if(!selectedFavoriteFootKey.trim()) {
+    if (!selectedFavoriteFootKey.trim()) {
       error.favoriteFoot = 'This field is required';
     }
-    if(!selectedGenderKey.trim()) {
+    if (!selectedGenderKey.trim()) {
       error.gender = 'This field is required';
     }
 
@@ -248,7 +257,8 @@ const UserInfo = ({
 
     if (JSON.stringify(error) === "{}") {
       console.log('--------------------formated data', formatData);
-      editUserInfo(setLoading, formatData);
+      console.log('--------------------formated data', viewType === 'user');
+      editUserInfo(setLoading, formatData, viewType === 'user' ? user.id : current_user.id);
     }
   };
 
@@ -286,6 +296,8 @@ const UserInfo = ({
       selectedWardCode: code,
     });
   }
+
+  console.log('current user------------------', current_user);
 
   const onChangeFavoriteFoot = (code) => {
     setSelectedDropdownData({
@@ -379,7 +391,7 @@ const UserInfo = ({
                         valueBasedOnProperty="key"
                         displayProperty="value"
                         onChange={(genderKey) => onSelectGender(genderKey)}
-                        error={errors.gender || '' }
+                        error={errors.gender || ''}
                       />
                       {/* <InputLabel id="demo-simple-select-outlined-label">Gender</InputLabel>
                       <Select
@@ -480,16 +492,16 @@ const UserInfo = ({
                   <h6 className="font-weight-bold mt-4">Extra information: </h6>
                   <Row className="mt-2">
                     <Col xs={6}>
-                       <DropdownV2
+                      <DropdownV2
                         fullWidth
                         label="Farovite Foot"
                         disabledPlaceholder="None"
                         value={selectedFavoriteFootKey.toString()}
-                        options={favoriteFootArr|| []}
+                        options={favoriteFootArr || []}
                         valueBasedOnProperty="key"
                         displayProperty="value"
                         onChange={(code) => onChangeFavoriteFoot(code)}
-                        error={errors.favoriteFoot || '' }
+                        error={errors.favoriteFoot || ''}
                       />
                     </Col>
                     <Col xs={6}>
@@ -513,7 +525,7 @@ const UserInfo = ({
                         name="createdAt"
                         label="Created Date"
                         fullWidth
-                        value={moment(createdAt).format('DD/MM/YYYY HH:MM:ss')}
+                        value={createdAt}
                         placeHolder="Enter created at"
                         error={errors.createdAt}
                         InputProps={{
@@ -533,7 +545,7 @@ const UserInfo = ({
                         InputProps={{
                           readOnly: true,
                         }}
-                        value={moment(updatedAt).format('DD/MM/YYYY HH:MM:ss')}
+                        value={updatedAt}
                         placeHolder="Enter created at"
                         variant="outlined"
                       />
@@ -568,7 +580,8 @@ const UserInfo = ({
 
 const mapStateToProps = (state) => ({
   errors: state.errors,
-  user: state.auth.user
+  user: state.auth.user,
+  current_user: state.user.current_user,
 });
 export default connect(mapStateToProps, { editUserInfo, getUserInfo })(
   UserInfo

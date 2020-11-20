@@ -397,7 +397,13 @@ const DashBoard = ({
         case "/my-account":
           return (
             <>
-              <UserInfo />
+              <UserInfo viewType={'user'}/>
+            </>
+          );
+        case "/users/:userId":
+          return (
+            <>
+              <UserInfo viewType={'admin'}/>
             </>
           );
         default:
@@ -441,7 +447,7 @@ const DashBoard = ({
         case "/my-account":
           return (
             <>
-              <UserInfo />
+              <UserInfo key={'1'}/>
             </>
           );
         default:
@@ -567,6 +573,10 @@ const DashBoard = ({
   const getHeaderTitle = () => {
     if (match.path.includes('my-account')) {
       return 'My Account'
+    }
+
+    if(match.path.match('/users/:userId')) {
+      return "User info"
     }
     let found = isAdmin
       ? navLinkAdmin.find(item => item.to.includes(match.path)) : navLinkMananager.find(item => item.to.includes(match.path));
