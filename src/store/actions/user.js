@@ -296,9 +296,21 @@ export const editUserInfo = (setLoading, userData) => async (
   const { user } = state;
   console.log(userData)
 
-  const { firstName, lastName, address, dob, email, favoriteFoot, phone, playRole, gender } = userData;
-  
-  console.log(`'${JSON.stringify(address)}'`)
+  const {
+    firstName,
+    lastName, address,
+    dob,
+    email,
+    favoriteFoot,
+    phone,
+    playRole,
+    gender,
+    regionCode,
+    districtCode,
+    wardCode,
+  } = userData;
+
+  console.log(userData);
   try {
     const { data, errors } = await hera({
       options: {
@@ -316,8 +328,14 @@ export const editUserInfo = (setLoading, userData) => async (
               lastName: $lastName,
               phone: $phone, 
               gender: $gender,
+              email: $email,
               dob: $dob,
               address: $address
+              favoriteFoot: $favoriteFoot
+              playRole: $playRole
+              regionCode: $regionCode,
+              districtCode: $districtCode, 
+              wardCode: $wardCode
               ) {
                 id
                 email
@@ -327,6 +345,7 @@ export const editUserInfo = (setLoading, userData) => async (
                 gender
                 address
                 dob
+                favoriteFoot
                 avatar
                 playRole
                 createdAt
@@ -341,10 +360,16 @@ export const editUserInfo = (setLoading, userData) => async (
         phone,
         gender,
         dob,
-        address: `'${JSON.stringify(address)}'`,
+        address,
+        favoriteFoot,
+        playRole,
+        email,
+        regionCode,
+        districtCode,
+        wardCode
       },
     });
-  
+
     if (!errors) {
       const res = data.updateUser;
       dispatch({
@@ -361,7 +386,7 @@ export const editUserInfo = (setLoading, userData) => async (
       dispatch({
         type: CLEAR_ERRORS,
       });
-  
+
       setLoading(false);
       Swal.fire({
         position: "center",
@@ -380,17 +405,17 @@ export const editUserInfo = (setLoading, userData) => async (
         Object.keys(error).map((key) => {
           formatedError[key] = error[key].message;
         });
-  
+
       logoutDispatch(dispatch, errors);
       dispatch({
         type: GET_ERRORS,
         errors: { ...formatedError },
       });
     }
-  } catch(error) {
+  } catch (error) {
     console.log('err-----------------------', error);
   }
-  
+
 };
 
 // DELETE GROUP
