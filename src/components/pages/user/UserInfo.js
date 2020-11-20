@@ -172,7 +172,10 @@ const UserInfo = ({
 
   const setInit = () => {
     if (viewType === 'user') {
-      const address = JSON.parse(user.address);
+      console.log('uer---------------', user);
+      const address = JSON.parse(user.address) || {};
+      console.log('uer---------------', address);
+
       setformData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
@@ -185,11 +188,11 @@ const UserInfo = ({
         updatedAt: user.updatedAt || '',
       });
       setSelectedDropdownData({
-        selectedRegionCode: _.get(address, 'regionCode'),
-        selectedDistrictCode: _.get(address, 'districtCode'),
-        selectedWardCode: _.get(address, 'wardCode'),
-        selectedFavoriteFootKey: _.get(user, 'favoriteFoot') || '',
-        selectedGenderKey: _.get(user, 'gender', '') || '',
+        selectedRegionCode: _.get(address, 'regionCode') || '',
+        selectedDistrictCode: _.get(address, 'districtCode') || '',
+        selectedWardCode: _.get(address, 'wardCode') || '',
+        selectedFavoriteFootKey: _.get(current_user, 'favoriteFoot') || '',
+        selectedGenderKey: _.get(current_user, 'gender', '') || '',
       })
     } else {
       const address = JSON.parse(_.get(current_user, 'address'));
@@ -271,7 +274,10 @@ const UserInfo = ({
     });
   };
 
-  const [selectedDate, setSelectedDate] = useState(new Date(_.get(current_user, 'dob') || user.dob || ''));
+  const [selectedDate, setSelectedDate] = useState(
+    viewType === 'user' ?
+      user.dob ? new Date(user.dob) : null
+      : current_user.dob ? new Date(current_user.dob) : null);
 
   const onChangeRegion = (code) => {
     setSelectedDropdownData({
@@ -297,7 +303,6 @@ const UserInfo = ({
     });
   }
 
-  console.log('current user------------------', current_user);
 
   const onChangeFavoriteFoot = (code) => {
     setSelectedDropdownData({

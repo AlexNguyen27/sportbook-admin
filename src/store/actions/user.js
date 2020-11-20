@@ -170,7 +170,7 @@ export const updatePassword = (
     query: `
         mutation {
           changePassword(
-            ${userId ? `userId: ${userId}` : ""} 
+            ${userId ? `id: ${userId}` : ""} 
             currentPassword: $currentPassword, 
             newPassword: $newPassword, 
             confirmPassword: $confirmPassword
@@ -237,8 +237,8 @@ export const editUserInfo = (setLoading, userData, userId) => async (
   const {
     auth: {
       token,
+      user: { id: authId}
     },
-    user: { id: authId}
   } = state;
 
   const {
@@ -319,6 +319,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
       selectedId: res.id,
       newUser: res,
     });
+    console.log(authId, userId);
     if (authId === userId) {
       dispatch({
         type: EDIT_USER_INFO,
