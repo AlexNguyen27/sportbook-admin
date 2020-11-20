@@ -30,8 +30,8 @@ export const POST_STATUS_OBJECT = {
 };
 
 export const GENDER = {
-  male: 'male',
-  female: 'female',
+  male: 'Male',
+  female: 'Female',
 };
 export const ROLE = {
   admin: 'admin',
@@ -40,9 +40,9 @@ export const ROLE = {
 };
 
 export const FAVORITE_FOOT = {
-  right: 'right',
-  left: 'left',
-  both: 'both',
+  right: 'Right',
+  left: 'Left',
+  both: 'Both',
 };
 
 export const SUB_GROUND_STATUS = {

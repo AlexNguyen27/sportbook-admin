@@ -1,11 +1,9 @@
-// import axios from "axios";
 import logoutDispatch from "../../utils/logoutDispatch";
 import { GET_ERRORS, CLEAR_ERRORS, AUTHENTICATE, BASE_URL } from "./types";
 import { hera } from "hera-js";
-// import axios from "axios";
-// import jwt_decode from "jwt-decode";
 
 import Swal from "sweetalert2";
+import { ROLE } from "../../utils/common";    
 //LOGIN User
 export const loginUser = ({ email, password }) => async (dispatch) => {
   // try {
@@ -23,6 +21,7 @@ export const loginUser = ({ email, password }) => async (dispatch) => {
             firstName,
             lastName,
             email,
+            gender,
             phone,
             address,
             dob,
@@ -51,17 +50,21 @@ export const loginUser = ({ email, password }) => async (dispatch) => {
   } else {
     const resData = data.login;
     const { token } = resData;
-
-    // const decoded = jwt_decode(token);
-
     const userData = { ...resData };
     delete userData.token;
 
-    if (resData.role === "owner") {
+    if (resData.role === ROLE.owner) {
       userData.isManager = true;
-    }
-    if (resData.role === "admin") {
+    } else if (resData.role === ROLE.admin) {
       userData.isAdmin = true;
+    } else if (resData.role === ROLE.user) {
+      logoutDispatch(dispatch);
+      // Set errors
+      dispatch({
+        type: GET_ERRORS,
+        errors: { message: "Email or password is incorrect!" },
+      });
+      return;
     }
 
     dispatch({
@@ -86,10 +89,6 @@ export const logoutUser = () => (dispatch) => {
 export const signUpUser = (isAuthenticated, history, userData) => async (
   dispatch
 ) => {
-  // await axios.post("api/auth/signup", userData, {
-  //   headers: { Authorization: localStorage.token },
-  // });
-
   const { email, password } = userData;
   const { data, errors } = await hera({
     options: {
