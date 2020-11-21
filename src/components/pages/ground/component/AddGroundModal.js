@@ -1,15 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { clearErrors } from "../../../../store/actions/common";
-import {
-  TextField,
-  FormLabel,
-  FormControlLabel,
-  FormControl,
-  Checkbox,
-  FormGroup,
-} from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import _ from "lodash";
 
 // COMPONENTS
@@ -30,44 +23,43 @@ import {
 } from "reactstrap";
 import { GET_ERRORS } from "../../../../store/actions/types";
 import PageLoader from "../../../custom/PageLoader";
-import { addBenefit } from "../../../../store/actions/benefit";
+import { getBenefits } from "../../../../store/actions/benefit";
 import DropdownV2 from "../../../custom/DropdownV2";
-import { makeStyles } from "@material-ui/core/styles";
 import DropzoneAreaCustom from "../../../custom/DropzoneAreaCustom";
 import ReactGoogleMaps from "../../../custom/ReactGoogleMaps";
+import Benefits from "./Benefits";
+import { getCategories } from "../../../../store/actions/category";
+import { trimObjProperties } from "../../../../utils/formatString";
+import { addGround } from "../../../../store/actions/ground";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const AddGroundModal = ({
   errors,
   clearErrors,
   modal,
   setModal,
-  addBenefit,
+  getBenefits,
+  getCategories,
+  categories,
+  addGround
 }) => {
   const dispatch = useDispatch();
-  const classes = useStyles();
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
+  const categoryArr = Object.keys(categories).map((cateId) => ({
+    ...categories[cateId],
+  }));
 
-  const handleChange = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
-  };
-
-  const { gilad, jason, antoine } = state;
   const [loading, setLoading] = useState(false);
-  // NEW ROLE NAME STATE
+  const [checked, setChecked] = React.useState({});
+
+  useEffect(() => {
+    console.log("here------------------");
+    getBenefits(setLoading).then(() => {
+      setLoading(true);
+      console.log("herer-----------------sdfsdf");
+      getCategories(setLoading);
+    });
+  }, []);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -79,12 +71,14 @@ const AddGroundModal = ({
     selectedRegionCode: "",
     selectedDistrictCode: "",
     selectedWardCode: "",
+    selectedCategoryId: "",
   });
 
   const {
     selectedRegionCode,
     selectedDistrictCode,
     selectedWardCode,
+    selectedCategoryId,
   } = selectedDropdownData;
 
   const { title, description, phone, address } = formData;
@@ -139,26 +133,47 @@ const AddGroundModal = ({
       description: "",
       address: "",
     });
+    setSelectedDropdownData({
+      selectedRegionCode: "",
+      selectedDistrictCode: "",
+      selectedWardCode: "",
+      selectedCategoryId: "",
+    });
+    setChecked({});
   };
 
   // HANDLE ON SUBMIT FROM ADD NEW GROUP
   const onSubmit = (e) => {
     e.preventDefault();
 
+    const formatedData = trimObjProperties({
+      ...formData,
+      categoryId: selectedCategoryId,
+      regionCode: selectedRegionCode,
+      districtCode: selectedDistrictCode,
+      wardCode: selectedWardCode,
+    });
+
     const error = {};
 
-    // Object.keys(formData).map((key) => {
-    if (formData.title.trim() === "") {
-      error.title = "This field is required";
-    }
+    Object.keys(formatedData).map((key) => {
+      if (!formatedData[key]) {
+        error[key] = "This field is required";
+      }
+    });
+
     dispatch({
       type: GET_ERRORS,
       errors: error,
     });
 
+    formatedData.benefit = Object.keys(checked).toString();
+    
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
-      addBenefit(setLoading, title, description);
+      console.log("-formatedData----------------------", formatedData);
+      addGround(setLoading, formatedData);
+      closeModal();
     }
   };
 
@@ -194,9 +209,16 @@ const AddGroundModal = ({
     });
   };
 
+  const onChangeCategory = (id) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      selectedCategoryId: id,
+    });
+  };
+
   return (
     <Modal
-      style={{ maxWidth: "700px", marginTop: '100px' }}
+      style={{ maxWidth: "700px", marginTop: "100px" }}
       isOpen={modal}
       toggle={() => closeModal()}
       centered={true}
@@ -209,24 +231,37 @@ const AddGroundModal = ({
           <ModalBody>
             <Row>
               <Col xs="7">
+                <DropdownV2
+                  fullWidth
+                  label="Category"
+                  value={selectedCategoryId.toString() || ""}
+                  options={categoryArr || []}
+                  valueBasedOnProperty="id"
+                  displayProperty="name"
+                  onChange={(id) => onChangeCategory(id)}
+                  error={errors.categoryId}
+                />
+              </Col>
+              <Col xs="5">
+                <TextFieldInputWithHeader
+                  id="outlined-multiline-static"
+                  label="Phone"
+                  name="phone"
+                  fullWidth
+                  value={phone || ""}
+                  onChange={(e) => onChange(e)}
+                  error={errors.phone}
+                />
+              </Col>
+              <Col xs="12" className="mt-4">
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="title"
                   label="New Ground title"
                   fullWidth
-                  value={title}
-                  onChange={onChange}
+                  value={title || ""}
+                  onChange={(e) => onChange(e)}
                   error={errors.title}
-                />
-              </Col>
-              <Col xs="5">
-                <TextField
-                  id="outlined-multiline-static"
-                  label="Phone"
-                  name="phone"
-                  fullWidth
-                  value={phone}
-                  onChange={onChange}
                 />
               </Col>
               <Col xs="12" className="mt-4">
@@ -235,64 +270,29 @@ const AddGroundModal = ({
                   label="Enter ground description"
                   name="description"
                   fullWidth
-                  value={description}
+                  value={description || ""}
                   multiline
                   rows={2}
                   onChange={onChange}
                   variant="outlined"
+                  error={errors.description}
                 />
               </Col>
               {/* BENEFIT */}
               <Col xs={12}>
-                <FormControl
-                  component="fieldset"
-                  className={classes.formControl}
-                >
-                  <FormLabel component="legend">Benefits</FormLabel>
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={gilad}
-                          onChange={handleChange}
-                          name="gilad"
-                        />
-                      }
-                      label="Gilad Gray"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={jason}
-                          onChange={handleChange}
-                          name="jason"
-                        />
-                      }
-                      label="Jason Killian"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={antoine}
-                          onChange={handleChange}
-                          name="antoine"
-                        />
-                      }
-                      label="Antoine Llorca"
-                    />
-                  </FormGroup>
-                </FormControl>
+                <Benefits checked={checked} setChecked={setChecked} />
               </Col>
               {/* ADDRESS */}
               <Col xs={4}>
                 <DropdownV2
                   fullWidth
                   label="City / Province / Region"
-                  value={selectedRegionCode.toString()}
+                  value={selectedRegionCode.toString() || ""}
                   options={regionArr || []}
                   valueBasedOnProperty="code"
                   displayProperty="name"
                   onChange={(code) => onChangeRegion(code)}
+                  error={errors.regionCode}
                 />
               </Col>
               <Col xs={4}>
@@ -304,6 +304,7 @@ const AddGroundModal = ({
                   valueBasedOnProperty="code"
                   displayProperty="name"
                   onChange={(code) => onChangeDistrict(code)}
+                  error={errors.districtCode}
                 />
               </Col>
               <Col xs={4}>
@@ -315,6 +316,7 @@ const AddGroundModal = ({
                   valueBasedOnProperty="code"
                   displayProperty="name"
                   onChange={(code) => onChangeWard(code)}
+                  error={errors.wardCode}
                 />
               </Col>
               <Col xs={12} className="mt-4">
@@ -323,8 +325,8 @@ const AddGroundModal = ({
                   name="address"
                   label="Address"
                   fullWidth
-                  value={address}
-                  onChange={onChange}
+                  value={address || ''}
+                  onChange={(e) => onChange(e)}
                   error={errors.address}
                   variant="outlined"
                 />
@@ -361,8 +363,11 @@ const AddGroundModal = ({
 };
 const mapStateToProps = (state) => ({
   errors: state.errors,
+  categories: state.category.categories,
 });
 export default connect(mapStateToProps, {
   clearErrors,
-  addBenefit,
+  getBenefits,
+  getCategories,
+  addGround
 })(AddGroundModal);

@@ -80,3 +80,9 @@ export const GET_BENEFITS = "GET_BENEFITS";
 export const DELETE_BENEFIT = "DELETE_BENEFIT";
 export const EDIT_BENEFIT = "EDIT_BENEFIT";
 export const ADD_BENEFIT = "ADD_BENEFIT";
+
+// GROUND
+export const GET_GROUNDS = "GET_GROUNDS";
+export const DELETE_GROUND = "DELETE_GROUND";
+export const EDIT_GROUND = "EDIT_GROUND";
+export const ADD_GROUND = "ADD_GROUND";
