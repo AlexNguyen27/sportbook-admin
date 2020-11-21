@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { clearErrors } from "../../../../store/actions/common";
+import { TextField } from "@material-ui/core";
 import _ from "lodash";
 
 // COMPONENTS
@@ -32,7 +33,7 @@ import { trimObjProperties } from "../../../../utils/formatString";
 import { addGround } from "../../../../store/actions/ground";
 
 
-const AddGroundModal = ({
+const EditGroundModal = ({
   errors,
   clearErrors,
   modal,
@@ -261,7 +262,7 @@ const AddGroundModal = ({
                 />
               </Col>
               <Col xs="12" className="mt-4">
-                <TextFieldInputWithHeader
+                <TextField
                   id="outlined-multiline-static"
                   label="Enter ground description"
                   name="description"
@@ -366,4 +367,4 @@ export default connect(mapStateToProps, {
   getBenefits,
   getCategories,
   addGround
-})(AddGroundModal);
+})(EditGroundModal);

@@ -7,7 +7,7 @@ const PageLoader = ({ loading, children, style, noPadding }) => {
   const custom = noPadding ? {paddingTop: '0px'} : {paddingTop: "100px"}
   return loading ? (
     <div style={{ ...style, ...LoadingStyle, ...custom}}>
-      <Loader type="Triangle" color={Colors.purple} height="100" width="100" />
+      <Loader type="Plane" color={Colors.purple} height="100" width="100" />
     </div>
   ) : (
     <Fragment>{children}</Fragment>

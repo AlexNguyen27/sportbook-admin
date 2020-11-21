@@ -5,6 +5,8 @@ import {
   GET_BENEFITS,
   CLEAR_ERRORS,
   ADD_GROUND,
+  GET_GROUNDS,
+  DELETE_GROUND,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -26,14 +28,15 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
                 grounds {
                     id
                     title 
-                    description 
+                    description
+                    phone
+                    address,
+                    benefit
+                    image,
+                    createdAt 
                     category {
                       id
                       name
-                    }
-                    user {
-                      id
-                      email
                     }
                 }
               }
@@ -44,7 +47,7 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
     const grounds = arrayToObject(data.grounds);
 
     dispatch({
-      type: GET_BENEFITS,
+      type: GET_GROUNDS,
       grounds,
     });
     setLoading(false);
@@ -83,6 +86,7 @@ export const addGround = (setLoading, groundData) => async (
                 wardCode: $wardCode
                 benefit: $benefit   
             ) {
+                id
                 title
                 description
                 phone
@@ -138,3 +142,61 @@ export const addGround = (setLoading, groundData) => async (
     });
   }
 };
+
+export const deleteGround = (setLoading, id) => async (dispatch, getState) => {
+  const { token } = getState().auth;
+  console.log('er----------------', id);
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+      mutation {
+        deleteGround(id: $id) {
+          status,
+          message
+        }
+      } 
+    `,
+    variables: {
+      id,
+    },
+  });
+  if (!errors) {
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
+
+    dispatch({
+      type: DELETE_GROUND,
+      selectedId: id,
+    });
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Deleted successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    setLoading(false);
+  } else {
+    console.log(errors);
+    logoutDispatch(dispatch, errors);
+    Swal.fire({
+      position: "center",
+      type: "Warning",
+      title: "Can't delete this ground cuz it has sub ground!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
