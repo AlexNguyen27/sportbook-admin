@@ -3,7 +3,6 @@ import MaterialTable from "material-table";
 import moment from "moment";
 import { connect, useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
-// import { SAVE_CURRENT_USER } from "../../../store/actions/types";
 import { DATE_TIME } from "../../../utils/common";
 import {
   getCategories,
@@ -13,7 +12,7 @@ import {
 } from "../../../store/actions/category";
 
 import { forwardRef } from "react";
-
+ 
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -67,7 +66,6 @@ const CategoriesList = ({
   updateCategory,
   deleteCatgory,
 }) => {
-  const dispatch = useDispatch();
   const [state, setState] = useState({
     columns: [
       {
@@ -165,7 +163,7 @@ const CategoriesList = ({
                   resolve();
                   // edit categories
                   setLoading(true);
-                  const { name, status, id } = newData;
+                  const { name, id } = newData;
                   updateCategory(setLoading, name, id);
                   if (oldData) {
                     setState((prevState) => {
