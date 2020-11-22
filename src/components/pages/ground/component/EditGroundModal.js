@@ -30,8 +30,7 @@ import ReactGoogleMaps from "../../../custom/ReactGoogleMaps";
 import Benefits from "./Benefits";
 import { getCategories } from "../../../../store/actions/category";
 import { trimObjProperties } from "../../../../utils/formatString";
-import { addGround } from "../../../../store/actions/ground";
-
+import { updateGround } from "../../../../store/actions/ground";
 
 const EditGroundModal = ({
   errors,
@@ -41,7 +40,8 @@ const EditGroundModal = ({
   getBenefits,
   getCategories,
   categories,
-  addGround
+  ground,
+  updateGround,
 }) => {
   const dispatch = useDispatch();
   const categoryArr = Object.keys(categories).map((cateId) => ({
@@ -50,21 +50,12 @@ const EditGroundModal = ({
 
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = React.useState({});
-
-  useEffect(() => {
-    getBenefits(setLoading).then(() => {
-      setLoading(true);
-      getCategories(setLoading);
-    });
-  }, []);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     phone: "",
     address: "",
   });
-
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedRegionCode: "",
     selectedDistrictCode: "",
@@ -72,6 +63,41 @@ const EditGroundModal = ({
     selectedCategoryId: "",
   });
 
+  const initFormData = () => {
+    if(ground) {
+      const { title, description, phone, address, categoryId } = ground ;
+      const addressData = JSON.parse(address || '');
+      const { regionCode, wardCode, districtCode } = addressData;
+      setFormData({
+        title,
+        description,
+        phone,
+        address: addressData.address,
+      });
+  
+      setSelectedDropdownData({
+        selectedRegionCode: regionCode,
+        selectedDistrictCode: districtCode,
+        selectedWardCode: wardCode,
+        selectedCategoryId: categoryId,
+      });
+  
+      const benefit = ground.benefit
+        .split(",")
+        .map((benefitId) => ({ [benefitId]: true }));
+      setChecked(benefit);
+    }
+  };
+
+  useEffect(() => {
+    if(modal) {
+      getBenefits(setLoading).then(() => {
+        setLoading(true);
+        getCategories(setLoading);
+        initFormData();
+      });
+    }
+  }, [setModal, modal]);
   const {
     selectedRegionCode,
     selectedDistrictCode,
@@ -166,10 +192,10 @@ const EditGroundModal = ({
     });
 
     formatedData.benefit = Object.keys(checked).toString();
-    
+    formatedData.id = ground.id;
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
-      addGround(setLoading, formatedData);
+      updateGround(setLoading, formatedData);
       closeModal();
     }
   };
@@ -221,7 +247,7 @@ const EditGroundModal = ({
       centered={true}
     >
       <PageLoader loading={loading} noPadding>
-        <ModalHeader toggle={() => closeModal()}>Add New Ground</ModalHeader>
+        <ModalHeader toggle={() => closeModal()}>Edit Ground</ModalHeader>
 
         {/** MODAL BODY */}
         <Form onSubmit={(e) => onSubmit(e)}>
@@ -254,7 +280,7 @@ const EditGroundModal = ({
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="title"
-                  label="New Ground title"
+                  label="Ground title"
                   fullWidth
                   value={title || ""}
                   onChange={(e) => onChange(e)}
@@ -322,7 +348,7 @@ const EditGroundModal = ({
                   name="address"
                   label="Address"
                   fullWidth
-                  value={address || ''}
+                  value={address || ""}
                   onChange={(e) => onChange(e)}
                   error={errors.address}
                   variant="outlined"
@@ -366,5 +392,5 @@ export default connect(mapStateToProps, {
   clearErrors,
   getBenefits,
   getCategories,
-  addGround
+  updateGround,
 })(EditGroundModal);
