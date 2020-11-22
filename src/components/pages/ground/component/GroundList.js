@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import GroundCard from "../../../layout/GroundCard";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 
-const GroundList = ({ grounds, onDelete }) => {
+const GroundList = ({ grounds, onDelete, onEdit }) => {
   const groundArr = Object.keys(grounds).map((groundId) => grounds[groundId]);
 
   return (
     <Grid container type="flex" justify="center" spacing={3}>
       {groundArr.map((ground) => (
-        <Grid item xs={3} key={ground}>
-          <GroundCard ground={ground} onDelete={onDelete} />
+        <Grid item xs={3} key={ground.id}>
+          <GroundCard ground={ground} onDelete={onDelete} onEdit={onEdit}/>
         </Grid>
       ))}
     </Grid>

@@ -411,7 +411,6 @@ const DashBoard = ({
 
       }
     } else {
-      console.log('d-=----------esle-------------', match.path);
       switch (match.path) {
         case "/order-management":
           return (
@@ -712,7 +711,7 @@ const DashBoard = ({
               button
               key={item.key}
               component={Link}
-              to={item.to}
+              to={item.to || ''}
               onClick={() => {
                 setDrawerId(item.key)
               }}
@@ -744,7 +743,8 @@ const DashBoard = ({
               component={Link}
               button
               className={classes.nested}
-              to={"/my-account"} onClick={() => {
+              to={"/my-account"} 
+              onClick={() => {
                 setDrawerId('myAccount')
               }}>
               <ListItemIcon >
@@ -781,7 +781,7 @@ const DashBoard = ({
               button
               key={item.key}
               component={Link}
-              to={item.to}
+              to={item.to || ''}
               onClick={item.onClick || (() => {
                 setDrawerId(item.key)
               })}

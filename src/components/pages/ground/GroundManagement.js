@@ -8,6 +8,7 @@ import AddGroundModal from "./component/AddGroundModal";
 import { getGrounds, deleteGround } from "../../../store/actions/ground";
 import PageLoader from "../../custom/PageLoader";
 import Swal from "sweetalert2";
+import EditGroundModal from "./component/EditGroundModal";
 
 const useStyles = makeStyles((theme) => ({
   btn: {
@@ -17,11 +18,14 @@ const useStyles = makeStyles((theme) => ({
 
 const GroundManagement = ({
   getGrounds,
+  grounds,
   deleteGround
 }) => {
   const classes = useStyles();
   const [modelAdd, setModelAdd] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [modelEdit, setModelEdit] = useState(false);
+  const [groundData, setGroundData] = useState();
 
   const onDelete = (groundId) => {
     Swal.fire({
@@ -44,6 +48,11 @@ const GroundManagement = ({
     getGrounds(setLoading);
   }, []);
 
+  const onEdit = (groundId) => {
+    console.log('groundid====================', groundId);
+    setModelEdit(true);
+    setGroundData(grounds[groundId]);
+  }
 
   return (
     <PageLoader loading={loading}>
@@ -55,12 +64,14 @@ const GroundManagement = ({
       >
         <AddCircleIcon className="mr-2" /> Add Ground
       </Button>
-      <GroundList onDelete={onDelete}/>
+      <GroundList onDelete={onDelete} onEdit={onEdit}/>
       <AddGroundModal modal={modelAdd} setModal={setModelAdd} />
+      <EditGroundModal modal={modelEdit} setModal={setModelEdit} ground={groundData}/>
     </PageLoader>
   );
 };
 
 const mapStateToProps = (state) => ({
+  grounds: state.ground.grounds
 });
 export default connect(mapStateToProps, { getGrounds, deleteGround })(GroundManagement);

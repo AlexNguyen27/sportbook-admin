@@ -2,11 +2,11 @@ import logoutDispatch from "../../utils/logoutDispatch";
 import {
   GET_ERRORS,
   BASE_URL,
-  GET_BENEFITS,
   CLEAR_ERRORS,
   ADD_GROUND,
   GET_GROUNDS,
   DELETE_GROUND,
+  EDIT_GROUND,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -34,6 +34,7 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
                     benefit
                     image,
                     createdAt 
+                    categoryId
                     category {
                       id
                       name
@@ -93,13 +94,11 @@ export const addGround = (setLoading, groundData) => async (
                 address,
                 benefit
                 image,
+                createdAt
+                categoryId
                 category {
                   id
                   name
-                }
-                user {
-                  id
-                  email
                 }
             }
         } 
@@ -200,3 +199,84 @@ export const deleteGround = (setLoading, id) => async (dispatch, getState) => {
   }
 };
 
+export const updateGround = (setLoading, groundData) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+  const { data, errors } = await hera({
+      options: {
+          url: BASE_URL,
+          headers: {
+              token,
+              "Content-Type": "application/json",
+          },
+      },
+      query: `
+      mutation {
+       updateGround(
+          id: $id
+          title: $title,
+          description: $description
+          phone: $phone
+          address: $address
+          categoryId: $categoryId
+          regionCode: $regionCode
+          districtCode: $districtCode
+          wardCode: $wardCode
+          benefit: $benefit   
+         ) {
+          id
+          title
+          description
+          phone
+          address,
+          benefit
+          image,
+          createdAt
+          categoryId
+          category {
+            id
+            name
+          }
+        }
+      } 
+    `,
+      variables: {
+         ...groundData,
+      },
+  });
+  if (!errors) {
+      dispatch({
+          type: CLEAR_ERRORS,
+      });
+
+      dispatch({
+          type: EDIT_GROUND,
+          ground: data.updateGround,
+      });
+      setLoading(false);
+      Swal.fire({
+          position: "center",
+          type: "success",
+          title: "Your work has been save!",
+          showConfirmButton: false,
+          timer: 1500,
+      });
+      setLoading(false);
+  } else {
+      console.log(errors);
+      Swal.fire({
+          position: "center",
+          type: "Warning",
+          title: "Please check the input!",
+          showConfirmButton: false,
+          timer: 1500,
+      });
+      logoutDispatch(dispatch, errors);
+      dispatch({
+          type: GET_ERRORS,
+          errors: errors[0].message,
+      });
+  }
+};

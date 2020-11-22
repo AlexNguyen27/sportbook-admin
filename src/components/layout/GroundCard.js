@@ -33,9 +33,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GroundCard = ({ ground, onDelete }) => {
+const GroundCard = ({ ground, onDelete, onEdit }) => {
   const classes = useStyles();
-  const [modelEdit, setModelEdit] = useState(false);
 
   const {
     title,
@@ -71,7 +70,7 @@ const GroundCard = ({ ground, onDelete }) => {
       <CardActions disableSpacing>
         <IconButton
           className={classes.expand}
-          onClick={() => setModelEdit(true)}
+          onClick={() => onEdit(ground.id)}
           aria-label="Edit this ground"
         >
           <EditIcon /> <span style={{ fontSize: "16px" }}> Edit</span>
@@ -85,7 +84,6 @@ const GroundCard = ({ ground, onDelete }) => {
           <DeleteIcon /> <span style={{ fontSize: "16px" }}> Delete</span>
         </IconButton>
       </CardActions>
-      <EditGroundModal modal={modelEdit} setModal={setModelEdit} />
     </Card>
   );
 };
