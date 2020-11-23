@@ -255,6 +255,8 @@ export const updatePrice = (setLoading, priceData) => async (
       showConfirmButton: false,
       timer: 1500,
     });
+    setLoading(false);
+
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,

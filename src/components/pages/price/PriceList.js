@@ -28,6 +28,8 @@ import {
 import PageLoader from "../../custom/PageLoader";
 import { DATE_TIME } from "../../../utils/common";
 import moment from "moment";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -53,6 +55,17 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+}));
 const PriceList = ({
   subGround,
   errors,
@@ -64,10 +77,47 @@ const PriceList = ({
   updatePrice,
   deletePrice,
 }) => {
+  const classes = useStyles();
   const [state, setState] = React.useState({
     columns: [
-      { title: "From", field: "startTime" },
-      { title: "To", field: "endTime" },
+      {
+        title: "From time",
+        field: "startTime",
+        render: (rowData) => (
+          <TextField
+            id="time"
+            label="Alarm clock"
+            type="time"
+            defaultValue={rowData.startTime}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+          />
+        ),
+      },
+      {
+        title: "To time",
+        field: "endTime",
+        render: (rowData) => (
+          <TextField
+            id="time"
+            label="Alarm clock"
+            type="time"
+            defaultValue={rowData.endTime}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 300, // 5 min
+            }}
+          />
+        ),
+      },
       { title: "Price/hours", field: "price", type: "numeric" },
 
       {
@@ -75,7 +125,7 @@ const PriceList = ({
         field: "discount",
         type: "numeric",
         initialEditValue: 0,
-        validate: (rowData) => rowData.discount > -1,
+        validate: (rowData) => rowData.discount > -1 && rowData.discount < 101,
       },
       {
         title: "Status",
@@ -84,7 +134,7 @@ const PriceList = ({
           ready: "Ready",
           reserved: "Reserved",
         },
-        initialEditValue: "public",
+        initialEditValue: "ready",
         editable: "never",
       },
     ],
@@ -128,12 +178,14 @@ const PriceList = ({
           actionsColumnIndex: -1,
           search: false,
           headerStyle: {
-            backgroundColor: "#01579b",
-            color: "#FFF",
+            // backgroundColor: "#01579b",
+            fontWeight: "bold",
+            color: "#393e46",
           },
           cellStyle: {
             fontSize: "14px",
           },
+          pageSize: 7
         }}
         actions={[
           // {
@@ -175,60 +227,37 @@ const PriceList = ({
         editable={{
           onRowAdd: (newData) =>
             new Promise((resolve) => {
-              setTimeout(() => {
-                resolve();
-                console.log("newdata----------", newData);
-                setLoading(false);
-                const priceData = {
-                  price: newData.price,
-                  discount: newData.discount,
-                  startTime: newData.startTime,
-                  endTime: newData.endTime,
-                  subGroundId: subGround.id,
-                };
-                addPrice(setLoading, priceData);
-                // setState((prevState) => {
-                //   const data = [...prevState.data];
-                //   data.push(newData);
-                //   return { ...prevState, data };
-                // });
-              }, 600);
+              resolve();
+              console.log("newdata----------", newData);
+              setLoading(false);
+              const priceData = {
+                price: newData.price,
+                discount: newData.discount,
+                startTime: newData.startTime,
+                endTime: newData.endTime,
+                subGroundId: subGround.id,
+              };
+              addPrice(setLoading, priceData);
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {
-              setTimeout(() => {
-                resolve();
-                setLoading(true);
-                const priceData = {
-                  id: oldData.id,
-                  price: newData.price,
-                  discount: newData.discount,
-                  startTime: newData.startTime,
-                  endTime: newData.endTime,
-                  subGroundId: subGround.id,
-                };
-                updatePrice(setLoading, priceData);
-                // if (oldData) {
-                //   setState((prevState) => {
-                //     const data = [...prevState.data];
-                //     data[data.indexOf(oldData)] = newData;
-                //     return { ...prevState, data };
-                //   });
-                // }
-              }, 600);
+              resolve();
+              setLoading(true);
+              const priceData = {
+                id: oldData.id,
+                price: newData.price,
+                discount: newData.discount,
+                startTime: newData.startTime,
+                endTime: newData.endTime,
+                subGroundId: subGround.id,
+              };
+              updatePrice(setLoading, priceData);
             }),
           onRowDelete: (oldData) =>
             new Promise((resolve) => {
-              setTimeout(() => {
-                resolve();
-                setLoading(true);
-                deletePrice(setLoading, oldData.id);
-                // setState((prevState) => {
-                //   const data = [...prevState.data];
-                //   data.splice(data.indexOf(oldData), 1);
-                //   return { ...prevState, data };
-                // });
-              }, 600);
+              resolve();
+              setLoading(true);
+              deletePrice(setLoading, oldData.id);
             }),
         }}
       />
