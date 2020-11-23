@@ -55,3 +55,9 @@ export const GET_SUB_GROUNDS = "GET_SUB_GROUNDS";
 export const DELETE_SUB_GROUND = "DELETE_SUB_GROUND";
 export const EDIT_SUB_GROUND = "EDIT_SUB_GROUND";
 export const ADD_SUB_GROUND = "ADD_SUB_GROUND";
+
+// PRICE
+export const GET_PRICES = "GET_PRICES";
+export const DELETE_PRICE = "DELETE_PRICE";
+export const EDIT_PRICE = "EDIT_PRICE";
+export const ADD_PRICE = "ADD_PRICE";

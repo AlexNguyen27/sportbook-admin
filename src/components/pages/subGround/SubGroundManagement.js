@@ -150,13 +150,8 @@ const SubGroundManagement = ({
               }}
             />
           </Col>
-          <Col>
-            <Button
-              style={{ marginTop: "auto" }}
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
+          <Col style={{ marginTop: "auto" }}>
+            <Button type="submit" variant="contained" color="primary">
               <AddCircleIcon className="mr-2" /> Add
             </Button>
           </Col>

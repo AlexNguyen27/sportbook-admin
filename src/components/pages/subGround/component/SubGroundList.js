@@ -6,7 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { connect } from "react-redux";
-import TableSubGround from "../../../layout/TableSubGround";
+import PriceList from "../../price/PriceList";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -102,7 +102,7 @@ const SubGroundList = ({ subGrounds, onDelete, onEdit }) => {
               index={subGround.id}
               style={{ width: "100%" }}
             >
-              <TableSubGround subGround={subGround} onDelete={onDelete} onEdit={onEdit}/>
+              <PriceList subGround={subGround} onDelete={onDelete} onEdit={onEdit}/>
             </TabPanel>
           ))}
         </div>
