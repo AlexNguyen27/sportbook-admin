@@ -79,7 +79,7 @@ const EditSubGroundModal = ({
   return (
     <Modal isOpen={modal} toggle={() => closeModal()} centered={true}>
       <PageLoader loading={loading} noPadding>
-        <ModalHeader toggle={() => closeModal()}>Edit benefit</ModalHeader>
+        <ModalHeader toggle={() => closeModal()}>Edit sub ground</ModalHeader>
         {/** MODAL BODY */}
         <Form onSubmit={(e) => onSubmit(e)}>
           <ModalBody>

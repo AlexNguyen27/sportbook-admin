@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import React, { useState } from "react";
 import { connect } from "react-redux";
-import { green } from "@material-ui/core/colors";
 import { useDispatch } from "react-redux";
 import { clearErrors } from '../../../../store/actions/common';
-import {
-  TextField,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-} from "@material-ui/core";
-
 // COMPONENTS
 import Button from "@material-ui/core/Button";
 import TextFieldInputWithHeader from "../../../custom/TextFieldInputWithheader";
@@ -26,19 +15,9 @@ import {
   ModalFooter,
   Form,
 } from "reactstrap";
-import { GET_ERRORS, BASE_URL } from "../../../../store/actions/types";
+import { GET_ERRORS } from "../../../../store/actions/types";
 import PageLoader from "../../../custom/PageLoader";
 import { addBenefit } from "../../../../store/actions/benefit";
-
-const GreenRadio = withStyles({
-  root: {
-    color: green[400],
-    "&$checked": {
-      color: green[600],
-    },
-  },
-  checked: {},
-})((props) => <Radio color="default" {...props} />);
 
 const AddBenefitModal = ({
   errors,
@@ -50,21 +29,10 @@ const AddBenefitModal = ({
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
-  // NEW ROLE NAME STATE
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
-
-  //   const [image, setImage] = useState({
-  //     name: "",
-  //     file: "",
-  //   });
-
-  //   const [video, setVideo] = useState({
-  //     name: "",
-  //     file: "",
-  //   });
 
   const { title, description } = formData;
 
@@ -76,14 +44,6 @@ const AddBenefitModal = ({
       title: "",
       description: "",
     });
-    // setImage({
-    //   name: "",
-    //   file: "",
-    // });
-    // setVideo({
-    //   name: "",
-    //   file: "",
-    // });
   };
 
   // HANDLE ON SUBMIT FROM ADD NEW GROUP
@@ -98,13 +58,6 @@ const AddBenefitModal = ({
     }
     // });
 
-    // if (image.name.trim() === "") {
-    //   error.image = "Please select an image!";
-    // }
-
-    // if (video.name.trim() === "") {
-    //   error.video = "Please select an video!";
-    // }
     dispatch({
       type: GET_ERRORS,
       errors: error,
@@ -128,21 +81,6 @@ const AddBenefitModal = ({
     });
   };
 
-  //   const handleCapture = ({ target }) => {
-  //     const fileName = target.files[0].name;
-  //     if (target.accept.includes("image")) {
-  //       setImage({
-  //         name: fileName,
-  //         file: target.files[0],
-  //       });
-  //     } else {
-  //       setVideo({
-  //         name: fileName,
-  //         file: target.files[0],
-  //       });
-  //     }
-  //   };
-
   return (
     <Modal isOpen={modal} toggle={() => closeModal()} centered={true}>
       <PageLoader loading={loading} noPadding>
@@ -164,7 +102,7 @@ const AddBenefitModal = ({
                 />
               </Col>
               <Col xs="12" className="mt-4">
-                <TextField
+                <TextFieldInputWithHeader
                   id="outlined-multiline-static"
                   label="Description"
                   name="description"
@@ -177,52 +115,6 @@ const AddBenefitModal = ({
                 />
               </Col>
             </Row>
-            {/* <Row className="py-1 mt-2">
-              <Col xs="5">
-                <Button variant="contained" component="label">
-                  Upload Image
-                  <input
-                    accept="image/*"
-                    type="file"
-                    onChange={handleCapture}
-                    style={{ display: "none" }}
-                  />
-                </Button>
-              </Col>
-              <Col xs="7" className="text-break">
-                <h6>{image.name}</h6>
-              </Col>
-            </Row>
-            {errors.image && (
-              <Row>
-                <p style={{ color: "red" }} className="px-3 py-2 m-0">
-                  {errors.image}
-                </p>
-              </Row>
-            )}
-            <Row className="py-1 mt-2">
-              <Col xs="5">
-                <Button variant="contained" component="label">
-                  Upload Video
-                  <input
-                    accept="video/*"
-                    type="file"
-                    onChange={handleCapture}
-                    style={{ display: "none" }}
-                  />
-                </Button>
-              </Col>
-              <Col xs="7" className="text-break">
-                <h6>{video.name}</h6>
-              </Col>
-            </Row>
-            {errors.image && (
-              <Row>
-                <p style={{ color: "red" }} className="px-3 py-2 m-0">
-                  {errors.image}
-                </p>
-              </Row>
-            )} */}
           </ModalBody>
           {/** MODAL FOOTER */}
           <ModalFooter>

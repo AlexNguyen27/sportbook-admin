@@ -3,34 +3,21 @@ import {
   GET_ERRORS,
   BASE_URL,
   CLEAR_ERRORS,
-  GET_SUB_GROUNDS,
-  ADD_SUB_GROUND,
-  DELETE_SUB_GROUND,
-  EDIT_SUB_GROUND,
+  GET_ORDERS,
+  ADD_ORDER,
+  DELETE_ORDER,
+  EDIT_ORDER,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
 import Swal from "sweetalert2";
 
-export const getSubGrounds = (setLoading, groundId) => async (
+export const getOrders = (setLoading) => async (
   dispatch,
   getState
 ) => {
   const { token } = getState().auth;
 
-  let subGroundQuery = "";
-  let variables = {};
-  if (groundId) {
-    variables = { ...variables, groundId };
-    subGroundQuery += "groundId: $groundId";
-  }
-
-  if (subGroundQuery.length > 0) {
-    subGroundQuery = `(${subGroundQuery})`;
-  }
-
-  console.log("valirad-----------------", variables);
-  console.log("valirad-----------sdsdsd------", subGroundQuery);
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
@@ -39,27 +26,40 @@ export const getSubGrounds = (setLoading, groundId) => async (
         "Content-Type": "application/json",
       },
     },
-      query: `
-          query {
-            subGrounds${subGroundQuery} {
-              id
-              name
-              numberOfPlayers
-              groundId
-              createdAt
-            }
-          }
-      `,
-    variables: {
-      ...variables,
-    },
+    query: `
+                query {
+                  orders {
+                    id
+                    subGroundId
+                    userId
+                    startDay
+                    startTime
+                    endTime
+                    paymentType
+                    status
+                    discount
+                    price
+                    subGround {
+                        id
+                        name
+                    }
+                    user {
+                        id
+                        firstName
+                    }
+                    createdAt
+                    updatedAt
+                  }
+                }
+            `,
+    variables: {},
   });
   if (!errors) {
-    const subGrounds = arrayToObject(data.subGrounds);
+    const orders = arrayToObject(data.orders);
 
     dispatch({
-      type: GET_SUB_GROUNDS,
-      subGrounds,
+      type: GET_ORDERS,
+      orders,
     });
     setLoading(false);
   } else {
@@ -110,7 +110,7 @@ export const addSubGround = (setLoading, subGroundData) => async (
     });
 
     dispatch({
-      type: ADD_SUB_GROUND,
+      type: ADD_ORDER,
       subGround: data.createSubGround,
     });
     setLoading(false);
@@ -138,10 +138,7 @@ export const addSubGround = (setLoading, subGroundData) => async (
   }
 };
 
-export const deleteSubGround = (setLoading, id) => async (
-  dispatch,
-  getState
-) => {
+export const deleteSubGround = (setLoading, id) => async (dispatch, getState) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
     options: {
@@ -169,7 +166,7 @@ export const deleteSubGround = (setLoading, id) => async (
     });
 
     dispatch({
-      type: DELETE_SUB_GROUND,
+      type: DELETE_ORDER,
       selectedId: id,
     });
     Swal.fire({
@@ -203,14 +200,14 @@ export const updateSubGround = (setLoading, subGroundData) => async (
 ) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
-    options: {
-      url: BASE_URL,
-      headers: {
-        token,
-        "Content-Type": "application/json",
+      options: {
+          url: BASE_URL,
+          headers: {
+              token,
+              "Content-Type": "application/json",
+          },
       },
-    },
-    query: `
+      query: `
       mutation {
        updateSubGround(
          id: $id
@@ -226,41 +223,41 @@ export const updateSubGround = (setLoading, subGroundData) => async (
         }
       } 
     `,
-    variables: {
-      ...subGroundData,
-    },
+      variables: {
+         ...subGroundData
+      },
   });
   if (!errors) {
-    dispatch({
-      type: CLEAR_ERRORS,
-    });
+      dispatch({
+          type: CLEAR_ERRORS,
+      });
 
-    dispatch({
-      type: EDIT_SUB_GROUND,
-      subGround: data.updateSubGround,
-    });
-    setLoading(false);
-    Swal.fire({
-      position: "center",
-      type: "success",
-      title: "Your work has been save!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    setLoading(false);
+      dispatch({
+          type: EDIT_ORDER,
+          subGround: data.updateSubGround,
+      });
+      setLoading(false);
+      Swal.fire({
+          position: "center",
+          type: "success",
+          title: "Your work has been save!",
+          showConfirmButton: false,
+          timer: 1500,
+      });
+      setLoading(false);
   } else {
-    console.log(errors);
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "Please check the input!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    logoutDispatch(dispatch, errors);
-    dispatch({
-      type: GET_ERRORS,
-      errors: errors[0].message,
-    });
+      console.log(errors);
+      Swal.fire({
+          position: "center",
+          type: "Warning",
+          title: "Please check the input!",
+          showConfirmButton: false,
+          timer: 1500,
+      });
+      logoutDispatch(dispatch, errors);
+      dispatch({
+          type: GET_ERRORS,
+          errors: errors[0].message,
+      });
   }
 };
