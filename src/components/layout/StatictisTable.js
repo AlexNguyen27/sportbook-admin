@@ -1,14 +1,13 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-
-const TAX_RATE = 0.07;
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   table: {
@@ -20,75 +19,65 @@ function ccyFormat(num) {
   return `${num.toFixed(2)}`;
 }
 
-function priceRow(qty, unit) {
-  return qty * unit;
-}
-
-function createRow(desc, qty, unit) {
-  const price = priceRow(qty, unit);
-  return { desc, qty, unit, price };
-}
-
-function subtotal(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
-}
-
-const rows = [
-  createRow('Paperclips (Box)', 100, 1.15),
-  createRow('Paper (Case)', 10, 45.99),
-  createRow('Waste Basket', 2, 17.99),
-];
-
-const invoiceSubtotal = subtotal(rows);
-const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-const invoiceTotal = invoiceTaxes + invoiceSubtotal;
-
-export default function StatisticTable() {
+const StatictisTable = ({ reports }) => {
   const classes = useStyles();
 
+  const dataSource = Object.keys(reports).map((key) => ({
+    ...reports[key],
+  }));
+  const totalOrders = dataSource
+    .map(({ orderCount }) => orderCount)
+    .reduce((sum, i) => sum + i, 0);
+  const totalAmounts = dataSource
+    .map(({ totalAmount }) => totalAmount)
+    .reduce((sum, i) => sum + i, 0);
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell align="center" colSpan={3}>
-              Details
+            <TableCell align="left" className="font-weight-bold">
+              Ground name
             </TableCell>
-            <TableCell align="right">Price</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Desc</TableCell>
-            <TableCell align="right">Qty.</TableCell>
-            <TableCell align="right">Unit</TableCell>
-            <TableCell align="right">Sum</TableCell>
+            <TableCell align="center" className="font-weight-bold">
+              Order Times
+            </TableCell>
+            <TableCell align="right" className="font-weight-bold" colSpan={2}>
+              Amount
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.desc}>
-              <TableCell>{row.desc}</TableCell>
-              <TableCell align="right">{row.qty}</TableCell>
-              <TableCell align="right">{row.unit}</TableCell>
-              <TableCell align="right">{ccyFormat(row.price)}</TableCell>
+          {dataSource.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell align="left">{row.title}</TableCell>
+              <TableCell align="center">{row.orderCount}</TableCell>
+              <TableCell align="right" colSpan={2}>
+                {ccyFormat(row.totalAmount || 0)}
+              </TableCell>
             </TableRow>
           ))}
 
           <TableRow>
             <TableCell rowSpan={3} />
-            <TableCell colSpan={2}>Subtotal</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
+            <TableCell className="font-weight-bold" colSpan={2}>
+              Total Orders
+            </TableCell>
+            <TableCell align="right">{totalOrders}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Tax</TableCell>
-            <TableCell align="right">{`${(TAX_RATE * 100).toFixed(0)} %`}</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>Total</TableCell>
-            <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+            <TableCell className="font-weight-bold" colSpan={2}>
+              Total Amount
+            </TableCell>
+            <TableCell align="right">{ccyFormat(totalAmounts)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
     </TableContainer>
   );
-}
+};
+
+const mapStateToProps = (state) => ({
+  reports: state.statistic.reports,
+});
+export default connect(mapStateToProps, null)(StatictisTable);
