@@ -5,28 +5,25 @@ import MultipleSummary from "./MultipleSummary";
 import DropdownV2 from "../../custom/DropdownV2";
 import { Grid } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
+import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import StatisticTable from "../../layout/StatictisTable";
-import { getGrounds } from "../../../store/actions/ground";
-import { getGroundsByDate } from "../../../store/actions/statistic";
+import { getGroundsByDate, getReports } from "../../../store/actions/statistic";
 import PageLoader from "../../custom/PageLoader";
 
-const Statistic = ({ grounds, getGroundsByDate }) => {
+const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedDateId: "7days",
   });
   const [loading, setLoading] = useState(true);
+  const [reportLoading, setReportLoading] = useState(true);
 
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2014-08-18T21:11:54")
-  );
+  const [selectedStartDate, setSelectedStartDate] = React.useState(moment().subtract(7, 'days'));
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  const [selectedEndDate, setSelectedEndDate] = React.useState(new Date());
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSelectDisplayOption = (selectedDateId) => {
@@ -39,8 +36,10 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
   const { selectedDateId } = selectedDropdownData;
 
   useEffect(() => {
+    setLoading(true);
     getGroundsByDate(setLoading, selectedDateId);
   }, [selectedDateId]);
+
   const displayOptions = [
     {
       name: "7 days ago",
@@ -65,10 +64,15 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
     (key) => grounds[key].totalAmount
   );
 
+  useEffect(() => {
+    setReportLoading(true);
+    getReports(setReportLoading, selectedStartDate, selectedEndDate);
+  }, [selectedStartDate, selectedEndDate]);
+
   console.log(groundNames, totalAmounts);
 
   return (
-    <div>
+    <div className="mb-4">
       <Grid item xs={4} className="mb-4">
         <DropdownV2
           fullWidth
@@ -83,9 +87,9 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
       </Grid>
       <PageLoader loading={loading}>
         <MultipleSummary
-          name={groundNames}
+          name={groundNames || []}
           // eslint-disable-next-line no-sparse-arrays
-          dataSource={totalAmounts}
+          dataSource={totalAmounts || []}
         />
       </PageLoader>
       <hr className="m-4" />
@@ -100,8 +104,8 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
             margin="normal"
             id="date-picker-inline"
             label="From date"
-            value={selectedDate}
-            onChange={handleDateChange}
+            value={selectedStartDate}
+            onChange={(date) => setSelectedStartDate(date)}
             KeyboardButtonProps={{
               "aria-label": "change date",
             }}
@@ -114,15 +118,17 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
             margin="normal"
             id="date-picker-inline"
             label="To date"
-            value={selectedDate}
-            onChange={handleDateChange}
+            value={selectedEndDate}
+            onChange={(date) => setSelectedEndDate(date)}
             KeyboardButtonProps={{
               "aria-label": "change date",
             }}
           />
         </MuiPickersUtilsProvider>
       </Grid>
-      <StatisticTable />
+      <PageLoader loading={reportLoading}>
+        <StatisticTable />
+      </PageLoader>
     </div>
   );
 };
@@ -130,4 +136,6 @@ const Statistic = ({ grounds, getGroundsByDate }) => {
 const mapStateToProps = (state) => ({
   grounds: state.statistic.grounds,
 });
-export default connect(mapStateToProps, { getGroundsByDate })(Statistic);
+export default connect(mapStateToProps, { getGroundsByDate, getReports })(
+  Statistic
+);
