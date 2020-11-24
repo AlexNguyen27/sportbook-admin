@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import moment from "moment";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { DATE_TIME } from "../../../utils/common";
 import {
@@ -37,7 +37,6 @@ const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  // Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
@@ -77,24 +76,17 @@ const CategoriesList = ({
             ? { isValid: false, helperText: "Name cannot be empty" }
             : true,
       },
-      // {
-      //   title: "Status",
-      //   field: "status",
-      //   lookup: { public: "Public", private: "Private" },
-      //   initialEditValue: "public",
-      // },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
     data: [
       {
         name: "home",
-        // status: "public",
         createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
       },
     ],
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getCategories(setLoading);
   }, [getCategories, loading]);
