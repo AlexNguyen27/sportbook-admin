@@ -1,67 +1,89 @@
-import React, { useState } from 'react';
-import TableUser from './component/TableUser';
+import React, { useState, useEffect } from "react";
+import TableUser from "./component/TableUser";
 import DropdownV2 from "../../custom/DropdownV2";
-import { Grid } from '@material-ui/core';
-function LoyalCustomer(props) {
-    const [selectedDropdownData, setSelectedDropdownData] = useState({
-        selectedCategoryIndex: 0,
+import { connect } from "react-redux";
+import { Row, Col } from "reactstrap";
+import PageLoader from "../../custom/PageLoader";
+import { getLoyalCustomers } from "../../../store/actions/loyalCustomer";
+import { getDateTime } from "../../../utils/commonFunction";
+
+function LoyalCustomer({ getLoyalCustomers, loyalCustomers }) {
+  const [selectedDropdownData, setSelectedDropdownData] = useState({
+    weekday: "monday",
+  });
+  const onSelectCategory = (weekday) => {
+    setSelectedDropdownData({
+      ...selectedDropdownData,
+      weekday,
     });
-    const onSelectCategory = (selectedCategoryIndex) => {
-        setSelectedDropdownData({
-            ...selectedDropdownData,
-            selectedCategoryIndex,
-        });
-    };
+  };
 
-    const { selectedCategoryIndex } = selectedDropdownData;
-    const categoryArr = [
-        {
-            name: 'Monday',
-            id: 0
-        }, 
-        {
-            name: 'Tuesday',
-            id: 1,
-        }, 
-        {
-            id: 2,
-            name: 'Webnesday'
-        },
-        {
-            id: 3,
-            name: 'Thursday'
-        },
-        {
-            id: 4,
-            name: 'Friday'
-        },
-        {
-            id: 5,
-            name: 'Saturday'
-        },
-        {
-            id: 6,
-            name: 'Sunday'
-        }
-    ]
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getLoyalCustomers({ weekday }, setLoading);
+  }, [setSelectedDropdownData, selectedDropdownData]);
 
-    return (
-        <div>
-            <Grid item xs={4} className="mb-4">
-                <DropdownV2
-                    fullWidth
-                    label="Select Day"
-                    value={selectedCategoryIndex.toString()}
-                    options={categoryArr || []}
-                    valueBasedOnProperty="id"
-                    displayProperty="name"
-                    onChange={(index) => onSelectCategory(index)}
-                    variant="outlined"
-                />
-            </Grid>
-            <TableUser />
-        </div>
-    );
+  const { weekday } = selectedDropdownData;
+  const categoryArr = [
+    {
+      name: "Monday",
+      id: "monday",
+    },
+    {
+      name: "Tuesday",
+      id: "tuesday",
+    },
+    {
+      id: "wednesday",
+      name: "Webnesday",
+    },
+    {
+      id: "thursday",
+      name: "Thursday",
+    },
+    {
+      id: "friday",
+      name: "Friday",
+    },
+    {
+      id: "saturday",
+      name: "Saturday",
+    },
+    {
+      id: "sunday",
+      name: "Sunday",
+    },
+  ];
+
+  const userArr = Object.keys(loyalCustomers).map((userId) => ({
+    ...loyalCustomers[userId],
+    createdAt: getDateTime(loyalCustomers[userId].createdAt)
+  }));
+
+  return (
+    <div>
+      <Row className="p-4">
+        <h5 className="mt-auto">Customer usually play on: </h5>
+        <Col xs={2}>
+          <DropdownV2
+            fullWidth
+            label="Select Day"
+            value={weekday.toString()}
+            options={categoryArr || []}
+            valueBasedOnProperty="id"
+            displayProperty="name"
+            onChange={(index) => onSelectCategory(index)}
+          />
+        </Col>
+      </Row>
+      <PageLoader loading={loading}>
+        <TableUser dataSource={userArr}/>
+      </PageLoader>
+    </div>
+  );
 }
 
-export default LoyalCustomer;
+const mapStateToProps = (state) => ({
+  loyalCustomers: state.loyalCustomer.loyalCustomers,
+});
+export default connect(mapStateToProps, { getLoyalCustomers })(LoyalCustomer);

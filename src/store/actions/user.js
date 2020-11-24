@@ -12,11 +12,12 @@ import { arrayToObject } from "../../utils/commonFunction";
 import { hera } from "hera-js";
 import Swal from "sweetalert2";
 import logoutDispatch from "../../utils/logoutDispatch";
-import Axios from "axios";
 import { ROLE } from "../../utils/common";
 
-// GET majors data
-export const getUsers = ({ role }, setLoading) => async (dispatch, getState) => {
+export const getUsers = ({ role }, setLoading) => async (
+  dispatch,
+  getState
+) => {
   const { token } = getState().auth;
 
   const { data, errors } = await hera({
@@ -46,7 +47,7 @@ export const getUsers = ({ role }, setLoading) => async (dispatch, getState) => 
           }
         `,
     variables: {
-      role
+      role,
     },
   });
 
@@ -70,10 +71,7 @@ export const getUsers = ({ role }, setLoading) => async (dispatch, getState) => 
 };
 
 // GET majors data
-export const getUserInfo = (id, setLoading) => async (
-  dispatch,
-  getState
-) => {
+export const getUserInfo = (id, setLoading) => async (dispatch, getState) => {
   const {
     token,
     user: { id: authUserId, role },
@@ -82,7 +80,7 @@ export const getUserInfo = (id, setLoading) => async (
   let userId = id;
   // manager role
   if (role === ROLE.owner) {
-    userId = authUserId
+    userId = authUserId;
   }
 
   const { data, errors } = await hera({
@@ -126,12 +124,6 @@ export const getUserInfo = (id, setLoading) => async (
         user_profile: data.getUserProfile,
       });
     }
-    // else {
-    //   dispatch({
-    //     type: GET_FRIEND_PROFILE,
-    //     friend_profile: data.getUserProfile,
-    //   });
-    // }
 
     setLoading(false);
   } else {
@@ -237,13 +229,14 @@ export const editUserInfo = (setLoading, userData, userId) => async (
   const {
     auth: {
       token,
-      user: { id: authId}
+      user: { id: authId },
     },
   } = state;
 
   const {
     firstName,
-    lastName, address,
+    lastName,
+    address,
     dob,
     email,
     favoriteFoot,
@@ -308,7 +301,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
       districtCode,
       wardCode,
       favoriteFoot,
-      gender
+      gender,
     },
   });
 

@@ -1,3 +1,5 @@
+import moment from 'moment';
+import { DATE_TIME } from './common';
 export const arrayToObject = (array) => {
   return array.reduce((obj, item) => {
     if (item.id) {
@@ -29,3 +31,17 @@ export const validateEmail = (email) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+
+export const getFullname = (firstname, lastname) => {
+  let fullname = "";
+  if (firstname) {
+    fullname += firstname + " ";
+  }
+  if (lastname) {
+    fullname += lastname;
+  }
+  return fullname;
+};
+
+export const getDateTime = (date) => moment(date).format(DATE_TIME);

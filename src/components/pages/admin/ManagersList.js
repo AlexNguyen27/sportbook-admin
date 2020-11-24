@@ -10,6 +10,7 @@ import {
 } from "../../../store/actions/user";
 import { SAVE_CURRENT_USER } from "../../../store/actions/types";
 import { DATE_TIME, ROLE } from "../../../utils/common";
+import { getFullname, getDateTime } from "../../../utils/commonFunction";
 
 import { forwardRef } from "react";
 
@@ -103,19 +104,6 @@ const ManagersList = ({
   useEffect(() => {
     getUsers({ role: ROLE.owner }, setLoading);
   }, []);
-
-  const getFullname = (firstname, lastname) => {
-    let fullname = "";
-    if (firstname) {
-      fullname += firstname + " ";
-    }
-    if (lastname) {
-      fullname += lastname;
-    }
-    return fullname;
-  };
-
-  const getDateTime = (date) => moment(date).format(DATE_TIME);
 
   const usersArray = Object.keys(users).map((userId) => ({
     ...users[userId],

@@ -85,7 +85,7 @@ const BenefitsList = ({
     ],
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [modelAdd, setModelAdd] = useState(false);
   const [modelEdit, setModelEdit] = useState(false);
   const [benefit, setBenefit] = useState();

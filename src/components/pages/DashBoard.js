@@ -19,11 +19,9 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Badge from "@material-ui/core/Badge";
-// import ReportIcon from "@material-ui/icons/Report";
 import CategoryIcon from "@material-ui/icons/Category";
-import Collapse from '@material-ui/core/Collapse';
+import Collapse from "@material-ui/core/Collapse";
 import "../../css/index.css";
-
 
 // MATERIAL ICONS
 import MenuIcon from "@material-ui/icons/Menu";
@@ -35,34 +33,30 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import CardGiftcardIcon from '@material-ui/icons/CardGiftcard';
-// import BarChartIcon from "@material-ui/icons/BarChart";
-import ContactsIcon from '@material-ui/icons/Contacts';
-import LoyaltyIcon from '@material-ui/icons/Loyalty';
-import MultilineChartIcon from '@material-ui/icons/MultilineChart';
+import CardGiftcardIcon from "@material-ui/icons/CardGiftcard";
+import ContactsIcon from "@material-ui/icons/Contacts";
+import LoyaltyIcon from "@material-ui/icons/Loyalty";
+import MultilineChartIcon from "@material-ui/icons/MultilineChart";
 import HelpIcon from "@material-ui/icons/Help";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-// import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
-import EventNoteIcon from '@material-ui/icons/EventNote';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import SettingsIcon from '@material-ui/icons/Settings';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LockIcon from '@material-ui/icons/Lock';
-import DeviceHubIcon from '@material-ui/icons/DeviceHub';
-import { Link, NavLink } from "react-router-dom";
+import EventNoteIcon from "@material-ui/icons/EventNote";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import SettingsIcon from "@material-ui/icons/Settings";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LockIcon from "@material-ui/icons/Lock";
+import DeviceHubIcon from "@material-ui/icons/DeviceHub";
+import { Link } from "react-router-dom";
 
 import { logoutUser } from "../../store/actions/auth";
 import { Avatar } from "@material-ui/core";
 import ChangePasswordModal from "./user/component/ChangePasswordModal";
 import UsersList from "./admin/UsersList";
-// import ViewPost from "./post/component/ViewPost";
 import GroundManagement from "./ground/GroundManagement";
 import OrderManagement from "./order/OrderManagement";
 import SubGroundManagement from "./subGround/SubGroundManagement";
-// import MultipleSummary from "./statistics/MultipleSummary";
 import Statistic from "./statistics/Statistic";
 import LoyalCustomer from "./loyalCustomer/LoyalCustomer";
 import UserInfo from "./user/UserInfo";
@@ -152,7 +146,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    minHeight: '52px !important',
+    minHeight: "52px !important",
   },
   header: {
     background: Colors.light_purple,
@@ -214,7 +208,9 @@ const DashBoard = ({
     //   logoutUser();
     // }
   }
-  const [drawerId, setDrawerId] = useState(isAdmin ? "dashboard" : "order-management");
+  const [drawerId, setDrawerId] = useState(
+    isAdmin ? "dashboard" : "order-management"
+  );
   // const [menuName, setMenuName] = useState(isAdmin ? "User Management" : "Ground management");
 
   const classes = useStyles();
@@ -225,7 +221,6 @@ const DashBoard = ({
   useEffect(() => {
     // getUserProfile(user.id, setLoading);
   }, []);
-
 
   const [open, setOpen] = useState(true);
 
@@ -328,37 +323,36 @@ const DashBoard = ({
       <Fragment>
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          Rhoncus dolor purus non enim praesent elementum facilisis leo vel.
-          Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id
-          interdum velit laoreet id donec ultrices. Odio morbi quis commodo
-          odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum
-          est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-          lobortis feugiat vivamus at augue. At augue eget arcu dictum
-          varius duis at consectetur lorem. Velit sed ullamcorper morbi
-          tincidunt. Lorem donec massa sapien faucibus et molestie ac.
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
+          dolor purus non enim praesent elementum facilisis leo vel. Risus at
+          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
+          quisque non tellus. Convallis convallis tellus id interdum velit
+          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
+          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
+          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
+          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
+          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
+          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
+          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
+          faucibus et molestie ac.
         </Typography>
         <Typography paragraph>
           Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
           ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare
-          suspendisse sed nisi lacus sed viverra tellus. Purus sit amet
-          volutpat consequat mauris. Elementum eu facilisis sed odio morbi.
-          Euismod lacinia at quis risus sed vulputate odio. Morbi tincidunt
-          ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam
-          aliquam sem et tortor. Habitant morbi tristique senectus et.
-          Adipiscing elit duis tristique sollicitudin nibh sit. Ornare
-          aenean euismod elementum nisi quis eleifend. Commodo viverra
-          maecenas accumsan lacus vel facilisis. Nulla posuere sollicitudin
-          aliquam ultrices sagittis orci a.
+          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
+          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
+          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
+          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
+          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
+          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
+          morbi tristique senectus et. Adipiscing elit duis tristique
+          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
+          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
+          posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography>
       </Fragment>
-    )
-  }
+    );
+  };
 
   const renderContent = (drawerId) => {
     if (isAdmin) {
@@ -397,18 +391,31 @@ const DashBoard = ({
         case "/my-account":
           return (
             <>
-              <UserInfo viewType={'user'}/>
+              <UserInfo viewType={"user"} />
             </>
           );
         case "/users/:userId":
           return (
             <>
-              <UserInfo viewType={'admin'}/>
+              <UserInfo viewType={"admin"} />
+            </>
+          );
+        case "/ground-management":
+          return (
+            <>
+              <GroundManagement />
+            </>
+          );
+
+        case "/statistics":
+          return (
+            <>
+              {/* FILER CHAR BY MONTH AND DAY */}
+              <Statistic />
             </>
           );
         default:
           return defaultTabContent();
-
       }
     } else {
       switch (match.path) {
@@ -446,14 +453,13 @@ const DashBoard = ({
         case "/my-account":
           return (
             <>
-              <UserInfo viewType={'user'}/>
+              <UserInfo viewType={"user"} />
             </>
           );
         default:
           return defaultTabContent();
       }
     }
-
   };
 
   if (!isAuthenticated) {
@@ -513,6 +519,18 @@ const DashBoard = ({
       title: "Manager Management",
     },
     {
+      key: "groundManagement",
+      icon: <DashboardIcon />,
+      to: "/ground-management",
+      title: "Ground Management",
+    },
+    {
+      key: "statistics",
+      icon: <MultilineChartIcon />,
+      to: `/statistics`,
+      title: "Statistics And Charts",
+    },
+    {
       key: "category",
       icon: <CategoryIcon />,
       to: "/categories-list",
@@ -524,6 +542,7 @@ const DashBoard = ({
       to: "/benefits-list",
       title: "Benefit",
     },
+  
     // {
     //   key: "report",
     //   icon: <ReportIcon />,
@@ -570,20 +589,21 @@ const DashBoard = ({
   };
 
   const getHeaderTitle = () => {
-    if (match.path.includes('my-account')) {
-      return 'My Account'
+    if (match.path.includes("my-account")) {
+      return "My Account";
     }
 
-    if(match.path.match('/users/:userId')) {
-      return "User info"
+    if (match.path.match("/users/:userId")) {
+      return "User info";
     }
     let found = isAdmin
-      ? navLinkAdmin.find(item => item.to.includes(match.path)) : navLinkMananager.find(item => item.to.includes(match.path));
+      ? navLinkAdmin.find((item) => item.to.includes(match.path))
+      : navLinkMananager.find((item) => item.to.includes(match.path));
     if (!found) {
-      found = navExtraInfo.find(item => item.to.includes(match.path));
+      found = navExtraInfo.find((item) => item.to.includes(match.path));
     }
-    return found?.title || '';
-  }
+    return found?.title || "";
+  };
 
   return (
     <div className={classes.root}>
@@ -598,7 +618,7 @@ const DashBoard = ({
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar style={{ maxHeight: '52px', minHeight: '0px' }}>
+        <Toolbar style={{ maxHeight: "52px", minHeight: "0px" }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -694,13 +714,13 @@ const DashBoard = ({
       >
         {/* Header title */}
         <div className={classes.drawerHeader}>
-          <strong>{isAdmin ? "ADMIN" : 'MANAGER'}</strong>
+          <strong>{isAdmin ? "ADMIN" : "MANAGER"}</strong>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-                <ChevronRightIcon />
-              )}
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </div>
         <Divider />
@@ -711,9 +731,9 @@ const DashBoard = ({
               button
               key={item.key}
               component={Link}
-              to={item.to || ''}
+              to={item.to || ""}
               onClick={() => {
-                setDrawerId(item.key)
+                setDrawerId(item.key);
               }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
@@ -743,30 +763,37 @@ const DashBoard = ({
               component={Link}
               button
               className={classes.nested}
-              to={"/my-account"} 
+              to={"/my-account"}
               onClick={() => {
-                setDrawerId('myAccount')
-              }}>
-              <ListItemIcon >
+                setDrawerId("myAccount");
+              }}
+            >
+              <ListItemIcon>
                 <AccountCircleIcon />
               </ListItemIcon>
               <ListItemText>
                 <span
-                  style={{ fontWeight: match.path === '/my-account' && !modalChangePassword ? "bold" : "" }}
+                  style={{
+                    fontWeight:
+                      match.path === "/my-account" && !modalChangePassword
+                        ? "bold"
+                        : "",
+                  }}
                 >
                   My account
                 </span>
               </ListItemText>
             </ListItem>
-            <ListItem button className={classes.nested}
-              onClick={handeOnChangePassword}>
+            <ListItem
+              button
+              className={classes.nested}
+              onClick={handeOnChangePassword}
+            >
               <ListItemIcon>
                 <LockIcon />
               </ListItemIcon>
               <ListItemText>
-                <span
-                  style={{ fontWeight: modalChangePassword ? "bold" : "" }}
-                >
+                <span style={{ fontWeight: modalChangePassword ? "bold" : "" }}>
                   Change password
                 </span>
               </ListItemText>
@@ -781,23 +808,26 @@ const DashBoard = ({
               button
               key={item.key}
               component={Link}
-              to={item.to || ''}
-              onClick={item.onClick || (() => {
-                setDrawerId(item.key)
-              })}
+              to={item.to || ""}
+              onClick={
+                item.onClick ||
+                (() => {
+                  setDrawerId(item.key);
+                })
+              }
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText>
                 <span
-                  style={{ fontWeight: match.path.includes(item.to) ? "bold" : "" }}
+                  style={{
+                    fontWeight: match.path.includes(item.to) ? "bold" : "",
+                  }}
                 >
                   {item.title}
                 </span>
               </ListItemText>
             </ListItem>
           ))}
-
-
         </List>
       </Drawer>
       <main
@@ -813,6 +843,4 @@ const DashBoard = ({
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
-export default connect(mapStateToProps, { logoutUser })(
-  DashBoard
-);
+export default connect(mapStateToProps, { logoutUser })(DashBoard);
