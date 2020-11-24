@@ -105,7 +105,6 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
         field: "status",
         lookup: ORDER_STATUS,
         render: (rowData) => {
-          console.log(rowData);
           return (
             <Alert
               className="m-0 text-center"
@@ -153,7 +152,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     getOrders(setLoading);
-  }, [getOrders, loading]);
+  }, []);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId) => ({

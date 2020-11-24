@@ -176,7 +176,7 @@ export const updateOrderStatus = (setLoading, orderData) => async (
       mutation {
         updateOrderStatus(
          id: $id
-        status: $status
+          status: $status
        ) {
         status
         message
