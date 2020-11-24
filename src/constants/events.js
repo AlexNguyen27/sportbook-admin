@@ -1,3 +1,4 @@
+import moment from 'moment';
 const now = new Date()
 
 export default [
@@ -5,7 +6,7 @@ export default [
     id: 0,
     title: 'All Day Event very long title',
     allDay: true,
-    start: new Date(2015, 3, 0),
+    start: moment(),
     end: new Date(2015, 3, 1),
   },
   {
@@ -101,7 +102,7 @@ export default [
   },
   {
     id: 14,
-    title: 'Today',
+    title: 'Today test',
     start: new Date(new Date().setHours(new Date().getHours() - 3)),
     end: new Date(new Date().setHours(new Date().getHours() + 3)),
   },
