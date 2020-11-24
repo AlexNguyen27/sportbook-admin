@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import moment from "moment";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import {
   DATE_TIME,
   ORDER_STATUS,
   PAYMENT_TYPE,
 } from "../../../../utils/common";
-import {
-  getCategories,
-  addCategory,
-  deleteCatgory,
-  updateCategory,
-} from "../../../../store/actions/category";
 
 import { forwardRef } from "react";
 
@@ -23,7 +17,6 @@ import Check from "@material-ui/icons/Check";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import Clear from "@material-ui/icons/Clear";
-import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import FilterList from "@material-ui/icons/FilterList";
 import FirstPage from "@material-ui/icons/FirstPage";
@@ -33,11 +26,10 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { Alert } from "reactstrap";
-import PageLoader from "../../../custom/PageLoader";
-import Swal from "sweetalert2";
 import Colors from "../../../../constants/Colors";
+import PageLoader from "../../../custom/PageLoader";
 import { capitalizeFirstLetter } from "../../../../utils/commonFunction";
-import { getOrders } from "../../../../store/actions/order";
+import { getOrders, updateOrderStatus } from "../../../../store/actions/order";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -70,7 +62,7 @@ const colorStatus = {
   approved: "success",
 };
 
-const OrderList = ({ getOrders }) => {
+const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
   const [state, setState] = useState({
     columns: [
       {
@@ -160,12 +152,17 @@ const OrderList = ({ getOrders }) => {
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    // getCategories(setLoading);
     getOrders(setLoading);
   }, [getOrders, loading]);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
-
+  const orderArr = Object.keys(orders).map((orderId) => ({
+    ...orders[orderId],
+    subGroundName: orders[orderId].subGround.name,
+    price: orders[orderId].price.toString(),
+    discount: orders[orderId].discount.toString(),
+    createdAt: getDateTime(orders[orderId].createdAt),
+  }));
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -173,7 +170,7 @@ const OrderList = ({ getOrders }) => {
           icons={tableIcons}
           title="List Of Orders"
           columns={state.columns}
-          data={state.data || []}
+          data={orderArr || []}
           options={{
             pageSize: 8,
             headerStyle: {
@@ -184,61 +181,24 @@ const OrderList = ({ getOrders }) => {
             },
             actionsColumnIndex: -1,
           }}
-          actions={[
-            {
-              icon: () => <Delete style={{ color: Colors.red }} />,
-              tooltip: "Delete Category", // delete order only for testing
-              onClick: (event, rowData) => {
-                Swal.fire({
-                  title: `Are you sure to delete ?`,
-                  text: "You won't be able to revert this!",
-                  type: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#3085d6",
-                  cancelButtonColor: "#d33",
-                  confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                  if (result.value) {
-                    setLoading(true);
-                    // deleteCatgory(setLoading, rowData.id);
-                    // deleteUser(setLoading, rowData.id);
-                  }
-                });
-              },
-            },
-          ]}
           editable={{
-            // onRowAdd: (newData) =>
-            //   new Promise((resolve, reject) => {
-            //     setTimeout(() => {
-            //       const { name } = newData;
-            //       setLoading(true);
-            //       addCategory(setLoading, name);
-            //       resolve();
-            //     }, 1000);
-            //   }),
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                  // edit categories
-                  setLoading(true);
-                  const { name, id } = newData;
-                  updateCategory(setLoading, name, id);
-                  if (oldData) {
-                    setState((prevState) => {
-                      const data = [...prevState.data];
-                      data[data.indexOf(oldData)] = newData;
-                      return { ...prevState, data };
-                    });
-                  }
-                }, 100);
+                resolve();
+                setLoading(true);
+                const { status, id } = newData;
+                updateOrderStatus(setLoading, { id, status });
               }),
+            isEditHidden: (rowData) => ["cancelled", "approved"].includes(rowData.status),
           }}
         />
       </div>
     </PageLoader>
   );
 };
-const mapStateToProps = (state) => ({});
-export default connect(mapStateToProps, { getOrders })(withRouter(OrderList));
+const mapStateToProps = (state) => ({
+  orders: state.order.orders,
+});
+export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
+  withRouter(OrderList)
+);

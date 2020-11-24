@@ -3,6 +3,7 @@ import {
   GET_ORDERS,
   ADD_ORDER,
   EDIT_ORDER,
+  EDIT_ORDER_STATUS,
   DELETE_ORDER,
 } from "../actions/types";
 
@@ -26,6 +27,14 @@ export default function (state = initialState, action) {
           ...state.orders,
           [order.id]: order,
         },
+      };
+
+    case EDIT_ORDER_STATUS:
+      const { id, status } = action.orderData;
+      const selectedOrder = state.orders[id];
+      return {
+        ...state.orders,
+        orders: { ...state.orders, [id]: { ...selectedOrder, status: status } },
       };
     case DELETE_ORDER:
       const newOrders = state.orders;

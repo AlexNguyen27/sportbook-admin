@@ -5,17 +5,13 @@ import {
   CLEAR_ERRORS,
   GET_ORDERS,
   ADD_ORDER,
-  DELETE_ORDER,
-  EDIT_ORDER,
+  EDIT_ORDER_STATUS,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
 import Swal from "sweetalert2";
 
-export const getOrders = (setLoading) => async (
-  dispatch,
-  getState
-) => {
+export const getOrders = (setLoading) => async (dispatch, getState) => {
   const { token } = getState().auth;
 
   const { data, errors } = await hera({
@@ -71,7 +67,7 @@ export const getOrders = (setLoading) => async (
   }
 };
 
-export const addSubGround = (setLoading, subGroundData) => async (
+export const addOrder = (setLoading, orderData) => async (
   dispatch,
   getState
 ) => {
@@ -86,21 +82,36 @@ export const addSubGround = (setLoading, subGroundData) => async (
     },
     query: `
           mutation {
-            createSubGround(
-                 name: $name,
-                 numberOfPlayers: $numberOfPlayers
-                 groundId: $groundId
+            createOrder(
+              subGroundId: $subGroundId
+              startDay: $startDay
+              startTime: $startTime
+              endTime: $endTime
+              paymentType: $paymentType
+              price: $price
+              discount: $discount
               ) {
                 id
-                name
-                numberOfPlayers
-                groundId
+                subGroundId
+                userId
+                startDay
+                startTime
+                endTime
+                paymentType
+                status
+                discount
+                price
+                subGround {
+                  id
+                  name
+                }
                 createdAt
+                updatedAt
               }
           } 
         `,
     variables: {
-      ...subGroundData,
+      ...orderData,
     },
   });
 
@@ -111,7 +122,7 @@ export const addSubGround = (setLoading, subGroundData) => async (
 
     dispatch({
       type: ADD_ORDER,
-      subGround: data.createSubGround,
+      order: data.createOrder,
     });
     setLoading(false);
     Swal.fire({
@@ -124,6 +135,7 @@ export const addSubGround = (setLoading, subGroundData) => async (
   } else {
     logoutDispatch(dispatch, errors);
     setLoading(false);
+
     Swal.fire({
       position: "center",
       type: "Warning",
@@ -131,14 +143,26 @@ export const addSubGround = (setLoading, subGroundData) => async (
       showConfirmButton: false,
       timer: 1500,
     });
+    // TODO: update later
+    const payloadError = errors[0]?.extensions?.payload;
+    let error = {};
+    Object.keys(payloadError).map((key) => {
+      error[key] = payloadError[key].message;
+    });
+
+    console.log(error, "error--------------------");
+
     dispatch({
       type: GET_ERRORS,
-      errors: errors[0].message,
+      errors: error || errors[0].message,
     });
   }
 };
 
-export const deleteSubGround = (setLoading, id) => async (dispatch, getState) => {
+export const updateOrderStatus = (setLoading, orderData) => async (
+  dispatch,
+  getState
+) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
     options: {
@@ -149,15 +173,18 @@ export const deleteSubGround = (setLoading, id) => async (dispatch, getState) =>
       },
     },
     query: `
-        mutation {
-          deleteSubGround(id: $id) {
-            status,
-            message
-          }
-        } 
-      `,
+      mutation {
+        updateOrderStatus(
+         id: $id
+        status: $status
+       ) {
+        status
+        message
+        }
+      } 
+    `,
     variables: {
-      id,
+      ...orderData,
     },
   });
   if (!errors) {
@@ -166,98 +193,32 @@ export const deleteSubGround = (setLoading, id) => async (dispatch, getState) =>
     });
 
     dispatch({
-      type: DELETE_ORDER,
-      selectedId: id,
+      type: EDIT_ORDER_STATUS,
+      orderData: {
+        ...orderData,
+      },
     });
+    setLoading(false);
     Swal.fire({
       position: "center",
       type: "success",
-      title: "Deleted successfully!",
+      title: "Your work has been save!",
       showConfirmButton: false,
       timer: 1500,
     });
     setLoading(false);
   } else {
-    console.log(errors);
-    logoutDispatch(dispatch, errors);
     Swal.fire({
       position: "center",
       type: "Warning",
-      title: "Can't delete this ground cuz it has sub ground!",
+      title: errors[0].message,
       showConfirmButton: false,
       timer: 1500,
     });
+    logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,
       errors: errors[0].message,
     });
-  }
-};
-
-export const updateSubGround = (setLoading, subGroundData) => async (
-  dispatch,
-  getState
-) => {
-  const { token } = getState().auth;
-  const { data, errors } = await hera({
-      options: {
-          url: BASE_URL,
-          headers: {
-              token,
-              "Content-Type": "application/json",
-          },
-      },
-      query: `
-      mutation {
-       updateSubGround(
-         id: $id
-         name: $name
-         groundId: $groundId
-         numberOfPlayers: $numberOfPlayers
-       ) {
-        id
-        name
-        numberOfPlayers
-        groundId
-        createdAt
-        }
-      } 
-    `,
-      variables: {
-         ...subGroundData
-      },
-  });
-  if (!errors) {
-      dispatch({
-          type: CLEAR_ERRORS,
-      });
-
-      dispatch({
-          type: EDIT_ORDER,
-          subGround: data.updateSubGround,
-      });
-      setLoading(false);
-      Swal.fire({
-          position: "center",
-          type: "success",
-          title: "Your work has been save!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      setLoading(false);
-  } else {
-      console.log(errors);
-      Swal.fire({
-          position: "center",
-          type: "Warning",
-          title: "Please check the input!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      logoutDispatch(dispatch, errors);
-      dispatch({
-          type: GET_ERRORS,
-          errors: errors[0].message,
-      });
   }
 };

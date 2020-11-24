@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { clearErrors } from "../../../../store/actions/common";
 import moment from "moment";
+import _ from "lodash";
 // COMPONENTS
 import Button from "@material-ui/core/Button";
 import TextFieldInputWithHeader from "../../../custom/TextFieldInputWithheader";
@@ -18,29 +19,28 @@ import {
 } from "reactstrap";
 import { GET_ERRORS } from "../../../../store/actions/types";
 import PageLoader from "../../../custom/PageLoader";
-import { addBenefit } from "../../../../store/actions/benefit";
 import { getSubGrounds } from "../../../../store/actions/subGround";
 import DropdownV2 from "../../../custom/DropdownV2";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
-  KeyboardTimePicker,
 } from "@material-ui/pickers";
 import { PAYMENT_TYPE } from "../../../../utils/common";
 import { trimObjProperties } from "../../../../utils/formatString";
 import { getPrices } from "../../../../store/actions/price";
+import { addOrder } from "../../../../store/actions/order";
 
 const AddOrderModal = ({
   errors,
   clearErrors,
   modal,
   setModal,
-  addBenefit,
   getSubGrounds,
   subGrounds,
   getPrices,
   prices,
+  addOrder,
 }) => {
   const dispatch = useDispatch();
 
@@ -51,6 +51,7 @@ const AddOrderModal = ({
   const [selectedSubGroundId, setSelectedSubGroundId] = useState(
     subGroundArr[0]?.id || ""
   );
+
   useEffect(() => {
     getSubGrounds(setLoading).then(() => {
       setLoading(true);
@@ -68,20 +69,26 @@ const AddOrderModal = ({
     discount: "",
   });
 
-  const startTimeArr = Object.keys(prices).map((key) => ({
-    startTime: moment(prices[key].startTime, "HH:mm:ss").format("HH:mm"),
-    displayValue: moment(prices[key].startTime, "HH:mm:ss").format("HH:mm A"),
-  }));
-
-  const endTimeArr = Object.keys(prices).map((key) => ({
-    endTime: moment(prices[key].endTime, "HH:mm:ss").format("HH:mm"),
-    displayValue: moment(prices[key].endTime, "HH:mm:ss").format("HH:mm A"),
-  }));
+  const startTimeArr = () => {
+    const startTimes = [];
+    Object.keys(prices).map((key) => {
+      if (!startTimes.find((item) => item.compare === prices[key].startTime)) {
+        startTimes.push({
+          compare: prices[key].startTime,
+          startTime: moment(prices[key].startTime, "HH:mm:ss").format("HH:mm"),
+          displayValue: moment(prices[key].startTime, "HH:mm:ss").format(
+            "HH:mm A"
+          ),
+        });
+      }
+    });
+    return startTimes;
+  };
 
   const [selectedDate, setSelectedDate] = React.useState({
     date: new Date(),
     startTime: startTimeArr[0]?.id || "",
-    endTime: endTimeArr[0]?.id || "",
+    selectedPriceId: "",
   });
 
   const paymendTypeArr = Object.keys(PAYMENT_TYPE).map((key) => ({
@@ -89,8 +96,26 @@ const AddOrderModal = ({
     value: PAYMENT_TYPE[key],
   }));
 
-  console.log("------sdf---------", startTimeArr);
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
+
+  const getEndTimes = () => {
+    let endTimes = [];
+    if (!selectedDate.startTime.trim()) {
+      return endTimes;
+    }
+
+    const endTimeArray = _.map(prices, (price) => {
+      const newEndTime = {
+        priceId: price.id,
+        startTime: moment(price.startTime, "HH:mm:ss").format("HH:mm"),
+        displayValue: moment(price.endTime, "HH:mm:ss").format("HH:mm A"),
+      };
+      return newEndTime;
+    });
+
+    endTimes = _.filter(endTimeArray, ["startTime", selectedDate.startTime]);
+    return endTimes;
+  };
 
   const { price, discount } = formData;
   // CLOSE MODAL ACTION
@@ -103,7 +128,6 @@ const AddOrderModal = ({
     });
   };
   const handleDateChange = (date, fieldName) => {
-    console.log("d-------------", date);
     setSelectedDate({
       ...selectedDate,
       [fieldName]: date,
@@ -117,10 +141,14 @@ const AddOrderModal = ({
     });
   };
 
-  const handleEndTimeChange = (date) => {
+  const handleEndTimeChange = (priceId) => {
+    setFormData({
+      price: prices[priceId].price,
+      discount: prices[priceId].discount.toString(),
+    });
     setSelectedDate({
       ...selectedDate,
-      endTime: date,
+      selectedPriceId: priceId,
     });
   };
   // HANDLE ON SUBMIT FROM ADD NEW GROUP
@@ -128,20 +156,20 @@ const AddOrderModal = ({
     e.preventDefault();
 
     const error = {};
-    const formatedData = {
+    const formatedData = trimObjProperties({
       subGroundId: selectedSubGroundId,
       startDay: moment(selectedDate.date).format("DD/MM/YYYY"),
-      startTime: moment(selectedDate.startTime).format("HH:mm"),
-      endTime: moment(selectedDate.endTime).format("HH:mm"),
+      startTime: prices[selectedDate.selectedPriceId]?.startTime || '',
+      endTime: prices[selectedDate.selectedPriceId]?.endTime || '',
       paymentType: selectedPaymentType,
-    };
-    console.log("d----------------", formatedData);
+    });
+    console.log("ffff--------------------", formatedData);
 
-    // Object.keys(formData).map((key) => {
-    // if (formData.title.trim() === "") {
-    //   error.title = "This field is required";
-    // }
-    // });
+    Object.keys(formatedData).map((key) => {
+      if (!formatedData[key]) {
+        error[key] = "This field is required";
+      }
+    });
     if (!selectedPaymentType.trim()) {
       error.payment = "This field is required";
     }
@@ -154,13 +182,9 @@ const AddOrderModal = ({
     if (JSON.stringify(error) === "{}") {
       // setLoading(true);
       formatedData.price = price;
-      formatedData.discount = discount;
-      console.log(formatedData);
-      //   addBenefit(
-      //     setLoading,
-      //     title,
-      //     description,
-      //   );
+      formatedData.discount = Number(discount);
+      setLoading(true);
+      addOrder(setLoading, formatedData);
     }
   };
 
@@ -205,12 +229,13 @@ const AddOrderModal = ({
                     variant="outlined"
                     id="date-picker-dialog"
                     label="Select date"
-                    format="MM/dd/yyyy"
+                    format="dd/MM/yyyy"
                     value={selectedDate.date}
                     onChange={(date) => handleDateChange(date, "date")}
                     KeyboardButtonProps={{
                       "aria-label": "change date",
                     }}
+                    error={errors.startDay}
                   />
                 </MuiPickersUtilsProvider>
               </Col>
@@ -232,55 +257,31 @@ const AddOrderModal = ({
                   fullWidth
                   label="Select start time"
                   value={selectedDate.startTime.toString() || ""}
-                  options={startTimeArr || []}
+                  options={startTimeArr() || []}
                   valueBasedOnProperty="startTime"
                   displayProperty="displayValue"
                   onChange={(time) => handleStartTimeChange(time)}
-                  error={errors.payment}
+                  error={errors.startTime}
                   variant="outlined"
                 />
-                {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardTimePicker
-                    margin="normal"
-                    id="time-picker"
-                    label="Select start time"
-                    value={selectedDate.startTime}
-                    onChange={(date) => handleDateChange(date, "startTime")}
-                    KeyboardButtonProps={{
-                      "aria-label": "change time",
-                    }}
-                  />
-                </MuiPickersUtilsProvider> */}
               </Col>
               <Col xs="6" className="mt-4">
                 <DropdownV2
                   fullWidth
-                  label="Select start time"
-                  value={selectedDate.endTime.toString() || ""}
-                  options={endTimeArr || []}
-                  valueBasedOnProperty="endTime"
+                  label="Select end time"
+                  value={selectedDate.selectedPriceId.toString() || ""}
+                  options={getEndTimes() || []}
+                  valueBasedOnProperty="priceId"
                   displayProperty="displayValue"
-                  onChange={(time) => handleEndTimeChange(time)}
-                  error={errors.payment}
+                  onChange={(priceId) => handleEndTimeChange(priceId)}
+                  error={errors.endTime}
                   variant="outlined"
                 />
-                {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardTimePicker
-                    margin="normal"
-                    id="time-picker"
-                    label="Select end time"
-                    value={selectedDate.endTime}
-                    onChange={(date) => handleDateChange(date, "endTime")}
-                    KeyboardButtonProps={{
-                      "aria-label": "change time",
-                    }}
-                  />
-                </MuiPickersUtilsProvider> */}
               </Col>
-
               <Col xs="6" className="mt-4">
                 <TextFieldInputWithHeader
                   disabled
+                  type="number"
                   variant="outlined"
                   name="price"
                   label="Price"
@@ -292,6 +293,7 @@ const AddOrderModal = ({
               <Col xs="6" className="mt-4">
                 <TextFieldInputWithHeader
                   disabled
+                  type="number"
                   variant="outlined"
                   name="discount"
                   label="Discount"
@@ -327,7 +329,7 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   clearErrors,
-  addBenefit,
+  addOrder,
   getPrices,
   getSubGrounds,
 })(AddOrderModal);
