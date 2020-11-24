@@ -1,10 +1,8 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
 import { Row, Col } from "reactstrap";
-// react-chart-js
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import { Pie } from "react-chartjs-2";
-import { HorizontalBar } from "react-chartjs-2";
+
 // MATERIAL UI
 import { makeStyles } from "@material-ui/core/styles";
 import Radio from "@material-ui/core/Radio";
@@ -12,6 +10,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
+
 // Material UI style
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,61 +39,65 @@ const useStyles = makeStyles((theme) => ({
 //   ],
 // };
 
-const MultipleSummary = ({ name, like, view }) => {
+const MultipleSummary = ({ name, dataSource, view }) => {
   const classes = useStyles();
-  // Array option of question
-  // const options = [
-  //   "January",
-  //   "February",
-  //   "March",
-  //   "April",
-  //   "May",
-  //   "June",
-  //   "July",
-  // ];
   const options = name;
-  // let optionLabels = options.map((option) => option.text);
-  // const totalAnswers = [65, 59, 80, 81, 56, 55, 40];
+  const lineName = "Price(VND)";
 
-  const totalAnswers = like || view;
   // PIE CHART
   const dataPie = {
     labels: options,
     datasets: [
       {
-        data: totalAnswers,
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+        data: dataSource,
+        label: "Pie chart",
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
       },
     ],
   };
 
-  const lineName = view ? "Views" : "Likes";
   // LINE CHART
   const dataLine = {
     labels: options,
     datasets: [
       {
         label: lineName,
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: "rgba(75,192,192,0.4)",
-        borderColor: "rgba(75,192,192,1)",
-        borderCapStyle: "butt",
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: "miter",
-        pointBorderColor: "rgba(75,192,192,1)",
-        pointBackgroundColor: "#fff",
-        pointBorderWidth: 1,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: "rgba(75,192,192,1)",
-        pointHoverBorderColor: "rgba(220,220,220,1)",
-        pointHoverBorderWidth: 2,
-        pointRadius: 1,
-        pointHitRadius: 10,
-        spanGaps: true,
-        data: totalAnswers,
+        data: dataSource,
+        // lineTension: 0.1,
+        // backgroundColor: "rgba(75,192,192,0.4)",
+        // borderColor: "rgba(75,192,192,1)",
+        // borderCapStyle: "butt",
+        // borderDash: [],
+        // borderDashOffset: 0.0,
+        // borderJoinStyle: "miter",
+        // pointBorderColor: "rgba(75,192,192,1)",
+        // pointBackgroundColor: "#fff",
+        // pointBorderWidth: 1,
+        // pointHoverRadius: 5,
+        // pointHoverBackgroundColor: "rgba(75,192,192,1)",
+        // pointHoverBorderColor: "rgba(220,220,220,1)",
+        // pointHoverBorderWidth: 2,
+        // pointRadius: 1,
+        // pointHitRadius: 10,
+        // spanGaps: true,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
       },
     ],
   };
@@ -104,24 +107,48 @@ const MultipleSummary = ({ name, like, view }) => {
     labels: options,
     datasets: [
       {
+        data: dataSource,
         label: lineName,
-        backgroundColor: "rgba(255,99,132,0.2)",
-        borderColor: "rgba(255,99,132,1)",
+        // backgroundColor: "rgba(255,99,132,0.2)",
+        // borderColor: "rgba(255,99,132,1)",
+        // borderWidth: 1,
+        // hoverBackgroundColor: "rgba(255,99,132,0.4)",
+        // hoverBorderColor: "rgba(255,99,132,1)",
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
         borderWidth: 1,
-        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-        hoverBorderColor: "rgba(255,99,132,1)",
-        data: totalAnswers,
       },
     ],
   };
 
   // AXES BAR CHART
+  // const Axes = [
+  //   {
+  //     min: 0,
+  //     ticks: {
+  //       beginAtZero: true,
+  //       stepSize: 1,
+  //     },
+  //   },
+  // ];
   const Axes = [
     {
-      min: 0,
       ticks: {
         beginAtZero: true,
-        stepSize: 1,
       },
     },
   ];
@@ -178,7 +205,7 @@ const MultipleSummary = ({ name, like, view }) => {
                     data={dataLine}
                     options={{
                       scales: {
-                        yAxes: Axes,
+                        yAxes: Axes
                       },
                     }}
                   />
@@ -186,11 +213,11 @@ const MultipleSummary = ({ name, like, view }) => {
               ),
               3: (
                 <div>
-                  <HorizontalBar
+                  <Bar
                     data={dataBar}
                     options={{
                       scales: {
-                        xAxes: Axes,
+                        yAxes: Axes
                       },
                     }}
                   />
@@ -203,11 +230,5 @@ const MultipleSummary = ({ name, like, view }) => {
     </Fragment>
   );
 };
-// const mapStateToProps = state => ({
-//   question_report_page: state.question_report_page
-// });
-// export default connect(
-//   mapStateToProps,
-//   null
-// )(MultipleSummary);
+
 export default MultipleSummary;

@@ -9,6 +9,7 @@ import subGround from "./subGround";
 import price from "./price";
 import order from "./order";
 import loyalCustomer from "./loyalCustomer";
+import statistic from "./statistic";
 
 export default combineReducers({
   errors,
@@ -21,4 +22,5 @@ export default combineReducers({
   price,
   order,
   loyalCustomer,
+  statistic,
 });

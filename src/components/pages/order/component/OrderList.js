@@ -66,7 +66,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
   const [state, setState] = useState({
     columns: [
       {
-        title: "Ground name",
+        title: "Sub ground name",
         field: "subGroundName",
         editable: "never",
       },
