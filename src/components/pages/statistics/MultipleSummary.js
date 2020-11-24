@@ -52,20 +52,20 @@ const MultipleSummary = ({ name, dataSource, view }) => {
         data: dataSource,
         label: "Pie chart",
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
         ],
         borderWidth: 1,
       },
@@ -96,8 +96,8 @@ const MultipleSummary = ({ name, dataSource, view }) => {
         // pointRadius: 1,
         // pointHitRadius: 10,
         // spanGaps: true,
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
       },
     ],
   };
@@ -115,20 +115,20 @@ const MultipleSummary = ({ name, dataSource, view }) => {
         // hoverBackgroundColor: "rgba(255,99,132,0.4)",
         // hoverBorderColor: "rgba(255,99,132,1)",
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
         ],
         borderWidth: 1,
       },
@@ -192,6 +192,11 @@ const MultipleSummary = ({ name, dataSource, view }) => {
           </FormControl>
         </Col>
         <Col md={9}>
+          {!dataSource.length && (
+            <div>
+              <h5 className="text-center mt-4">NO ORDER DATA</h5>
+            </div>
+          )}
           {
             {
               1: (
@@ -205,7 +210,7 @@ const MultipleSummary = ({ name, dataSource, view }) => {
                     data={dataLine}
                     options={{
                       scales: {
-                        yAxes: Axes
+                        yAxes: Axes,
                       },
                     }}
                   />
@@ -217,7 +222,7 @@ const MultipleSummary = ({ name, dataSource, view }) => {
                     data={dataBar}
                     options={{
                       scales: {
-                        yAxes: Axes
+                        yAxes: Axes,
                       },
                     }}
                   />

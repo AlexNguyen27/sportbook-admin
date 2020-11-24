@@ -157,7 +157,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
-    subGroundName: orders[orderId].subGround.name,
+    subGroundName: orders[orderId]?.subGround?.name || '',
     price: orders[orderId].price.toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
