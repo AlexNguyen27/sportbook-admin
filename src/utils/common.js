@@ -30,12 +30,12 @@ export const SUB_GROUND_STATUS = {
 };
 
 export const PAYMENT_TYPE = {
-  online: 'online',
-  offline: 'offline',
+  online: 'Online',
+  offline: 'Offline',
 };
 
 export const ORDER_STATUS = {
-  new: 'new',
-  cancelled: 'cancelled',
-  approved: 'approved',
+  new: 'New',
+  cancelled: 'Cancelled',
+  approved: 'Approved',
 };

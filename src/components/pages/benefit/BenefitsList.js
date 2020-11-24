@@ -91,7 +91,6 @@ const BenefitsList = ({
   const [benefit, setBenefit] = useState();
 
   useEffect(() => {
-    // getCategories(setLoading);
     getBenefits(setLoading);
   }, [getBenefits, loading]);
 

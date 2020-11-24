@@ -61,3 +61,10 @@ export const GET_PRICES = "GET_PRICES";
 export const DELETE_PRICE = "DELETE_PRICE";
 export const EDIT_PRICE = "EDIT_PRICE";
 export const ADD_PRICE = "ADD_PRICE";
+
+// ORDER
+export const GET_ORDERS = "GET_ORDERS";
+export const DELETE_ORDER = "DELETE_ORDER";
+export const EDIT_ORDER = "EDIT_ORDER";
+export const EDIT_ORDER_STATUS = "EDIT_ORDER_STATUS";
+export const ADD_ORDER = "ADD_ORDER";

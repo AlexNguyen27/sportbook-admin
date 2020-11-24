@@ -18,6 +18,19 @@ export const getSubGrounds = (setLoading, groundId) => async (
 ) => {
   const { token } = getState().auth;
 
+  let subGroundQuery = "";
+  let variables = {};
+  if (groundId) {
+    variables = { ...variables, groundId };
+    subGroundQuery += "groundId: $groundId";
+  }
+
+  if (subGroundQuery.length > 0) {
+    subGroundQuery = `(${subGroundQuery})`;
+  }
+
+  console.log("valirad-----------------", variables);
+  console.log("valirad-----------sdsdsd------", subGroundQuery);
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
@@ -26,19 +39,19 @@ export const getSubGrounds = (setLoading, groundId) => async (
         "Content-Type": "application/json",
       },
     },
-    query: `
-                query {
-                  subGrounds(groundId: $groundId) {
-                    id
-                    name
-                    numberOfPlayers
-                    groundId
-                    createdAt
-                  }
-                }
-            `,
+      query: `
+          query {
+            subGrounds${subGroundQuery} {
+              id
+              name
+              numberOfPlayers
+              groundId
+              createdAt
+            }
+          }
+      `,
     variables: {
-      groundId,
+      ...variables,
     },
   });
   if (!errors) {
@@ -125,7 +138,10 @@ export const addSubGround = (setLoading, subGroundData) => async (
   }
 };
 
-export const deleteSubGround = (setLoading, id) => async (dispatch, getState) => {
+export const deleteSubGround = (setLoading, id) => async (
+  dispatch,
+  getState
+) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
     options: {
@@ -187,14 +203,14 @@ export const updateSubGround = (setLoading, subGroundData) => async (
 ) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
-      options: {
-          url: BASE_URL,
-          headers: {
-              token,
-              "Content-Type": "application/json",
-          },
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
       },
-      query: `
+    },
+    query: `
       mutation {
        updateSubGround(
          id: $id
@@ -210,41 +226,41 @@ export const updateSubGround = (setLoading, subGroundData) => async (
         }
       } 
     `,
-      variables: {
-         ...subGroundData
-      },
+    variables: {
+      ...subGroundData,
+    },
   });
   if (!errors) {
-      dispatch({
-          type: CLEAR_ERRORS,
-      });
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
 
-      dispatch({
-          type: EDIT_SUB_GROUND,
-          subGround: data.updateSubGround,
-      });
-      setLoading(false);
-      Swal.fire({
-          position: "center",
-          type: "success",
-          title: "Your work has been save!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      setLoading(false);
+    dispatch({
+      type: EDIT_SUB_GROUND,
+      subGround: data.updateSubGround,
+    });
+    setLoading(false);
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Your work has been save!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    setLoading(false);
   } else {
-      console.log(errors);
-      Swal.fire({
-          position: "center",
-          type: "Warning",
-          title: "Please check the input!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      logoutDispatch(dispatch, errors);
-      dispatch({
-          type: GET_ERRORS,
-          errors: errors[0].message,
-      });
+    console.log(errors);
+    Swal.fire({
+      position: "center",
+      type: "Warning",
+      title: "Please check the input!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
   }
 };
