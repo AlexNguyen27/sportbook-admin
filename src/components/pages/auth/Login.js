@@ -1,8 +1,8 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-import { Redirect, withRouter, matchPath } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import { Button, Container } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 // COMPONENT
 import PageTitle from "../../custom/PageTitle";
@@ -68,13 +68,22 @@ const Login = ({
   };
 
   if (isAuthenticated) {
-      return isAdmin ? <Redirect to="/orders-list" /> : <Redirect to="/order-management" />;;
+    return isAdmin ? (
+      <Redirect to="/orders-list" />
+    ) : (
+      <Redirect to="/order-management" />
+    );
   }
 
   return (
     <Fragment>
-      <Grid container justify='center' type='flex' style={{ marginTop: '150px' }}>
-        <Grid item xs={6}>
+      <Grid
+        container
+        justify="center"
+        type="flex"
+        style={{ marginTop: "80px" }}
+      >
+        <Grid item xs={6} className="m-auto">
           <Grid container justify="center" className="login mt-4">
             <Grid item xs={10}>
               <PageTitle title="Login to continue" center="true" />
@@ -83,21 +92,21 @@ const Login = ({
                   <Button
                     className="mt-3 w-100"
                     variant="contained"
-                    style={{ backgroundColor: '#3f72af', color: 'white' }}
+                    style={{ backgroundColor: "#3f72af", color: "white" }}
                     type="submit"
                   >
                     Facebook
-                    </Button>
+                  </Button>
                 </Grid>
                 <Grid item xs={6}>
                   <Button
                     className="mt-3 w-100"
                     variant="contained"
                     type="submit"
-                    style={{ backgroundColor: '#ec524b', color: 'white' }}
+                    style={{ backgroundColor: "#ec524b", color: "white" }}
                   >
                     Google
-                </Button>
+                  </Button>
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>
@@ -138,10 +147,10 @@ const Login = ({
                 <p
                   style={{ color: "#00bfd8", cursor: "pointer" }}
                   className="mt-3 text-decoration-underline"
-                  onClick={() => history.push('reset-password')}
+                  onClick={() => history.push("reset-password")}
                 >
                   Forgot password?
-            </p>
+                </p>
               </div>
             </Grid>
           </Grid>

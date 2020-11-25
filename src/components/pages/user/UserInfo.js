@@ -191,8 +191,8 @@ const UserInfo = ({
         selectedRegionCode: _.get(address, 'regionCode') || '',
         selectedDistrictCode: _.get(address, 'districtCode') || '',
         selectedWardCode: _.get(address, 'wardCode') || '',
-        selectedFavoriteFootKey: _.get(current_user, 'favoriteFoot') || '',
-        selectedGenderKey: _.get(current_user, 'gender', '') || '',
+        selectedFavoriteFootKey: _.get(user, 'favoriteFoot') || '',
+        selectedGenderKey: _.get(user, 'gender', '') || '',
       })
     } else {
       const address = JSON.parse(_.get(current_user, 'address'));
