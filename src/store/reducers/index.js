@@ -10,6 +10,7 @@ import price from "./price";
 import order from "./order";
 import loyalCustomer from "./loyalCustomer";
 import statistic from "./statistic";
+import history from "./history";
 
 export default combineReducers({
   errors,
@@ -23,4 +24,5 @@ export default combineReducers({
   order,
   loyalCustomer,
   statistic,
+  history,
 });

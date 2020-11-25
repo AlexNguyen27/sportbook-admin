@@ -2,13 +2,9 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import moment from "moment";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
-import {
-  DATE_TIME,
-  ORDER_STATUS,
-  PAYMENT_TYPE,
-} from "../../../utils/common";
-
+import { withRouter, useHistory } from "react-router-dom";
+import { DATE_TIME, ORDER_STATUS, PAYMENT_TYPE } from "../../../utils/common";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -163,6 +159,7 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus }) => {
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
   }));
+  const history = useHistory();
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -181,6 +178,16 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus }) => {
             },
             actionsColumnIndex: -1,
           }}
+          actions={[
+            {
+              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+              tooltip: "History",
+              onClick: (event, rowData) => {
+                history.push(`orders-list/${rowData.id}`);
+
+              },
+            },
+          ]}
           editable={{
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
@@ -189,7 +196,8 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus }) => {
                 const { status, id } = newData;
                 updateOrderStatus(setLoading, { id, status });
               }),
-            isEditHidden: (rowData) => ["cancelled", "approved"].includes(rowData.status),
+            isEditHidden: (rowData) =>
+              ["cancelled", "approved"].includes(rowData.status),
           }}
         />
       </div>

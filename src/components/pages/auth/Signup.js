@@ -68,11 +68,11 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
 
   return (
     <Fragment>
-      <Grid container justify='center' type='flex' style={{ marginTop: '150px' }}>
+      <Grid container justify='center' type='flex' style={{ marginTop: "80px" }} >
         <Grid item xs={6}>
           <Landing />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={6} className="m-auto">
           <Grid container justify="center" className="login mt-4">
             <Grid item xs={10}>
               <PageTitle title="Create new account" center="true" />

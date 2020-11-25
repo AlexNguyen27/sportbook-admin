@@ -64,6 +64,7 @@ import CategoryList from "./category/CategoryList";
 import ManagersList from "./admin/ManagersList";
 import BenefitsList from "./benefit/BenefitsList";
 import OrdersList from "./admin/OrdersList";
+import HistoryList from "./history/HistoryList";
 
 const drawerWidth = 260;
 
@@ -414,6 +415,12 @@ const DashBoard = ({
               <Statistic />
             </>
           );
+        case "/orders-list/:orderId":
+          return (
+            <>
+              <HistoryList orderId={match.params.orderId}/>
+            </>
+          );
         default:
           return defaultTabContent();
       }
@@ -454,6 +461,12 @@ const DashBoard = ({
           return (
             <>
               <UserInfo viewType={"user"} />
+            </>
+          );
+        case "/order-management/:orderId":
+          return (
+            <>
+              <HistoryList orderId={match.params.orderId} />
             </>
           );
         default:
@@ -542,7 +555,7 @@ const DashBoard = ({
       to: "/benefits-list",
       title: "Benefit",
     },
-  
+
     // {
     //   key: "report",
     //   icon: <ReportIcon />,
@@ -596,6 +609,11 @@ const DashBoard = ({
     if (match.path.match("/users/:userId")) {
       return "User info";
     }
+
+    if (match.path.match("orderId")) {
+      return "Order History";
+    }
+
     let found = isAdmin
       ? navLinkAdmin.find((item) => item.to.includes(match.path))
       : navLinkMananager.find((item) => item.to.includes(match.path));

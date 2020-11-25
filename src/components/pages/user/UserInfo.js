@@ -4,31 +4,26 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Button } from "@material-ui/core";
 import { Row, Col } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
-import _ from 'lodash';
-import SaveIcon from '@material-ui/icons/Save';
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import DateFnsUtils from '@date-io/date-fns';
-import moment from 'moment';
-import {
-  MuiPickersUtilsProvider,
-  DatePicker,
-} from '@material-ui/pickers';
+import _ from "lodash";
+import SaveIcon from "@material-ui/icons/Save";
+import RotateLeftIcon from "@material-ui/icons/RotateLeft";
+import DateFnsUtils from "@date-io/date-fns";
+import moment from "moment";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import {
   GET_ERRORS,
   CLEAR_ERRORS,
   BASE_IMAGE_URL,
 } from "../../../store/actions/types";
-import {
-  trimObjProperties,
-} from "../../../utils/formatString";
+import { trimObjProperties } from "../../../utils/formatString";
 import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
 import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
 import { GENDER, FAVORITE_FOOT } from "../../../utils/common";
-import REGIONS from '../../locales/regions.json';
-import DISTRICTS from '../../locales/districts.json';
-import WARDS from '../../locales/wards.json';
+import REGIONS from "../../locales/regions.json";
+import DISTRICTS from "../../locales/districts.json";
+import WARDS from "../../locales/wards.json";
 
 import { validateEmail } from "../../../utils/commonFunction";
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-    width: '100%'
+    width: "100%",
   },
 }));
 
@@ -70,29 +65,29 @@ const UserInfo = ({
     email: "",
     phone: "",
     address: "",
-    avatar: '',
-    gender: '',
-    playRole: '',
-    createdAt: '',
-    updatedAt: '',
+    avatar: "",
+    gender: "",
+    playRole: "",
+    createdAt: "",
+    updatedAt: "",
   });
 
-  const genderArr = Object.keys(GENDER).map(key => ({
+  const genderArr = Object.keys(GENDER).map((key) => ({
     key: key,
-    value: GENDER[key]
-  }))
+    value: GENDER[key],
+  }));
 
-  const favoriteFootArr = Object.keys(FAVORITE_FOOT).map(key => ({
+  const favoriteFootArr = Object.keys(FAVORITE_FOOT).map((key) => ({
     key: key,
-    value: FAVORITE_FOOT[key]
-  }))
+    value: FAVORITE_FOOT[key],
+  }));
 
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedGenderKey: "",
     selectedFavoriteFootKey: "",
-    selectedRegionCode: '',
-    selectedDistrictCode: '',
-    selectedWardCode: ''
+    selectedRegionCode: "",
+    selectedDistrictCode: "",
+    selectedWardCode: "",
   });
 
   const {
@@ -100,10 +95,10 @@ const UserInfo = ({
     selectedRegionCode,
     selectedDistrictCode,
     selectedWardCode,
-    selectedFavoriteFootKey
+    selectedFavoriteFootKey,
   } = selectedDropdownData;
 
-  const regionArr = Object.keys(REGIONS).map(key => ({
+  const regionArr = Object.keys(REGIONS).map((key) => ({
     code: REGIONS[key].code,
     name: REGIONS[key].name_with_type,
   }));
@@ -123,7 +118,7 @@ const UserInfo = ({
       return newDistrict;
     });
 
-    districts = _.filter(districtArray, ['parent_code', selectedRegionCode]);
+    districts = _.filter(districtArray, ["parent_code", selectedRegionCode]);
     return districts;
   };
 
@@ -140,7 +135,7 @@ const UserInfo = ({
       };
       return newWard;
     });
-    wards = _.filter(wardArray, ['parent_code', selectedDistrictCode]);
+    wards = _.filter(wardArray, ["parent_code", selectedDistrictCode]);
     return wards;
   };
 
@@ -171,51 +166,51 @@ const UserInfo = ({
   };
 
   const setInit = () => {
-    if (viewType === 'user') {
-      console.log('uer---------------', user);
+    if (viewType === "user") {
+      console.log("uer---------------", user);
       const address = JSON.parse(user.address) || {};
-      console.log('uer---------------', address);
+      console.log("uer---------------", address);
 
       setformData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
-        address: user.address ? address.address : '',
-        avatar: user.avatar || '',
-        playRole: user.playRole || '',
-        createdAt: user.createdAt || '',
-        updatedAt: user.updatedAt || '',
+        address: user.address ? address.address : "",
+        avatar: user.avatar || "",
+        playRole: user.playRole || "",
+        createdAt: user.createdAt || "",
+        updatedAt: user.updatedAt || "",
       });
       setSelectedDropdownData({
-        selectedRegionCode: _.get(address, 'regionCode') || '',
-        selectedDistrictCode: _.get(address, 'districtCode') || '',
-        selectedWardCode: _.get(address, 'wardCode') || '',
-        selectedFavoriteFootKey: _.get(current_user, 'favoriteFoot') || '',
-        selectedGenderKey: _.get(current_user, 'gender', '') || '',
-      })
+        selectedRegionCode: _.get(address, "regionCode") || "",
+        selectedDistrictCode: _.get(address, "districtCode") || "",
+        selectedWardCode: _.get(address, "wardCode") || "",
+        selectedFavoriteFootKey: _.get(user, "favoriteFoot") || "",
+        selectedGenderKey: _.get(user, "gender", "") || "",
+      });
     } else {
-      const address = JSON.parse(_.get(current_user, 'address'));
+      const address = JSON.parse(_.get(current_user, "address"));
       setformData({
-        firstName: _.get(current_user, 'firstName') || "",
-        lastName: _.get(current_user, 'lastName') || "",
-        email: _.get(current_user, 'email') || "",
-        phone: _.get(current_user, 'phone') || "",
-        address: _.get(current_user, 'address') ? address.address : '',
-        avatar: _.get(current_user, 'avatar') || '',
-        playRole: _.get(current_user, 'playRole') || '',
-        createdAt: _.get(current_user, 'createdAt') || '',
-        updatedAt: _.get(current_user, 'updatedAt') || '',
+        firstName: _.get(current_user, "firstName") || "",
+        lastName: _.get(current_user, "lastName") || "",
+        email: _.get(current_user, "email") || "",
+        phone: _.get(current_user, "phone") || "",
+        address: _.get(current_user, "address") ? address.address : "",
+        avatar: _.get(current_user, "avatar") || "",
+        playRole: _.get(current_user, "playRole") || "",
+        createdAt: _.get(current_user, "createdAt") || "",
+        updatedAt: _.get(current_user, "updatedAt") || "",
       });
       setSelectedDropdownData({
-        selectedRegionCode: _.get(address, 'regionCode') || '',
-        selectedDistrictCode: _.get(address, 'districtCode') || '',
-        selectedWardCode: _.get(address, 'wardCode') || '',
-        selectedFavoriteFootKey: _.get(current_user, 'favoriteFoot') || '',
-        selectedGenderKey: _.get(current_user, 'gender', '') || '',
-      })
-    };
-  }
+        selectedRegionCode: _.get(address, "regionCode") || "",
+        selectedDistrictCode: _.get(address, "districtCode") || "",
+        selectedWardCode: _.get(address, "wardCode") || "",
+        selectedFavoriteFootKey: _.get(current_user, "favoriteFoot") || "",
+        selectedGenderKey: _.get(current_user, "gender", "") || "",
+      });
+    }
+  };
 
   useEffect(() => {
     getUserInfo(user.id, setLoading);
@@ -226,7 +221,7 @@ const UserInfo = ({
     const formatData = trimObjProperties(formData);
 
     let error = {};
-    const notRequired = ['avatar'];
+    const notRequired = ["avatar"];
     Object.keys(formatData).map((key) => {
       if (formatData[key].trim() === "" && !notRequired.includes(key)) {
         error[key] = "This field is required";
@@ -237,10 +232,10 @@ const UserInfo = ({
       error.email = "Email is invalid!";
     }
     if (!selectedFavoriteFootKey.trim()) {
-      error.favoriteFoot = 'This field is required';
+      error.favoriteFoot = "This field is required";
     }
     if (!selectedGenderKey.trim()) {
-      error.gender = 'This field is required';
+      error.gender = "This field is required";
     }
 
     dispatch({
@@ -252,16 +247,21 @@ const UserInfo = ({
       formatData.gender = selectedGenderKey;
     }
 
-    formatData.dob = moment(selectedDate).format('DD/MM/YYYY');
+    formatData.dob = moment(selectedDate).format("DD/MM/YYYY");
     formatData.regionCode = selectedRegionCode;
     formatData.districtCode = selectedDistrictCode;
     formatData.wardCode = selectedWardCode;
     formatData.favoriteFoot = selectedFavoriteFootKey;
 
     if (JSON.stringify(error) === "{}") {
-      console.log('--------------------formated data', formatData);
-      console.log('--------------------formated data', viewType === 'user');
-      editUserInfo(setLoading, formatData, viewType === 'user' ? user.id : current_user.id);
+      console.log("--------------------formated data", formatData);
+      console.log("--------------------formated data", viewType === "user");
+      setLoading(true);
+      editUserInfo(
+        setLoading,
+        formatData,
+        viewType === "user" ? user.id : current_user.id
+      );
     }
   };
 
@@ -275,41 +275,45 @@ const UserInfo = ({
   };
 
   const [selectedDate, setSelectedDate] = useState(
-    viewType === 'user' ?
-      user.dob ? new Date(user.dob) : null
-      : current_user.dob ? new Date(current_user.dob) : null);
+    viewType === "user"
+      ? user.dob
+        ? new Date(user.dob)
+        : null
+      : current_user.dob
+      ? new Date(current_user.dob)
+      : null
+  );
 
   const onChangeRegion = (code) => {
     setSelectedDropdownData({
       ...selectedDropdownData,
       selectedRegionCode: code,
-      selectedWardCode: '',
-      selectedDistrictCode: ''
+      selectedWardCode: "",
+      selectedDistrictCode: "",
     });
-  }
+  };
 
   const onChangeDistrict = (code) => {
     setSelectedDropdownData({
       ...selectedDropdownData,
       selectedDistrictCode: code,
-      selectedWardCode: ''
+      selectedWardCode: "",
     });
-  }
+  };
 
   const onChangeWard = (code) => {
     setSelectedDropdownData({
       ...selectedDropdownData,
       selectedWardCode: code,
     });
-  }
-
+  };
 
   const onChangeFavoriteFoot = (code) => {
     setSelectedDropdownData({
       ...selectedDropdownData,
       selectedFavoriteFootKey: code,
     });
-  }
+  };
 
   return (
     <PageLoader loading={loading}>
@@ -325,7 +329,9 @@ const UserInfo = ({
                     width="100%"
                     height={200}
                   />
-                  <h6 className="mt-2 mb-0 font-weight-bold">{firstName} {lastName}</h6>
+                  <h6 className="mt-2 mb-0 font-weight-bold">
+                    {firstName} {lastName}
+                  </h6>
                 </Paper>
                 {/* <Row style={{ marginTop: '20px', justifyContent: 'center'}}>
                   <Button
@@ -350,7 +356,7 @@ const UserInfo = ({
                     <Col xs={6}>
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
-                        name='firstName'
+                        name="firstName"
                         label="First name"
                         fullWidth
                         value={firstName}
@@ -376,7 +382,7 @@ const UserInfo = ({
                     <Col>
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
-                        name='email'
+                        name="email"
                         label="Email"
                         fullWidth
                         value={email}
@@ -396,7 +402,8 @@ const UserInfo = ({
                         valueBasedOnProperty="key"
                         displayProperty="value"
                         onChange={(genderKey) => onSelectGender(genderKey)}
-                        error={errors.gender || ''}
+                        error={errors.gender || ""}
+                        variant="outlined"
                       />
                     </Col>
                   </Row>
@@ -404,7 +411,7 @@ const UserInfo = ({
                     <Col xs={6}>
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
-                        name='phone'
+                        name="phone"
                         label="Phone"
                         fullWidth
                         value={phone}
@@ -418,7 +425,7 @@ const UserInfo = ({
                       <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <DatePicker
                           variant="inline"
-                          style={{ width: '100%', margin: 0 }}
+                          style={{ width: "100%", margin: 0 }}
                           format="dd/MM/yyyy"
                           margin="normal"
                           id="date-picker-inline"
@@ -426,7 +433,7 @@ const UserInfo = ({
                           value={selectedDate}
                           onChange={(date) => setSelectedDate(date)}
                           KeyboardButtonProps={{
-                            'aria-label': 'change date',
+                            "aria-label": "change date",
                           }}
                         />
                       </MuiPickersUtilsProvider>
@@ -470,7 +477,7 @@ const UserInfo = ({
                     <Col className="mt-4">
                       <TextFieldInputWithHeader
                         id="outlined-multiline-flexible"
-                        name='address'
+                        name="address"
                         label="Address"
                         fullWidth
                         value={address}
@@ -487,13 +494,14 @@ const UserInfo = ({
                       <DropdownV2
                         fullWidth
                         label="Farovite Foot"
+                        variant="outlined"
                         disabledPlaceholder="None"
                         value={selectedFavoriteFootKey.toString()}
                         options={favoriteFootArr || []}
                         valueBasedOnProperty="key"
                         displayProperty="value"
                         onChange={(code) => onChangeFavoriteFoot(code)}
-                        error={errors.favoriteFoot || ''}
+                        error={errors.favoriteFoot || ""}
                       />
                     </Col>
                     <Col xs={6}>
@@ -543,7 +551,6 @@ const UserInfo = ({
                       />
                     </Col>
                   </Row>
-
                 </form>
               </Col>
             </Row>

@@ -9,7 +9,7 @@ const localizer = momentLocalizer(moment);
 const MyCalendar = ({ orders }) => {
   const dataSource = Object.keys(orders).map((key) => ({
     id: key,
-    title: orders[key].subGround.name,
+    title: orders[key]?.subGround?.name || '',
     start: moment(orders[key].startDay + " " + orders[key].startTime),
     end: moment(orders[key].startDay + " " + orders[key].endTime),
   }));
