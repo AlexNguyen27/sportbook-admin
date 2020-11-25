@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import moment from "moment";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import {
   DATE_TIME,
   ORDER_STATUS,
@@ -25,6 +25,7 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Alert } from "reactstrap";
 import Colors from "../../../../constants/Colors";
 import PageLoader from "../../../custom/PageLoader";
@@ -63,6 +64,7 @@ const colorStatus = {
 };
 
 const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
+  const history = useHistory();
   const [state, setState] = useState({
     columns: [
       {
@@ -157,7 +159,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
-    subGroundName: orders[orderId]?.subGround?.name || '',
+    subGroundName: orders[orderId]?.subGround?.name || "",
     price: orders[orderId].price.toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
@@ -180,6 +182,15 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
             },
             actionsColumnIndex: -1,
           }}
+          actions={[
+            {
+              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+              tooltip: "History",
+              onClick: (event, rowData) => {
+                history.push(`order-management/${rowData.id}`);
+              },
+            },
+          ]}
           editable={{
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
@@ -188,7 +199,8 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
                 const { status, id } = newData;
                 updateOrderStatus(setLoading, { id, status });
               }),
-            isEditHidden: (rowData) => ["cancelled", "approved"].includes(rowData.status),
+            isEditHidden: (rowData) =>
+              ["cancelled", "approved"].includes(rowData.status),
           }}
         />
       </div>
