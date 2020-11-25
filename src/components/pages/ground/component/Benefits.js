@@ -42,10 +42,10 @@ const Benefits = ({ benefits, checked, setChecked }) => {
               key={benefits[key].id}
               control={
                 <Checkbox
-                  checked={checked[key]}
-                  onChange={handleChange}
-                  name={key}
-                  value={key}
+                  checked={checked[key] ? true : false}
+                  onChange={(e) => handleChange(e)}
+                  name={key || ""}
+                  value={key || ""}
                 />
               }
               label={benefits[key].title}

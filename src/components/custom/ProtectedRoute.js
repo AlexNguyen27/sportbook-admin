@@ -11,7 +11,6 @@ const ProtectedRoute = ({
   path,
   ...rest
 }) => {
-  console.log('paht------', path);
   const page = (props) => {
     if (isAuthenticated) {
       if (isAdmin || (isManager && path && !path.includes('list'))) {

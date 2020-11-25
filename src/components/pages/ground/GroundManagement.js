@@ -16,11 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GroundManagement = ({
-  getGrounds,
-  grounds,
-  deleteGround
-}) => {
+const GroundManagement = ({ getGrounds, grounds, deleteGround }) => {
   const classes = useStyles();
   const [modelAdd, setModelAdd] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -49,10 +45,9 @@ const GroundManagement = ({
   }, []);
 
   const onEdit = (groundId) => {
-    console.log('groundid====================', groundId);
     setModelEdit(true);
     setGroundData(grounds[groundId]);
-  }
+  };
 
   return (
     <PageLoader loading={loading}>
@@ -64,14 +59,20 @@ const GroundManagement = ({
       >
         <AddCircleIcon className="mr-2" /> Add Ground
       </Button>
-      <GroundList onDelete={onDelete} onEdit={onEdit}/>
+      <GroundList onDelete={onDelete} onEdit={onEdit} />
       <AddGroundModal modal={modelAdd} setModal={setModelAdd} />
-      <EditGroundModal modal={modelEdit} setModal={setModelEdit} ground={groundData}/>
+      <EditGroundModal
+        modal={modelEdit}
+        setModal={setModelEdit}
+        ground={groundData}
+      />
     </PageLoader>
   );
 };
 
 const mapStateToProps = (state) => ({
-  grounds: state.ground.grounds
+  grounds: state.ground.grounds,
 });
-export default connect(mapStateToProps, { getGrounds, deleteGround })(GroundManagement);
+export default connect(mapStateToProps, { getGrounds, deleteGround })(
+  GroundManagement
+);

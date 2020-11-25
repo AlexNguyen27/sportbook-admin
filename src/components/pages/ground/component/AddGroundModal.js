@@ -139,6 +139,7 @@ const AddGroundModal = ({
     setChecked({});
   };
 
+  const [urls, setUrls] = useState([]);
   // HANDLE ON SUBMIT FROM ADD NEW GROUP
   const onSubmit = (e) => {
     e.preventDefault();
@@ -168,6 +169,7 @@ const AddGroundModal = ({
     
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
+      formatedData.image = JSON.stringify(urls);
       addGround(setLoading, formatedData);
       closeModal();
     }
@@ -335,14 +337,14 @@ const AddGroundModal = ({
               {/* IMAGE */}
               <Col xs={12} className="mt-4">
                 <h6>Upload images:</h6>
-                <DropzoneAreaCustom />
+                <DropzoneAreaCustom urls={urls} setUrls={setUrls} />
               </Col>
             </Row>
           </ModalBody>
           {/** MODAL FOOTER */}
           <ModalFooter>
             <Button variant="contained" color="primary" type="submit">
-              Add
+              SAVE
             </Button>
             <Button
               variant="contained"
