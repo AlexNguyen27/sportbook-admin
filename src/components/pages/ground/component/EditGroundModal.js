@@ -77,6 +77,7 @@ const EditGroundModal = ({
         address: addressData.address,
       });
 
+
       setSelectedDropdownData({
         selectedRegionCode: regionCode,
         selectedDistrictCode: districtCode,
@@ -87,6 +88,8 @@ const EditGroundModal = ({
       const formatImage = JSON.parse(image);
       if (formatImage && formatImage.length > 0) {
         setUrls(formatImage.map((item) => item));
+      } else {
+        setUrls([])
       }
 
       const benefit = ground.benefit
