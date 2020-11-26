@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -14,9 +14,10 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlaceRoundedIcon from "@material-ui/icons/PlaceRounded";
 import Colors from "../../constants/Colors";
-import EditGroundModal from "../pages/ground/component/EditGroundModal";
 import { deleteGround } from "../../store/actions/ground";
 
+const DEFAULT_GROUND_IMAGE =
+  "https://daily.jstor.org/wp-content/uploads/2018/06/soccer_europe_1050x700.jpg";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
@@ -41,7 +42,9 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
     description,
     createdAt,
     category: { name },
+    image = "[]",
   } = ground;
+  const formatImages = JSON.parse(image);
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -55,7 +58,7 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
       />
       <CardMedia
         className={classes.media}
-        image={`https://daily.jstor.org/wp-content/uploads/2018/06/soccer_europe_1050x700.jpg`}
+        image={(formatImages && formatImages[0]) || DEFAULT_GROUND_IMAGE}
         title="Paella dish"
       />
       <CardContent>
@@ -73,7 +76,8 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
           onClick={() => onEdit(ground.id)}
           aria-label="Edit this ground"
         >
-          <EditIcon /> <span style={{ fontSize: "16px" }}> Edit</span>
+          <EditIcon />
+          <span style={{ fontSize: "16px" }}> Edit</span>
         </IconButton>
         <IconButton
           onClick={() => onDelete(ground.id)}
@@ -81,7 +85,8 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
           aria-label="Edit this ground"
           style={{ color: Colors.red }}
         >
-          <DeleteIcon /> <span style={{ fontSize: "16px" }}> Delete</span>
+          <span style={{ fontSize: "16px" }}> Delete</span>
+          <DeleteIcon />
         </IconButton>
       </CardActions>
     </Card>

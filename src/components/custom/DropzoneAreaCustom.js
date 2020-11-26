@@ -9,7 +9,7 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
   const [loading, setLoading] = useState(false);
 
   const handleUpload = (files) => {
-    const file = files[0];
+    const file = files[urls.length];
     if (file) {
       try {
         setLoading(true);
@@ -20,6 +20,8 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
             .child(file.name)
             .getDownloadURL()
             .then((url) => {
+              console.log(url);
+              console.log(file.name);
               setLoading(false);
               setUrls([...urls, url]);
             });
@@ -47,8 +49,8 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
       />
       <PageLoader loading={loading}>
         <Row className="mt-4">
-          {urls.map((url) => (
-            <Col xs={4} >
+          {urls.map((url, index) => (
+            <Col xs={4} key={index + 1}>
               <img
                 style={{ position: "relative" }}
                 width="100%"
