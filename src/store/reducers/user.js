@@ -5,6 +5,7 @@ import {
   EDIT_USER,
   SAVE_CURRENT_USER,
   GET_CURRENT_USER_AVATAR,
+  UPLOAD_AVATAR,
 } from "../actions/types";
 
 const initialState = {
@@ -37,6 +38,18 @@ export default function (state = initialState, action) {
         ...state,
         current_user: currentUser,
       };
+    case UPLOAD_AVATAR:
+      const { userId, avatar } = action.uploadData;
+      if (userId === state.current_user?.id) {
+        return {
+          ...state,
+          current_user: {
+            ...state.current_user,
+            avatar: avatar,
+          },
+        };
+      }
+      return { ...state };
     case GET_CURRENT_USER_AVATAR:
       return {
         ...state,

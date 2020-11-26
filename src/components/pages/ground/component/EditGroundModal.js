@@ -63,10 +63,12 @@ const EditGroundModal = ({
     selectedCategoryId: "",
   });
 
+  const [urls, setUrls] = useState([]);
+
   const initFormData = () => {
-    if(ground) {
-      const { title, description, phone, address, categoryId } = ground ;
-      const addressData = JSON.parse(address || '');
+    if (ground) {
+      const { title, description, phone, address, categoryId, image } = ground;
+      const addressData = JSON.parse(address || "");
       const { regionCode, wardCode, districtCode } = addressData;
       setFormData({
         title,
@@ -74,14 +76,19 @@ const EditGroundModal = ({
         phone,
         address: addressData.address,
       });
-  
+
       setSelectedDropdownData({
         selectedRegionCode: regionCode,
         selectedDistrictCode: districtCode,
         selectedWardCode: wardCode,
         selectedCategoryId: categoryId,
       });
-  
+
+      const formatImage = JSON.parse(image);
+      if (formatImage && formatImage.length > 0) {
+        setUrls(formatImage.map((item) => item));
+      }
+
       const benefit = ground.benefit
         .split(",")
         .map((benefitId) => ({ [benefitId]: true }));
@@ -90,7 +97,7 @@ const EditGroundModal = ({
   };
 
   useEffect(() => {
-    if(modal) {
+    if (modal) {
       getBenefits(setLoading).then(() => {
         setLoading(true);
         getCategories(setLoading);
@@ -195,6 +202,7 @@ const EditGroundModal = ({
     formatedData.id = ground.id;
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
+      formatedData.image = JSON.stringify(urls);
       updateGround(setLoading, formatedData);
       closeModal();
     }
@@ -362,14 +370,14 @@ const EditGroundModal = ({
               {/* IMAGE */}
               <Col xs={12} className="mt-4">
                 <h6>Upload images:</h6>
-                <DropzoneAreaCustom />
+                <DropzoneAreaCustom urls={urls} setUrls={setUrls} />
               </Col>
             </Row>
           </ModalBody>
           {/** MODAL FOOTER */}
           <ModalFooter>
             <Button variant="contained" color="primary" type="submit">
-              Add
+              Save
             </Button>
             <Button
               variant="contained"

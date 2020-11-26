@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Button } from "@material-ui/core";
+import { Grid, Button, IconButton, Tooltip } from "@material-ui/core";
 import { Row, Col } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
 import _ from "lodash";
@@ -9,6 +9,8 @@ import SaveIcon from "@material-ui/icons/Save";
 import RotateLeftIcon from "@material-ui/icons/RotateLeft";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import {
   GET_ERRORS,
@@ -18,7 +20,11 @@ import {
 import { trimObjProperties } from "../../../utils/formatString";
 import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
-import { editUserInfo, getUserInfo } from "../../../store/actions/user";
+import {
+  editUserInfo,
+  getUserInfo,
+  uploadAvatar,
+} from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
 import { GENDER, FAVORITE_FOOT } from "../../../utils/common";
 import REGIONS from "../../locales/regions.json";
@@ -26,6 +32,7 @@ import DISTRICTS from "../../locales/districts.json";
 import WARDS from "../../locales/wards.json";
 
 import { validateEmail } from "../../../utils/commonFunction";
+import { storage } from "../../../constants/firebase";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -45,6 +52,17 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 120,
     width: "100%",
   },
+  image: {
+    position: "relative",
+  },
+  btnUpload: {
+    position: "absolute",
+    right: "116px",
+    top: "155px",
+  },
+  inputFile: {
+    display: "none",
+  },
 }));
 
 const UserInfo = ({
@@ -54,18 +72,21 @@ const UserInfo = ({
   editUserInfo,
   getUserInfo,
   viewType,
+  uploadAvatar,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const imageUrl = BASE_IMAGE_URL;
+  const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(true);
+
   const [formData, setformData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     address: "",
-    avatar: "",
     gender: "",
     playRole: "",
     createdAt: "",
@@ -145,7 +166,6 @@ const UserInfo = ({
     email,
     phone,
     address,
-    avatar,
     playRole,
     createdAt,
     updatedAt,
@@ -167,9 +187,7 @@ const UserInfo = ({
 
   const setInit = () => {
     if (viewType === "user") {
-      console.log("uer---------------", user);
       const address = JSON.parse(user.address) || {};
-      console.log("uer---------------", address);
 
       setformData({
         firstName: user.firstName || "",
@@ -177,7 +195,6 @@ const UserInfo = ({
         email: user.email || "",
         phone: user.phone || "",
         address: user.address ? address.address : "",
-        avatar: user.avatar || "",
         playRole: user.playRole || "",
         createdAt: user.createdAt || "",
         updatedAt: user.updatedAt || "",
@@ -189,6 +206,7 @@ const UserInfo = ({
         selectedFavoriteFootKey: _.get(user, "favoriteFoot") || "",
         selectedGenderKey: _.get(user, "gender", "") || "",
       });
+      setAvatar(user.avatar || imageUrl);
     } else {
       const address = JSON.parse(_.get(current_user, "address"));
       setformData({
@@ -209,6 +227,7 @@ const UserInfo = ({
         selectedFavoriteFootKey: _.get(current_user, "favoriteFoot") || "",
         selectedGenderKey: _.get(current_user, "gender", "") || "",
       });
+      setAvatar(current_user.avatar || imageUrl);
     }
   };
 
@@ -221,9 +240,8 @@ const UserInfo = ({
     const formatData = trimObjProperties(formData);
 
     let error = {};
-    const notRequired = ["avatar"];
     Object.keys(formatData).map((key) => {
-      if (formatData[key].trim() === "" && !notRequired.includes(key)) {
+      if (formatData[key].trim() === "") {
         error[key] = "This field is required";
       }
     });
@@ -254,8 +272,6 @@ const UserInfo = ({
     formatData.favoriteFoot = selectedFavoriteFootKey;
 
     if (JSON.stringify(error) === "{}") {
-      console.log("--------------------formated data", formatData);
-      console.log("--------------------formated data", viewType === "user");
       setLoading(true);
       editUserInfo(
         setLoading,
@@ -264,8 +280,6 @@ const UserInfo = ({
       );
     }
   };
-
-  const imageUrl = BASE_IMAGE_URL;
 
   const onCancel = () => {
     setInit();
@@ -315,6 +329,42 @@ const UserInfo = ({
     });
   };
 
+  const [loadingUpload, setLoadingUpload] = useState(false);
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        setLoadingUpload(true);
+        const uploadTask = storage.ref(`/user/avatars/${file.name}`).put(file);
+        uploadTask.on("state_changed", console.log, console.error, () => {
+          storage
+            .ref("/user/avatars")
+            .child(file.name)
+            .getDownloadURL()
+            .then((url) => {
+              setAvatar(url);
+              uploadAvatar(
+                setLoadingUpload,
+                url,
+                viewType === "user" ? user.id : current_user.id
+              );
+              // Swal.fire({
+              //   position: "center",
+              //   type: "success",
+              //   title: "Uploaded successfully!",
+              //   showConfirmButton: false,
+              //   timer: 1500,
+              // });
+            });
+        });
+      } catch (error) {
+        console.log(error, "upload error------------------");
+      }
+    }
+  };
+
   return (
     <PageLoader loading={loading}>
       <div className={classes.root}>
@@ -323,31 +373,40 @@ const UserInfo = ({
             <Row>
               <Col xs="3">
                 <Paper className={classes.paper}>
-                  <img
-                    src={imageUrl}
-                    alt="Girl in a jacket"
-                    width="100%"
-                    height={200}
-                  />
-                  <h6 className="mt-2 mb-0 font-weight-bold">
-                    {firstName} {lastName}
-                  </h6>
-                </Paper>
-                {/* <Row style={{ marginTop: '20px', justifyContent: 'center'}}>
-                  <Button
-                    variant="contained"
-                    className="ml-3"
-                    component="label"
-                  >
-                    <ImageIcon className="mr-2" /> Update avatar
-                    <input
-                      accept="image/*"
-                      type="file"
-                      onChange={handleCapture}
-                      style={{ display: "none" }}
+                  <PageLoader loading={loadingUpload}>
+                    <img
+                      src={avatar || imageUrl}
+                      alt="Girl in a jacket"
+                      width="100%"
+                      height={200}
+                      className={classes.iamge}
                     />
-                  </Button>
-                </Row> */}
+                    <Tooltip title="Upload new avatar" aria-label="image">
+                      <div>
+                        <input
+                          accept="image/*"
+                          className={classes.inputFile}
+                          id="icon-button-file"
+                          multiple
+                          type="file"
+                          onChange={handleUpload}
+                        />
+                        <label htmlFor="icon-button-file">
+                          <IconButton
+                            aria-label="upload"
+                            className={classes.btnUpload}
+                            component="span"
+                          >
+                            <CloudUploadIcon fontSize="large" />
+                          </IconButton>
+                        </label>
+                      </div>
+                    </Tooltip>
+                    <h6 className="mb-0 font-weight-bold">
+                      {firstName} {lastName}
+                    </h6>
+                  </PageLoader>
+                </Paper>
               </Col>
               <Col xs="9">
                 <h4 className="text-center">User Information</h4>
@@ -582,6 +641,8 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
   current_user: state.user.current_user,
 });
-export default connect(mapStateToProps, { editUserInfo, getUserInfo })(
-  UserInfo
-);
+export default connect(mapStateToProps, {
+  editUserInfo,
+  getUserInfo,
+  uploadAvatar,
+})(UserInfo);

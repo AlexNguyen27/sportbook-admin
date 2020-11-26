@@ -7,6 +7,7 @@ import {
   BASE_URL,
   GET_USER_PROFILE,
   EDIT_USER_INFO,
+  UPLOAD_AVATAR,
 } from "./types";
 import { arrayToObject } from "../../utils/commonFunction";
 import { hera } from "hera-js";
@@ -350,7 +351,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
   }
 };
 
-// DELETE GROUP
+//
 export const deleteUser = (setLoading, userId) => async (
   dispatch,
   getState
@@ -406,33 +407,64 @@ export const deleteUser = (setLoading, userId) => async (
   }
 };
 
-// export const getGithubProfile = (userId, githubUsername) => async (
-//   dispatch,
-//   getState
-// ) => {
-//   try {
-//     const state = getState();
-//     const gitHubInfo = await Axios.get(
-//       `https://api.github.com/users/${githubUsername}/repos?per_page=5&sort=created:asc`
-//     );
+//
+export const uploadAvatar = (setLoading, avatar, userId) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
 
-//     if (gitHubInfo.data.length > 0) {
-//       if (state.auth.user.id === userId) {
-//         dispatch({
-//           type: GET_GITHUB_AVATAR,
-//           imageUrl: gitHubInfo.data[0].owner.avatar_url,
-//         });
-//       }
-//       // UPDATE CURRENT USER DATA
-//       if (state.auth.isAdmin) {
-//         dispatch({
-//           type: GET_CURRENT_USER_AVATAR,
-//           imageUrl: gitHubInfo.data[0].owner.avatar_url,
-//         });
-//       }
-//     }
-//     console.log(gitHubInfo);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+          mutation {
+            uploadAvatar(
+              avatar: $avatar
+              userId: $userId
+            ) {
+              id
+              avatar
+            }
+          }
+        `,
+    variables: {
+      avatar,
+      userId,
+    },
+  });
+
+  if (!errors) {
+    dispatch({
+      type: UPLOAD_AVATAR,
+      uploadData: {
+        userId,
+        avatar,
+      },
+    });
+
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
+
+    setLoading(false);
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Uploaded successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};

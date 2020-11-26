@@ -86,6 +86,7 @@ export const addGround = (setLoading, groundData) => async (
                 districtCode: $districtCode
                 wardCode: $wardCode
                 benefit: $benefit   
+                image: $image
             ) {
                 id
                 title
@@ -144,7 +145,6 @@ export const addGround = (setLoading, groundData) => async (
 
 export const deleteGround = (setLoading, id) => async (dispatch, getState) => {
   const { token } = getState().auth;
-  console.log('er----------------', id);
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
@@ -225,6 +225,7 @@ export const updateGround = (setLoading, groundData) => async (
           districtCode: $districtCode
           wardCode: $wardCode
           benefit: $benefit   
+          image: $image
          ) {
           id
           title
