@@ -8,7 +8,18 @@ import {
   FormGroup,
 } from "@material-ui/core";
 import { connect } from "react-redux";
+import { withStyles } from "@material-ui/core/styles";
+import { green } from "@material-ui/core/colors";
 
+const GreenCheckbox = withStyles({
+  root: {
+    color: green[400],
+    "&$checked": {
+      color: green[600],
+    },
+  },
+  checked: {},
+})((props) => <Checkbox color="default" {...props} />);
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -41,7 +52,7 @@ const Benefits = ({ benefits, checked, setChecked }) => {
             <FormControlLabel
               key={benefits[key].id}
               control={
-                <Checkbox
+                <GreenCheckbox
                   checked={checked[key] ? true : false}
                   onChange={(e) => handleChange(e)}
                   name={key || ""}

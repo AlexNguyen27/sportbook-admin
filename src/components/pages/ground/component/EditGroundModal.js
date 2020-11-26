@@ -85,7 +85,7 @@ const EditGroundModal = ({
       });
 
       const formatImage = JSON.parse(image);
-      if (formatImage.length > 0) {
+      if (formatImage && formatImage.length > 0) {
         setUrls(formatImage.map((item) => item));
       }
 

@@ -700,7 +700,7 @@ const DashBoard = ({
               <Avatar
                 alt="User Image"
                 src={
-                  (user && user.imageUrl) ||
+                  (user && user.avatar) ||
                   "https://image.plo.vn/w653/Uploaded/2020/xpckxpiu/2020_05_31/lisa_goix.jpg"
                 }
               />

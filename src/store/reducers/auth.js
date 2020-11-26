@@ -3,6 +3,7 @@ import {
   UNAUTHENTICATE,
   EDIT_USER_INFO,
   GET_GITHUB_AVATAR,
+  UPLOAD_AVATAR,
   //   AUTHENTICATE_TEACHER,
 } from "../actions/types";
 import setAuthToken from "../../utils/setAuthToken";
@@ -49,6 +50,18 @@ export default function (state = initialState, action) {
           imageUrl: action.imageUrl,
         },
       };
+    case UPLOAD_AVATAR: 
+      const { userId, avatar } = action.uploadData;
+      if(userId === state.user.id) {
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            avatar: avatar,
+          }
+        }
+      }
+      return {...state}
     case UNAUTHENTICATE:
       // Remove Token in Auth header
       setAuthToken(false);
