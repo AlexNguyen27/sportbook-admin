@@ -5,11 +5,10 @@ export default (state = initialState, action) => {
   const { errors, type } = action;
   switch (type) {
     case GET_ERRORS:
-      return {...errors};
-    case UNAUTHENTICATE:
+      return { ...errors };
     case CLEAR_ERRORS:
       return {};
-    case UNAUTHENTICATE: 
+    case UNAUTHENTICATE:
       return initialState;
     default:
       return state;
