@@ -333,21 +333,22 @@ export const editUserInfo = (setLoading, userData, userId) => async (
       timer: 1500,
     });
   } else {
-    console.log(errors);
     const error = errors[0].extensions.payload
       ? errors[0].extensions.payload
       : errors[0].message;
     const formatedError = {};
-    errors[0].extensions.payload &&
+    if (errors[0].extensions.payload) {
       Object.keys(error).map((key) => {
         formatedError[key] = error[key].message;
       });
+    }
 
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,
       errors: { ...formatedError },
     });
+    setLoading(false);
   }
 };
 

@@ -1,9 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { connect } from "react-redux";
-import { Redirect, withRouter, matchPath } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import { Button, Container } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 
 // COMPONENT
 import PageTitle from "../../custom/PageTitle";
@@ -68,7 +68,12 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
 
   return (
     <Fragment>
-      <Grid container justify='center' type='flex' style={{ marginTop: "80px" }} >
+      <Grid
+        container
+        justify="center"
+        type="flex"
+        style={{ marginTop: "80px" }}
+      >
         <Grid item xs={6}>
           <Landing />
         </Grid>
@@ -81,21 +86,21 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
                   <Button
                     className="mt-3 w-100"
                     variant="contained"
-                    style={{ backgroundColor: '#3f72af', color: 'white' }}
+                    style={{ backgroundColor: "#3f72af", color: "white" }}
                     type="submit"
                   >
                     Facebook
-                    </Button>
+                  </Button>
                 </Grid>
                 <Grid item xs={6}>
                   <Button
                     className="mt-3 w-100"
                     variant="contained"
                     type="submit"
-                    style={{ backgroundColor: '#ec524b', color: 'white' }}
+                    style={{ backgroundColor: "#ec524b", color: "white" }}
                   >
                     Google
-                </Button>
+                  </Button>
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>
@@ -141,22 +146,21 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
                     type="submit"
                   >
                     REGISTER
-              </Button>
+                  </Button>
                 </div>
               </form>
               <div className="text-center">
                 <p
                   style={{ color: "#00bfd8", cursor: "pointer" }}
                   className="mt-3 text-decoration-underline"
-                  onClick={() => history.push('/login')}
+                  onClick={() => history.push("/login")}
                 >
                   You already have an account?
-            </p>
+                </p>
               </div>
             </Grid>
           </Grid>
         </Grid>
-
       </Grid>
     </Fragment>
   );
