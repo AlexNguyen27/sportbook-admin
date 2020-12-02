@@ -20,6 +20,7 @@ function LoyalCustomer({ getLoyalCustomers, loyalCustomers }) {
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true)
     getLoyalCustomers({ weekday }, setLoading);
   }, [setSelectedDropdownData, selectedDropdownData]);
 
@@ -35,7 +36,7 @@ function LoyalCustomer({ getLoyalCustomers, loyalCustomers }) {
     },
     {
       id: "wednesday",
-      name: "Webnesday",
+      name: "Wednesday",
     },
     {
       id: "thursday",
@@ -57,7 +58,8 @@ function LoyalCustomer({ getLoyalCustomers, loyalCustomers }) {
 
   const userArr = Object.keys(loyalCustomers).map((userId) => ({
     ...loyalCustomers[userId],
-    createdAt: getDateTime(loyalCustomers[userId].createdAt)
+    createdAt: getDateTime(loyalCustomers[userId].createdAt),
+    startDay: loyalCustomers[userId]?.orders[0]?.startDay
   }));
 
   return (
