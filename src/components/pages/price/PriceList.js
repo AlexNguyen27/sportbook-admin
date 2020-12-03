@@ -83,42 +83,44 @@ const PriceList = ({
       {
         title: "From time",
         field: "startTime",
-        render: (rowData) => (
-          <TextField
-            id="time"
-            label="Alarm clock"
-            type="time"
-            defaultValue={rowData.startTime}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-          />
-        ),
+      render: (rowData) => <span>{moment(rowData.startTime, 'HH:mm:ss A').format('hh:mm A')}</span>,
+        editComponent: (props) => {
+          console.log(props);
+          return (
+            <>
+              <TextField
+                id="startTime"
+                type="time"
+                size="small"
+                defaultValue={props.value}
+                className={classes.textField}
+                onChange={(e) => props.onChange(e.target.value)}
+              />
+            </>
+          );
+        },
       },
       {
         title: "To time",
         field: "endTime",
-        render: (rowData) => (
-          <TextField
-            id="time"
-            label="Alarm clock"
-            type="time"
-            defaultValue={rowData.endTime}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 300, // 5 min
-            }}
-          />
-        ),
+        render: (rowData) => <span>{moment(rowData.endTime, 'HH:mm:ss A').format('hh:mm A')}</span>,
+        editComponent: (props) => {
+          console.log(props);
+          return (
+            <>
+              <TextField
+                id="endTime"
+                type="time"
+                size="small"
+                defaultValue={props.value}
+                className={classes.textField}
+                onChange={(e) => props.onChange(e.target.value)}
+              />
+            </>
+          );
+        },
       },
-      { title: "Price/hours", field: "price", type: "numeric" },
+      { title: "Price/hours", field: "price", type: "numeric",initialEditValue: 0, },
 
       {
         title: "Discount",
@@ -185,7 +187,7 @@ const PriceList = ({
           cellStyle: {
             fontSize: "14px",
           },
-          pageSize: 7
+          pageSize: 7,
         }}
         actions={[
           // {
@@ -228,7 +230,6 @@ const PriceList = ({
           onRowAdd: (newData) =>
             new Promise((resolve) => {
               resolve();
-              console.log("newdata----------", newData);
               setLoading(false);
               const priceData = {
                 price: newData.price,
@@ -241,6 +242,7 @@ const PriceList = ({
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {
+              console.log("new data--------------------", newData);
               resolve();
               setLoading(true);
               const priceData = {

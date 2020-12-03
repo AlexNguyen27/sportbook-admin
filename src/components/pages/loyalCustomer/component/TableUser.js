@@ -49,8 +49,8 @@ export default function TableUser({ dataSource }) {
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Email", field: 'email'},
       {
-        title: "Played at",
-        field: "createdAt",
+        title: "Usually play at",
+        field: "startDay",
       },
     ],
     data: [
@@ -74,6 +74,7 @@ export default function TableUser({ dataSource }) {
   const formatData = dataSource.map(user => ({
     ...user, 
     name: getFullname(user.firstName, user.lastName),
+
   }))
   return (
     <MaterialTable

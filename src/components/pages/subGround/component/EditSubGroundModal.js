@@ -63,7 +63,7 @@ const EditSubGroundModal = ({
     updateSubGround(setLoading, {
       id,
       name,
-      numberOfPlayers,
+      numberOfPlayers: Number(numberOfPlayers),
       groundId: editedData.groundId,
     });
   };

@@ -63,7 +63,7 @@ const colorStatus = {
   approved: "success",
 };
 
-const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
+const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) => {
   const history = useHistory();
   const [state, setState] = useState({
     columns: [
@@ -200,7 +200,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
                 updateOrderStatus(setLoading, { id, status });
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "approved"].includes(rowData.status),
+              ["cancelled", "approved"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
@@ -209,6 +209,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus }) => {
 };
 const mapStateToProps = (state) => ({
   orders: state.order.orders,
+  auth: state.auth
 });
 export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
   withRouter(OrderList)

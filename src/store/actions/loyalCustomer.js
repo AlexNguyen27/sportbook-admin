@@ -26,6 +26,11 @@ export const getLoyalCustomers = ({ weekday }, setLoading) => async (
                   firstName
                   lastName
                   phone
+                  orders {
+                    createdAt
+                    status
+                    startDay
+                  }
                 }
             }
           `,
