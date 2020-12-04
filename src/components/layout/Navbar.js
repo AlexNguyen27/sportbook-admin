@@ -51,7 +51,7 @@ const Navbar = ({ logoutUser }) => {
         style={{ background: Colors.purple, maxHeight: '50px' }}
       >
         <Link className="navbar-brand" to="/login">
-          Love Sports
+          Love Sport
         </Link>
 
         <button
