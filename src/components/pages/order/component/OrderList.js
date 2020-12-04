@@ -72,6 +72,7 @@ const OrderList = ({
         field: "subGroundName",
         editable: "never",
       },
+      { title: "Start day", field: "startDay", editable: "never" },
       {
         title: "Start time",
         field: "startTime",
@@ -83,12 +84,12 @@ const OrderList = ({
         editable: "never",
       },
       {
-        title: "Price(VND)",
-        field: "price",
+        title: "Amount(VND)",
+        field: "amount",
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{rowData.price.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
+            <span>{rowData.amount.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
           );
         },
       },
@@ -101,7 +102,6 @@ const OrderList = ({
         },
         editable: "never",
       },
-
       {
         title: "Status",
         field: "status",
@@ -118,7 +118,15 @@ const OrderList = ({
         },
         initialEditValue: "waiting_for_approve",
       },
-      { title: "Created At", field: "createdAt", editable: "never" },
+      {
+        title: "Payment",
+        field: "paymentType",
+        lookup: PAYMENT_TYPE,
+        render: (rowData) => {
+          return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
+        },
+        editable: "never",
+      },
     ],
     data: [
       {
@@ -160,7 +168,7 @@ const OrderList = ({
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
     subGroundName: orders[orderId]?.subGround?.name || "",
-    price: orders[orderId].price.toString(),
+    amount: (orders[orderId].price*(100 - orders[orderId].discount)/100).toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
   }));

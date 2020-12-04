@@ -35,7 +35,6 @@ export const getPrices = (setLoading, subGroundId) => async (
                     discount
                     endTime
                     startTime
-                    status
                     subGroundId
                     createdAt
                   }
@@ -89,7 +88,6 @@ export const addPrice = (setLoading, priceData) => async (
                 discount
                 endTime
                 startTime
-                status
                 subGroundId
                 createdAt
               }
@@ -218,7 +216,6 @@ export const updatePrice = (setLoading, priceData) => async (
             discount
             endTime
             startTime
-            status
             subGroundId
             createdAt
         }

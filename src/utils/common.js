@@ -1,6 +1,6 @@
 import { CLEAR_ERRORS } from "../store/actions/types";
 
-export const DATE_TIME = "DD-MM-YYYY HH:mm:ss";
+export const DATE_TIME = "DD-MM-YYYY HH:mm A";
 export const clearErrors = () => (dispatch) => {
   dispatch({
     type: CLEAR_ERRORS,
