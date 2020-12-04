@@ -9,7 +9,7 @@ const Landing = () => {
         width="647px"
         height="100%"
         src={white_logo}
-        alt="Love Sports"
+        alt="Love Sport"
       />
     </div>
   );
