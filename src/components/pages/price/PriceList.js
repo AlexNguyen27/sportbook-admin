@@ -129,16 +129,16 @@ const PriceList = ({
         initialEditValue: 0,
         validate: (rowData) => rowData.discount > -1 && rowData.discount < 101,
       },
-      {
-        title: "Status",
-        field: "status",
-        lookup: {
-          ready: "Ready",
-          reserved: "Reserved",
-        },
-        initialEditValue: "ready",
-        editable: "never",
-      },
+      // {
+      //   title: "Status",
+      //   field: "status",
+      //   lookup: {
+      //     ready: "Ready",
+      //     reserved: "Reserved",
+      //   },
+      //   initialEditValue: "ready",
+      //   editable: "never",
+      // },
     ],
     data: [
       {

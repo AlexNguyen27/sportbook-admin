@@ -3,7 +3,7 @@ import MaterialTable from "material-table";
 import moment from "moment";
 import { connect } from "react-redux";
 import { withRouter, useHistory } from "react-router-dom";
-import { DATE_TIME, ORDER_STATUS, PAYMENT_TYPE } from "../../../utils/common";
+import { DATE_TIME, ORDER_STATUS, PAYMENT_TYPE, COLOR_ORDER_STATUS } from "../../../utils/common";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { forwardRef } from "react";
 
@@ -50,12 +50,6 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-};
-
-const colorStatus = {
-  new: "primary",
-  cancelled: "danger",
-  approved: "success",
 };
 
 const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) => {
@@ -105,13 +99,13 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
           return (
             <Alert
               className="m-0 text-center"
-              color={colorStatus[rowData.status]}
+              color={COLOR_ORDER_STATUS[rowData.status]}
             >
               {capitalizeFirstLetter(rowData.status)}
             </Alert>
           );
         },
-        initialEditValue: "new",
+        initialEditValue: "waiting_for_approve",
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -197,7 +191,7 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
                 updateOrderStatus(setLoading, { id, status });
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "approved"].includes(rowData.status) || isAdmin,
+              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>

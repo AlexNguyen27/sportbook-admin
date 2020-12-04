@@ -7,6 +7,7 @@ import {
   DATE_TIME,
   ORDER_STATUS,
   PAYMENT_TYPE,
+  COLOR_ORDER_STATUS,
 } from "../../../../utils/common";
 
 import { forwardRef } from "react";
@@ -57,13 +58,12 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const colorStatus = {
-  new: "primary",
-  cancelled: "danger",
-  approved: "success",
-};
-
-const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) => {
+const OrderList = ({
+  getOrders,
+  orders,
+  updateOrderStatus,
+  auth: { isAdmin },
+}) => {
   const history = useHistory();
   const [state, setState] = useState({
     columns: [
@@ -110,13 +110,13 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
           return (
             <Alert
               className="m-0 text-center"
-              color={colorStatus[rowData.status]}
+              color={COLOR_ORDER_STATUS[rowData.status]}
             >
               {capitalizeFirstLetter(rowData.status)}
             </Alert>
           );
         },
-        initialEditValue: "new",
+        initialEditValue: "waiting_for_approve",
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -200,7 +200,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
                 updateOrderStatus(setLoading, { id, status });
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "approved"].includes(rowData.status) || isAdmin,
+              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
@@ -209,7 +209,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
 };
 const mapStateToProps = (state) => ({
   orders: state.order.orders,
-  auth: state.auth
+  auth: state.auth,
 });
 export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
   withRouter(OrderList)
