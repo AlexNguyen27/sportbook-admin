@@ -206,9 +206,13 @@ const OrdersList = ({
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 resolve();
-                setLoading(true);
+                resolve();
                 const { status, id } = newData;
-                updateOrderStatus(setLoading, { id, status });
+                if (newData.status !== oldData.status) {
+                  setLoading(true);
+                  updateOrderStatus(setLoading, { id, status });
+
+                }
               }),
             isEditHidden: (rowData) =>
               ["cancelled", "paid"].includes(rowData.status) || isAdmin,

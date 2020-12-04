@@ -136,25 +136,33 @@ export const addOrder = (setLoading, orderData) => async (
     logoutDispatch(dispatch, errors);
     setLoading(false);
 
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "An error occurred!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
     // TODO: update later
-    const payloadError = errors[0]?.extensions?.payload;
+    const payloadError = errors[0]?.extensions?.payload || {};
     let error = {};
     Object.keys(payloadError).map((key) => {
       error[key] = payloadError[key].message;
     });
 
-    console.log(error, "error--------------------");
+    const hasError = JSON.stringify(error) !== "{}";
+    if (!hasError) {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: errors[0].message || "An error occurred!",
+        showConfirmButton: true,
+      });
+    } else {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: "An error occurred!",
+        showConfirmButton: true,
+      });
+    }
 
     dispatch({
       type: GET_ERRORS,
-      errors: error || errors[0].message,
+      errors: hasError ? error : errors[0].message,
     });
   }
 };
@@ -198,22 +206,12 @@ export const updateOrderStatus = (setLoading, orderData) => async (
         ...orderData,
       },
     });
-    setLoading(false);
-    Swal.fire({
-      position: "center",
-      type: "success",
-      title: "Your work has been save!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    setLoading(false);
   } else {
     Swal.fire({
       position: "center",
       type: "Warning",
-      title: errors[0].message,
-      showConfirmButton: false,
-      timer: 1500,
+      title: errors[0].message || "An error occurred!",
+      showConfirmButton: true,
     });
     logoutDispatch(dispatch, errors);
     dispatch({
@@ -221,4 +219,6 @@ export const updateOrderStatus = (setLoading, orderData) => async (
       errors: errors[0].message,
     });
   }
+  setLoading(false);
+
 };

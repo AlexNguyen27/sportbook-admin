@@ -44,7 +44,7 @@ const AddOrderModal = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const subGroundArr = Object.keys(subGrounds).map(
     (subGroundId) => subGrounds[subGroundId]
   );
@@ -126,6 +126,12 @@ const AddOrderModal = ({
       price: "",
       discount: "",
     });
+    setSelectedPaymentType('');
+    setSelectedDate({
+      date: new Date(),
+      startTime: startTimeArr[0]?.id || "",
+      selectedPriceId: "",
+    })
   };
   const handleDateChange = (date, fieldName) => {
     setSelectedDate({

@@ -38,11 +38,13 @@ export const ORDER_STATUS = {
   cancelled: "Cancelled",
   approved: "Approved",
   paid: "Paid",
-};
+  // finished: "Finished" AUTO FINISHED WHEN OUT OF TIME
+ };
 
 export const COLOR_ORDER_STATUS = {
   waiting_for_approve: "primary",
   cancelled: "danger",
   approved: "warning",
   paid: "success",
+  finished: 'secondary'
 };
