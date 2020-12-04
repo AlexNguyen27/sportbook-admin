@@ -16,9 +16,10 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import { getFullname } from "../../../../utils/commonFunction";
+import { getFullname, capitalizeFirstLetter } from "../../../../utils/commonFunction";
 import _ from "lodash";
-import { ORDER_STATUS } from "../../../../utils/common";
+import { ORDER_STATUS, COLOR_ORDER_STATUS } from "../../../../utils/common";
+import { Alert } from "reactstrap";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -55,6 +56,16 @@ export default function TableHistory({ dataSource }) {
         title: "Status",
         field: "orderStatus",
         lookup: ORDER_STATUS,
+        render: (rowData) => {
+          return (
+            <Alert
+              className="m-0 text-center"
+              color={COLOR_ORDER_STATUS[rowData.orderStatus]}
+            >
+              {capitalizeFirstLetter(rowData.orderStatus)}
+            </Alert>
+          );
+        },
       },
     ],
     data: [

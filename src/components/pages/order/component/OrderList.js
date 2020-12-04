@@ -7,6 +7,7 @@ import {
   DATE_TIME,
   ORDER_STATUS,
   PAYMENT_TYPE,
+  COLOR_ORDER_STATUS,
 } from "../../../../utils/common";
 
 import { forwardRef } from "react";
@@ -57,13 +58,12 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const colorStatus = {
-  new: "primary",
-  cancelled: "danger",
-  approved: "success",
-};
-
-const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) => {
+const OrderList = ({
+  getOrders,
+  orders,
+  updateOrderStatus,
+  auth: { isAdmin },
+}) => {
   const history = useHistory();
   const [state, setState] = useState({
     columns: [
@@ -72,6 +72,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
         field: "subGroundName",
         editable: "never",
       },
+      { title: "Start day", field: "startDay", editable: "never" },
       {
         title: "Start time",
         field: "startTime",
@@ -83,12 +84,12 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
         editable: "never",
       },
       {
-        title: "Price(VND)",
-        field: "price",
+        title: "Amount(VND)",
+        field: "amount",
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{rowData.price.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
+            <span>{rowData.amount.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
           );
         },
       },
@@ -101,7 +102,6 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
         },
         editable: "never",
       },
-
       {
         title: "Status",
         field: "status",
@@ -110,15 +110,23 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
           return (
             <Alert
               className="m-0 text-center"
-              color={colorStatus[rowData.status]}
+              color={COLOR_ORDER_STATUS[rowData.status]}
             >
               {capitalizeFirstLetter(rowData.status)}
             </Alert>
           );
         },
-        initialEditValue: "new",
+        initialEditValue: "waiting_for_approve",
       },
-      { title: "Created At", field: "createdAt", editable: "never" },
+      {
+        title: "Payment",
+        field: "paymentType",
+        lookup: PAYMENT_TYPE,
+        render: (rowData) => {
+          return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
+        },
+        editable: "never",
+      },
     ],
     data: [
       {
@@ -160,7 +168,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
     subGroundName: orders[orderId]?.subGround?.name || "",
-    price: orders[orderId].price.toString(),
+    amount: (orders[orderId].price*(100 - orders[orderId].discount)/100).toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
   }));
@@ -200,7 +208,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
                 updateOrderStatus(setLoading, { id, status });
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "approved"].includes(rowData.status) || isAdmin,
+              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
@@ -209,7 +217,7 @@ const OrderList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) 
 };
 const mapStateToProps = (state) => ({
   orders: state.order.orders,
-  auth: state.auth
+  auth: state.auth,
 });
 export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
   withRouter(OrderList)

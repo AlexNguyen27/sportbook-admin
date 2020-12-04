@@ -3,8 +3,13 @@ import MaterialTable from "material-table";
 import moment from "moment";
 import { connect } from "react-redux";
 import { withRouter, useHistory } from "react-router-dom";
-import { DATE_TIME, ORDER_STATUS, PAYMENT_TYPE } from "../../../utils/common";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import {
+  DATE_TIME,
+  ORDER_STATUS,
+  PAYMENT_TYPE,
+  COLOR_ORDER_STATUS,
+} from "../../../utils/common";
+
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -21,6 +26,7 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Alert } from "reactstrap";
 import Colors from "../../../constants/Colors";
 import PageLoader from "../../custom/PageLoader";
@@ -52,20 +58,21 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const colorStatus = {
-  new: "primary",
-  cancelled: "danger",
-  approved: "success",
-};
-
-const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } }) => {
+const OrdersList = ({
+  getOrders,
+  orders,
+  updateOrderStatus,
+  auth: { isAdmin },
+}) => {
+  const history = useHistory();
   const [state, setState] = useState({
     columns: [
       {
-        title: "Ground name",
+        title: "Sub ground name",
         field: "subGroundName",
         editable: "never",
       },
+      { title: "Start day", field: "startDay", editable: "never" },
       {
         title: "Start time",
         field: "startTime",
@@ -77,12 +84,12 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
         editable: "never",
       },
       {
-        title: "Price(VND)",
-        field: "price",
+        title: "Amount(VND)",
+        field: "amount",
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{rowData.price.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
+            <span>{rowData.amount.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
           );
         },
       },
@@ -95,25 +102,31 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
         },
         editable: "never",
       },
-
       {
         title: "Status",
         field: "status",
         lookup: ORDER_STATUS,
         render: (rowData) => {
-          console.log(rowData);
           return (
             <Alert
               className="m-0 text-center"
-              color={colorStatus[rowData.status]}
+              color={COLOR_ORDER_STATUS[rowData.status]}
             >
               {capitalizeFirstLetter(rowData.status)}
             </Alert>
           );
         },
-        initialEditValue: "new",
+        initialEditValue: "waiting_for_approve",
       },
-      { title: "Created At", field: "createdAt", editable: "never" },
+      {
+        title: "Payment",
+        field: "paymentType",
+        lookup: PAYMENT_TYPE,
+        render: (rowData) => {
+          return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
+        },
+        editable: "never",
+      },
     ],
     data: [
       {
@@ -149,17 +162,19 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     getOrders(setLoading);
-  }, [getOrders, loading]);
+  }, []);
 
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
-    subGroundName: orders[orderId].subGround.name,
-    price: orders[orderId].price.toString(),
+    subGroundName: orders[orderId]?.subGround?.name || "",
+    amount: (
+      (orders[orderId].price * (100 - orders[orderId].discount)) /
+      100
+    ).toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
   }));
-  const history = useHistory();
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -184,7 +199,6 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
               tooltip: "History",
               onClick: (event, rowData) => {
                 history.push(`orders-list/${rowData.id}`);
-
               },
             },
           ]}
@@ -197,7 +211,7 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
                 updateOrderStatus(setLoading, { id, status });
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "approved"].includes(rowData.status) || isAdmin,
+              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
@@ -206,7 +220,7 @@ const OrdersList = ({ getOrders, orders, updateOrderStatus, auth: { isAdmin } })
 };
 const mapStateToProps = (state) => ({
   orders: state.order.orders,
-  auth: state.auth
+  auth: state.auth,
 });
 export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
   withRouter(OrdersList)
