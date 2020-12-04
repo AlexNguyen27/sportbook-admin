@@ -112,20 +112,11 @@ const OrderList = ({
               className="m-0 text-center"
               color={COLOR_ORDER_STATUS[rowData.status]}
             >
-              {capitalizeFirstLetter(rowData.status)}
+              {capitalizeFirstLetter(ORDER_STATUS[rowData.status])}
             </Alert>
           );
         },
         initialEditValue: "waiting_for_approve",
-      },
-      {
-        title: "Payment",
-        field: "paymentType",
-        lookup: PAYMENT_TYPE,
-        render: (rowData) => {
-          return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
-        },
-        editable: "never",
       },
     ],
     data: [
@@ -168,7 +159,10 @@ const OrderList = ({
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
     subGroundName: orders[orderId]?.subGround?.name || "",
-    amount: (orders[orderId].price*(100 - orders[orderId].discount)/100).toString(),
+    amount: (
+      (orders[orderId].price * (100 - orders[orderId].discount)) /
+      100
+    ).toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
   }));
