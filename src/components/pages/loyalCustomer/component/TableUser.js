@@ -48,6 +48,7 @@ export default function TableUser({ dataSource }) {
       { title: "Phone", field: "phone" },
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Email", field: 'email'},
+      { title: "Order times", field: 'orderCount'},
       {
         title: "Usually play at",
         field: "startDay",

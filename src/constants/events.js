@@ -3,161 +3,69 @@ const now = new Date()
 
 export default [
   {
-    id: 0,
-    title: 'All Day Event very long title',
-    allDay: true,
-    start: moment(),
-    end: new Date(2015, 3, 1),
+    title: "00:00-01:59",
+    start: "2018-03-04 00:00",
+    end: "2018-03-04 01:59",
+    up_down_ind: "Y"
   },
   {
-    id: 1,
-    title: 'Long Event',
-    start: new Date(2015, 3, 7),
-    end: new Date(2015, 3, 10),
-  },
-
-  {
-    id: 2,
-    title: 'DTS STARTS',
-    start: new Date(2016, 2, 13, 0, 0, 0),
-    end: new Date(2016, 2, 20, 0, 0, 0),
-  },
-
-  {
-    id: 3,
-    title: 'DTS ENDS',
-    start: new Date(2016, 10, 6, 0, 0, 0),
-    end: new Date(2016, 10, 13, 0, 0, 0),
-  },
-
-  {
-    id: 4,
-    title: 'Some Event',
-    start: new Date(2015, 3, 9, 0, 0, 0),
-    end: new Date(2015, 3, 10, 0, 0, 0),
+    title: "02:00-06:59",
+    start: "2018-03-04 02:00",
+    end: "2018-03-04 06:59",
+    up_down_ind: "N"
   },
   {
-    id: 5,
-    title: 'Conference',
-    start: new Date(2015, 3, 11),
-    end: new Date(2015, 3, 13),
-    desc: 'Big conference for important people',
+    title: "07:00-23:59",
+    start: "2018-03-04 07:00",
+    end: "2018-03-04 23:59",
+    up_down_ind: "Y"
   },
   {
-    id: 6,
-    title: 'Meeting',
-    start: new Date(2015, 3, 12, 10, 30, 0, 0),
-    end: new Date(2015, 3, 12, 12, 30, 0, 0),
-    desc: 'Pre-meeting meeting, to prepare for the meeting',
+    title: "00:00-01:59",
+    start: "2018-03-05 00:00",
+    end: "2018-03-05 01:59",
+    up_down_ind: "Y"
   },
   {
-    id: 7,
-    title: 'Lunch',
-    start: new Date(2015, 3, 12, 12, 0, 0, 0),
-    end: new Date(2015, 3, 12, 13, 0, 0, 0),
-    desc: 'Power lunch',
+    title: "02:00-06:59",
+    start: "2018-03-05 02:00",
+    end: "2018-03-05 06:59",
+    up_down_ind: "N"
   },
   {
-    id: 8,
-    title: 'Meeting',
-    start: new Date(2015, 3, 12, 14, 0, 0, 0),
-    end: new Date(2015, 3, 12, 15, 0, 0, 0),
+    title: "07:00-23:59",
+    start: "2018-03-05 07:00",
+    end: "2018-03-05 23:59",
+    up_down_ind: "Y"
   },
   {
-    id: 9,
-    title: 'Happy Hour',
-    start: new Date(2015, 3, 12, 17, 0, 0, 0),
-    end: new Date(2015, 3, 12, 17, 30, 0, 0),
-    desc: 'Most important meal of the day',
+    title: "00:00-01:59",
+    start: "2018-03-06 00:00",
+    end: "2018-03-06 01:59",
+    up_down_ind: "Y"
   },
   {
-    id: 10,
-    title: 'Dinner',
-    start: new Date(2015, 3, 12, 20, 0, 0, 0),
-    end: new Date(2015, 3, 12, 21, 0, 0, 0),
+    title: "02:00-06:59",
+    start: "2018-03-06 02:00",
+    end: "2018-03-06 06:59",
+    up_down_ind: "N"
   },
   {
-    id: 11,
-    title: 'Birthday Party',
-    start: new Date(2015, 3, 13, 7, 0, 0),
-    end: new Date(2015, 3, 13, 10, 30, 0),
+    title: "07:00-23:59",
+    start: "2018-03-06 07:00",
+    end: "2018-03-06 23:59",
+    up_down_ind: "Y"
   },
   {
-    id: 12,
-    title: 'Late Night Event',
-    start: new Date(2015, 3, 17, 19, 30, 0),
-    end: new Date(2015, 3, 18, 2, 0, 0),
+    title: "00:00-01:59",
+    start: "2018-03-07 00:00",
+    end: "2018-03-07 01:59",
+    up_down_ind: "Y"
   },
   {
-    id: 12.5,
-    title: 'Late Same Night Event',
-    start: new Date(2015, 3, 17, 19, 30, 0),
-    end: new Date(2015, 3, 17, 23, 30, 0),
-  },
-  {
-    id: 13,
-    title: 'Multi-day Event',
-    start: new Date(2015, 3, 20, 19, 30, 0),
-    end: new Date(2015, 3, 22, 2, 0, 0),
-  },
-  {
-    id: 14,
-    title: 'Today test',
-    start: new Date(new Date().setHours(new Date().getHours() - 3)),
-    end: new Date(new Date().setHours(new Date().getHours() + 3)),
-  },
-  {
-    id: 15,
-    title: 'Point in Time Event',
-    start: now,
-    end: now,
-  },
-  {
-    id: 16,
-    title: 'Video Record',
-    start: new Date(2015, 3, 14, 15, 30, 0),
-    end: new Date(2015, 3, 14, 19, 0, 0),
-  },
-  {
-    id: 17,
-    title: 'Dutch Song Producing',
-    start: new Date(2015, 3, 14, 16, 30, 0),
-    end: new Date(2015, 3, 14, 20, 0, 0),
-  },
-  {
-    id: 18,
-    title: 'Itaewon Halloween Meeting',
-    start: new Date(2015, 3, 14, 16, 30, 0),
-    end: new Date(2015, 3, 14, 17, 30, 0),
-  },
-  {
-    id: 19,
-    title: 'Online Coding Test',
-    start: new Date(2015, 3, 14, 17, 30, 0),
-    end: new Date(2015, 3, 14, 20, 30, 0),
-  },
-  {
-    id: 20,
-    title: 'An overlapped Event',
-    start: new Date(2015, 3, 14, 17, 0, 0),
-    end: new Date(2015, 3, 14, 18, 30, 0),
-  },
-  {
-    id: 21,
-    title: 'Phone Interview',
-    start: new Date(2015, 3, 14, 17, 0, 0),
-    end: new Date(2015, 3, 14, 18, 30, 0),
-  },
-  {
-    id: 22,
-    title: 'Cooking Class',
-    start: new Date(2015, 3, 14, 17, 30, 0),
-    end: new Date(2015, 3, 14, 19, 0, 0),
-  },
-  {
-    id: 23,
-    title: 'Go to the gym',
-    start: new Date(2015, 3, 14, 18, 30, 0),
-    end: new Date(2015, 3, 14, 20, 0, 0),
-  },
+    title: "02:00-06:59",
+    start: "2018-03-07 02:00",
+    end: "2018-03-07 06:59",
+    up_down_ind: "N"
+  }
 ]

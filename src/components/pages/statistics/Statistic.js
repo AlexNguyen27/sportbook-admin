@@ -5,7 +5,7 @@ import MultipleSummary from "./MultipleSummary";
 import DropdownV2 from "../../custom/DropdownV2";
 import { Grid } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
-import moment from 'moment';
+import moment from "moment";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -21,7 +21,9 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
   const [loading, setLoading] = useState(true);
   const [reportLoading, setReportLoading] = useState(true);
 
-  const [selectedStartDate, setSelectedStartDate] = React.useState(moment().subtract(7, 'days'));
+  const [selectedStartDate, setSelectedStartDate] = React.useState(
+    moment().subtract(7, "days")
+  );
 
   const [selectedEndDate, setSelectedEndDate] = React.useState(new Date());
 
@@ -64,6 +66,10 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
     (key) => grounds[key].totalAmount
   );
 
+  const orderTimes = Object.keys(grounds).map(
+    (key) => grounds[key].orderCount
+  );
+
   useEffect(() => {
     setReportLoading(true);
     getReports(setReportLoading, selectedStartDate, selectedEndDate);
@@ -90,6 +96,18 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
           name={groundNames || []}
           // eslint-disable-next-line no-sparse-arrays
           dataSource={totalAmounts || []}
+          lineName="Price(VND)"
+          title="Base on Total Amount"
+        />
+      </PageLoader>
+    <hr></hr>
+      <PageLoader loading={loading}>
+        <MultipleSummary
+          name={groundNames || []}
+          // eslint-disable-next-line no-sparse-arrays
+          dataSource={orderTimes || []}
+          lineName="Order Times"
+          title="Base on Order Times"
         />
       </PageLoader>
       <hr className="m-4" />
