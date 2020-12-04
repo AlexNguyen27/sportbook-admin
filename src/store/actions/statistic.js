@@ -29,6 +29,7 @@ export const getGroundsByDate = (setLoading, date) => async (
                       id
                       title 
                       totalAmount
+                      orderCount
                   }
                 }
             `,

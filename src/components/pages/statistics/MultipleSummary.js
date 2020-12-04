@@ -17,33 +17,17 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   formControl: {
-    margin: theme.spacing(3),
+    marginTop: "14px",
+    marginBottom: "14px",
   },
   group: {
     margin: theme.spacing(1, 0),
   },
 }));
 
-// const data = {
-//   labels: ["January", "February", "March", "April", "May", "June", "July"],
-//   datasets: [
-//     {
-//       label: "My First dataset",
-//       backgroundColor: "rgba(255,99,132,0.2)",
-//       borderColor: "rgba(255,99,132,1)",
-//       borderWidth: 1,
-//       hoverBackgroundColor: "rgba(255,99,132,0.4)",
-//       hoverBorderColor: "rgba(255,99,132,1)",
-//       data: [65, 59, 80, 81, 56, 55, 40],
-//     },
-//   ],
-// };
-
-const MultipleSummary = ({ name, dataSource, view }) => {
+const MultipleSummary = ({ name, dataSource, lineName, title }) => {
   const classes = useStyles();
   const options = name;
-  const lineName = "Price(VND)";
-
   // PIE CHART
   const dataPie = {
     labels: options,
@@ -79,23 +63,6 @@ const MultipleSummary = ({ name, dataSource, view }) => {
       {
         label: lineName,
         data: dataSource,
-        // lineTension: 0.1,
-        // backgroundColor: "rgba(75,192,192,0.4)",
-        // borderColor: "rgba(75,192,192,1)",
-        // borderCapStyle: "butt",
-        // borderDash: [],
-        // borderDashOffset: 0.0,
-        // borderJoinStyle: "miter",
-        // pointBorderColor: "rgba(75,192,192,1)",
-        // pointBackgroundColor: "#fff",
-        // pointBorderWidth: 1,
-        // pointHoverRadius: 5,
-        // pointHoverBackgroundColor: "rgba(75,192,192,1)",
-        // pointHoverBorderColor: "rgba(220,220,220,1)",
-        // pointHoverBorderWidth: 2,
-        // pointRadius: 1,
-        // pointHitRadius: 10,
-        // spanGaps: true,
         backgroundColor: "rgb(255, 99, 132)",
         borderColor: "rgba(255, 99, 132, 0.2)",
       },
@@ -109,11 +76,6 @@ const MultipleSummary = ({ name, dataSource, view }) => {
       {
         data: dataSource,
         label: lineName,
-        // backgroundColor: "rgba(255,99,132,0.2)",
-        // borderColor: "rgba(255,99,132,1)",
-        // borderWidth: 1,
-        // hoverBackgroundColor: "rgba(255,99,132,0.4)",
-        // hoverBorderColor: "rgba(255,99,132,1)",
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -134,17 +96,6 @@ const MultipleSummary = ({ name, dataSource, view }) => {
       },
     ],
   };
-
-  // AXES BAR CHART
-  // const Axes = [
-  //   {
-  //     min: 0,
-  //     ticks: {
-  //       beginAtZero: true,
-  //       stepSize: 1,
-  //     },
-  //   },
-  // ];
   const Axes = [
     {
       ticks: {
@@ -162,7 +113,7 @@ const MultipleSummary = ({ name, dataSource, view }) => {
 
   return (
     <Fragment>
-      <Row>
+      <Row style={{ justifyContent: "center", marginTop: '30px' }}>
         <Col md={3}>
           <FormControl component="fieldset" className={classes.formControl}>
             <FormLabel component="legend">Pick a chart</FormLabel>
@@ -192,6 +143,7 @@ const MultipleSummary = ({ name, dataSource, view }) => {
           </FormControl>
         </Col>
         <Col md={9}>
+          <h5>{title}</h5>
           {!dataSource.length && (
             <div>
               <h5 className="text-center mt-4">NO ORDER DATA</h5>

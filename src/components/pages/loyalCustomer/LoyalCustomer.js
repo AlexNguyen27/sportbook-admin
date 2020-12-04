@@ -59,7 +59,8 @@ function LoyalCustomer({ getLoyalCustomers, loyalCustomers }) {
   const userArr = Object.keys(loyalCustomers).map((userId) => ({
     ...loyalCustomers[userId],
     createdAt: getDateTime(loyalCustomers[userId].createdAt),
-    startDay: loyalCustomers[userId]?.orders[0]?.startDay
+    startDay: loyalCustomers[userId]?.orders[0]?.startDay,
+    orderCount: loyalCustomers[userId].orders.length,
   }));
 
   return (
