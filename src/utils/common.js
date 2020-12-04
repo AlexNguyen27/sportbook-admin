@@ -34,14 +34,14 @@ export const PAYMENT_TYPE = {
 };
 
 export const ORDER_STATUS = {
-  waiting_for_appove: "Waiting for approve",
+  waiting_for_approve: "Waiting for approve",
   cancelled: "Cancelled",
   approved: "Approved",
   paid: "Paid",
 };
 
 export const COLOR_ORDER_STATUS = {
-  waiting_for_appove: "primary",
+  waiting_for_approve: "primary",
   cancelled: "danger",
   approved: "warning",
   paid: "success",

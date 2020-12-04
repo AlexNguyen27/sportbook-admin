@@ -112,7 +112,7 @@ const OrdersList = ({
               className="m-0 text-center"
               color={COLOR_ORDER_STATUS[rowData.status]}
             >
-              {capitalizeFirstLetter(rowData.status)}
+              {capitalizeFirstLetter(ORDER_STATUS[rowData.status])}
             </Alert>
           );
         },
