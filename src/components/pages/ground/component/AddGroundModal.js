@@ -212,6 +212,14 @@ const AddGroundModal = ({
       ...selectedDropdownData,
       selectedCategoryId: id,
     });
+  }; 
+
+  const getMapAddress = () => {
+    const test = `${address}, ${WARDS[selectedWardCode]?.name_with_type}, ${
+      DISTRICTS[selectedDistrictCode]?.name_with_type
+    }, ${REGIONS[selectedRegionCode]?.name_with_type || ""}`;
+    console.log('test--------------------', test);
+    return test;
   };
 
   return (
@@ -281,43 +289,7 @@ const AddGroundModal = ({
                 <Benefits checked={checked} setChecked={setChecked} />
               </Col>
               {/* ADDRESS */}
-              <Col xs={4}>
-                <DropdownV2
-                  fullWidth
-                  label="City / Province / Region"
-                  value={selectedRegionCode.toString() || ""}
-                  options={regionArr || []}
-                  valueBasedOnProperty="code"
-                  displayProperty="name"
-                  onChange={(code) => onChangeRegion(code)}
-                  error={errors.regionCode}
-                />
-              </Col>
-              <Col xs={4}>
-                <DropdownV2
-                  fullWidth
-                  label="District"
-                  value={selectedDistrictCode.toString()}
-                  options={getDistricts() || []}
-                  valueBasedOnProperty="code"
-                  displayProperty="name"
-                  onChange={(code) => onChangeDistrict(code)}
-                  error={errors.districtCode}
-                />
-              </Col>
-              <Col xs={4}>
-                <DropdownV2
-                  fullWidth
-                  label="Ward"
-                  value={selectedWardCode.toString()}
-                  options={getWards() || []}
-                  valueBasedOnProperty="code"
-                  displayProperty="name"
-                  onChange={(code) => onChangeWard(code)}
-                  error={errors.wardCode}
-                />
-              </Col>
-              <Col xs={12} className="mt-4">
+              <Col xs={12} >
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="address"
@@ -329,9 +301,46 @@ const AddGroundModal = ({
                   variant="outlined"
                 />
               </Col>
+              <Col xs={4} className="mt-2">
+                <DropdownV2
+                  fullWidth
+                  label="City / Province / Region"
+                  value={selectedRegionCode.toString() || ""}
+                  options={regionArr || []}
+                  valueBasedOnProperty="code"
+                  displayProperty="name"
+                  onChange={(code) => onChangeRegion(code)}
+                  error={errors.regionCode}
+                />
+              </Col>
+              <Col xs={4} className="mt-2">
+                <DropdownV2
+                  fullWidth
+                  label="District"
+                  value={selectedDistrictCode.toString()}
+                  options={getDistricts() || []}
+                  valueBasedOnProperty="code"
+                  displayProperty="name"
+                  onChange={(code) => onChangeDistrict(code)}
+                  error={errors.districtCode}
+                />
+              </Col>
+              <Col xs={4} className="mt-2">
+                <DropdownV2
+                  fullWidth
+                  label="Ward"
+                  value={selectedWardCode.toString()}
+                  options={getWards() || []}
+                  valueBasedOnProperty="code"
+                  displayProperty="name"
+                  onChange={(code) => onChangeWard(code)}
+                  error={errors.wardCode}
+                />
+              </Col>
+             
               {/* MAP */}
               <Col xs={12} className="mt-4">
-                <ReactGoogleMaps />
+                <ReactGoogleMaps address={getMapAddress()}/>
               </Col>
 
               {/* IMAGE */}
