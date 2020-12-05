@@ -126,12 +126,12 @@ const AddOrderModal = ({
       price: "",
       discount: "",
     });
-    setSelectedPaymentType('');
+    setSelectedPaymentType("");
     setSelectedDate({
       date: new Date(),
       startTime: startTimeArr[0]?.id || "",
       selectedPriceId: "",
-    })
+    });
   };
   const handleDateChange = (date, fieldName) => {
     setSelectedDate({
@@ -165,8 +165,8 @@ const AddOrderModal = ({
     const formatedData = trimObjProperties({
       subGroundId: selectedSubGroundId,
       startDay: moment(selectedDate.date).format("DD/MM/YYYY"),
-      startTime: prices[selectedDate.selectedPriceId]?.startTime || '',
-      endTime: prices[selectedDate.selectedPriceId]?.endTime || '',
+      startTime: prices[selectedDate.selectedPriceId]?.startTime || "",
+      endTime: prices[selectedDate.selectedPriceId]?.endTime || "",
       paymentType: selectedPaymentType,
     });
     console.log("ffff--------------------", formatedData);
@@ -235,7 +235,10 @@ const AddOrderModal = ({
                     variant="outlined"
                     id="date-picker-dialog"
                     label="Select date"
+                    disablePast={true}
+                    inputVariant="outlined"
                     format="dd/MM/yyyy"
+                    style={{ width: "100%", marginTop: 0 }}
                     value={selectedDate.date}
                     onChange={(date) => handleDateChange(date, "date")}
                     KeyboardButtonProps={{

@@ -83,7 +83,11 @@ const PriceList = ({
       {
         title: "From time",
         field: "startTime",
-      render: (rowData) => <span>{moment(rowData.startTime, 'HH:mm:ss A').format('hh:mm A')}</span>,
+        render: (rowData) => (
+          <span>
+            {moment(rowData.startTime, "HH:mm:ss A").format("hh:mm A")}
+          </span>
+        ),
         editComponent: (props) => {
           console.log(props);
           return (
@@ -103,7 +107,9 @@ const PriceList = ({
       {
         title: "To time",
         field: "endTime",
-        render: (rowData) => <span>{moment(rowData.endTime, 'HH:mm:ss A').format('hh:mm A')}</span>,
+        render: (rowData) => (
+          <span>{moment(rowData.endTime, "HH:mm:ss A").format("hh:mm A")}</span>
+        ),
         editComponent: (props) => {
           console.log(props);
           return (
@@ -111,16 +117,23 @@ const PriceList = ({
               <TextField
                 id="endTime"
                 type="time"
+                format=""
                 size="small"
                 defaultValue={props.value}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
+                InputProps={{ inputProps: { min: '12:12:00', max: 10 } }}
               />
             </>
           );
         },
       },
-      { title: "Price/hours", field: "price", type: "numeric",initialEditValue: 0, },
+      {
+        title: "Price/hours",
+        field: "price",
+        type: "numeric",
+        initialEditValue: 0,
+      },
 
       {
         title: "Discount",

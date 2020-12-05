@@ -58,9 +58,10 @@ const OrderManagement = (props) => {
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               disableToolbar
-              variant="inline"
               format="MM/dd/yyyy"
               margin="normal"
+              disablePast={true}
+              inputVariant="outlined"
               id="date-picker-inline"
               label="Date picker inline"
               value={selectedDate}
