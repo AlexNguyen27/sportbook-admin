@@ -250,6 +250,13 @@ const EditGroundModal = ({
     });
   };
 
+  const getMapAddress = () => {
+    const test = `${address}, ${WARDS[selectedWardCode]?.name_with_type}, ${
+      DISTRICTS[selectedDistrictCode]?.name_with_type
+    }, ${REGIONS[selectedRegionCode]?.name_with_type || ""}`;
+    console.log('test--------------------', test);
+    return test;
+  };
   return (
     <Modal
       style={{ maxWidth: "700px", marginTop: "100px" }}
@@ -367,7 +374,7 @@ const EditGroundModal = ({
               </Col>
               {/* MAP */}
               <Col xs={12} className="mt-4">
-                <ReactGoogleMaps />
+                <ReactGoogleMaps address={getMapAddress()}/>
               </Col>
 
               {/* IMAGE */}
