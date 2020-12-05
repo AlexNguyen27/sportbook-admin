@@ -30,6 +30,7 @@ import { DATE_TIME } from "../../../utils/common";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
+import { formatThousandVND } from "../../../utils/commonFunction";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -88,8 +89,17 @@ const PriceList = ({
             {moment(rowData.startTime, "HH:mm:ss A").format("hh:mm A")}
           </span>
         ),
+        validate: (rowData) => {
+          const startTime = moment(rowData.startTime, "HH:mm:ss");
+          const endTime = moment(rowData.endTime, "HH:mm:ss");
+          return startTime.isBefore(endTime)
+            ? true
+            : {
+                isValid: false,
+                helperText: "Start time should be after end time!",
+              };
+        },
         editComponent: (props) => {
-          console.log(props);
           return (
             <>
               <TextField
@@ -99,6 +109,8 @@ const PriceList = ({
                 defaultValue={props.value}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
+                error={props.helperText}
+                helperText={props.helperText}
               />
             </>
           );
@@ -107,11 +119,20 @@ const PriceList = ({
       {
         title: "To time",
         field: "endTime",
+        validate: (rowData) => {
+          const startTime = moment(rowData.startTime, "HH:mm:ss");
+          const endTime = moment(rowData.endTime, "HH:mm:ss");
+          return startTime.isBefore(endTime)
+            ? true
+            : {
+                isValid: false,
+                helperText: "End time should be after start time!",
+              };
+        },
         render: (rowData) => (
           <span>{moment(rowData.endTime, "HH:mm:ss A").format("hh:mm A")}</span>
         ),
         editComponent: (props) => {
-          console.log(props);
           return (
             <>
               <TextField
@@ -122,7 +143,9 @@ const PriceList = ({
                 defaultValue={props.value}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
-                InputProps={{ inputProps: { min: '12:12:00', max: 10 } }}
+                InputProps={{ inputProps: { min: "12:12:00", max: 10 } }}
+                error={props.helperText}
+                helperText={props.helperText}
               />
             </>
           );
@@ -133,6 +156,11 @@ const PriceList = ({
         field: "price",
         type: "numeric",
         initialEditValue: 0,
+        render: (rowData) => (
+          <span>
+            {formatThousandVND(rowData.price, ' VND', 1)}
+          </span>
+        ),
       },
 
       {
@@ -141,6 +169,11 @@ const PriceList = ({
         type: "numeric",
         initialEditValue: 0,
         validate: (rowData) => rowData.discount > -1 && rowData.discount < 101,
+        render: (rowData) => (
+          <span>
+            {formatThousandVND(rowData.discount, ' %', 1)}
+          </span>
+        ),
       },
       // {
       //   title: "Status",

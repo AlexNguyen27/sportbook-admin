@@ -8,6 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { connect } from "react-redux";
+import { formatThousandVND } from "../../utils/commonFunction";
 
 const useStyles = makeStyles({
   table: {
@@ -53,7 +54,7 @@ const StatictisTable = ({ reports }) => {
               <TableCell align="left">{row.title}</TableCell>
               <TableCell align="center">{row.orderCount}</TableCell>
               <TableCell align="right" colSpan={2}>
-                {ccyFormat(row.totalAmount || 0)}
+                {formatThousandVND(row.totalAmount || 0, " VND")}
               </TableCell>
             </TableRow>
           ))}

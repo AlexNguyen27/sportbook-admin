@@ -45,3 +45,7 @@ export const getFullname = (firstname, lastname) => {
 };
 
 export const getDateTime = (date) => moment(date).format(DATE_TIME);
+
+export const formatThousandVND = (n, currency, toFixed = 2) => {
+  return n.toFixed(toFixed).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + currency;
+}
