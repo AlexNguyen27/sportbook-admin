@@ -8,6 +8,7 @@ import {
   ORDER_STATUS,
   PAYMENT_TYPE,
   COLOR_ORDER_STATUS,
+  ORDER_STATUS_OPTION,
 } from "../../../../utils/common";
 
 import { forwardRef } from "react";
@@ -30,8 +31,12 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Alert } from "reactstrap";
 import Colors from "../../../../constants/Colors";
 import PageLoader from "../../../custom/PageLoader";
-import { capitalizeFirstLetter } from "../../../../utils/commonFunction";
+import {
+  capitalizeFirstLetter,
+  formatThousandVND,
+} from "../../../../utils/commonFunction";
 import { getOrders, updateOrderStatus } from "../../../../store/actions/order";
+import DropdownV2 from "../../../custom/DropdownV2";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -65,6 +70,7 @@ const OrderList = ({
   auth: { isAdmin },
 }) => {
   const history = useHistory();
+  const [orderStatus, setOrderStatus] = useState();
   const [state, setState] = useState({
     columns: [
       {
@@ -77,11 +83,23 @@ const OrderList = ({
         title: "Start time",
         field: "startTime",
         editable: "never",
+        render: (rowData) => {
+          return (
+            <span>
+              {moment(rowData.startTime, "HH:mm:ss").format("hh:mm A")}
+            </span>
+          );
+        },
       },
       {
         title: "End time",
         field: "endTime",
         editable: "never",
+        render: (rowData) => {
+          return (
+            <span>{moment(rowData.endTime, "HH:mm:ss").format("hh:mm A")}</span>
+          );
+        },
       },
       {
         title: "Amount(VND)",
@@ -89,7 +107,7 @@ const OrderList = ({
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{rowData.amount.replace(/\d(?=(\d{3})+\.)/g, "$&,")}</span>
+            <span>{formatThousandVND(Number(rowData.amount) || 0, "đ")}</span>
           );
         },
       },
@@ -105,7 +123,27 @@ const OrderList = ({
       {
         title: "Status",
         field: "status",
-        lookup: ORDER_STATUS,
+        editComponent: (props) => {
+          const { id } = props.rowData;
+          const oldRowStatus = orders[id].status;
+          const statusArr = Object.keys(ORDER_STATUS_OPTION[oldRowStatus]).map(
+            (key) => ({
+              key: key,
+              value: ORDER_STATUS_OPTION[oldRowStatus][key],
+            })
+          );
+          return (
+            <DropdownV2
+              fullWidth
+              size="small"
+              value={props.rowData.status || ""}
+              options={statusArr || []}
+              valueBasedOnProperty="key"
+              displayProperty="value"
+              onChange={(key) => props.onChange(key)}
+            />
+          );
+        },
         render: (rowData) => {
           return (
             <Alert
@@ -206,6 +244,7 @@ const OrderList = ({
             isEditHidden: (rowData) =>
               ["cancelled", "paid"].includes(rowData.status) || isAdmin,
           }}
+          onRowClick={(event, rowData) => setOrderStatus(rowData.status)}
         />
       </div>
     </PageLoader>

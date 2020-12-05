@@ -41,6 +41,25 @@ export const ORDER_STATUS = {
   // finished: "Finished" AUTO FINISHED WHEN OUT OF TIME
  };
 
+ export const ORDER_STATUS_OPTION = {
+    waiting_for_approve: {
+      waiting_for_approve: "Waiting for approve",
+      cancelled: "Cancelled",
+      approved: "Approved",
+    },
+    cancelled: {
+      cancelled: "Cancelled",
+    },
+    approved: {
+      approved: "Approved",
+      paid: "Paid",
+    },
+    paid: {
+      paid: "Paid",
+    }
+ }
+
+
 export const COLOR_ORDER_STATUS = {
   waiting_for_approve: "primary",
   cancelled: "danger",
