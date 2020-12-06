@@ -4,6 +4,7 @@ import {
   EDIT_USER_INFO,
   GET_GITHUB_AVATAR,
   UPLOAD_AVATAR,
+  UPLOAD_MOMO_QR_CODE,
   //   AUTHENTICATE_TEACHER,
 } from "../actions/types";
 import setAuthToken from "../../utils/setAuthToken";
@@ -42,22 +43,17 @@ export default function (state = initialState, action) {
           ...newUser,
         },
       };
-    case GET_GITHUB_AVATAR:
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          imageUrl: action.imageUrl,
-        },
-      };
+    case UPLOAD_MOMO_QR_CODE:
     case UPLOAD_AVATAR: 
-      const { userId, avatar } = action.uploadData;
+    const { userId } = action.uploadData;
+    const uploadImages = { ...action.uploadData };
       if(userId === state.user.id) {
+        delete uploadImages.userId;
         return {
           ...state,
           user: {
             ...state.user,
-            avatar: avatar,
+            ...uploadImages,
           }
         }
       }

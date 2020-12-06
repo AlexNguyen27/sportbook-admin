@@ -91,7 +91,7 @@ const OrdersList = ({
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{formatThousandVND(rowData.amount, '', 1)}</span>
+            <span>{formatThousandVND(Number(rowData.amount), '', 1)}</span>
           );
         },
       },
@@ -182,7 +182,7 @@ const OrdersList = ({
     ],
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getOrders(setLoading);
   }, []);
@@ -207,7 +207,7 @@ const OrdersList = ({
           columns={state.columns}
           data={orderArr || []}
           options={{
-            pageSize: 8,
+            pageSize: 7,
             headerStyle: {
               fontWeight: "bold",
             },

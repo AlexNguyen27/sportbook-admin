@@ -6,6 +6,7 @@ import {
   SAVE_CURRENT_USER,
   GET_CURRENT_USER_AVATAR,
   UPLOAD_AVATAR,
+  UPLOAD_MOMO_QR_CODE,
 } from "../actions/types";
 
 const initialState = {
@@ -38,14 +39,17 @@ export default function (state = initialState, action) {
         ...state,
         current_user: currentUser,
       };
+    case UPLOAD_MOMO_QR_CODE:
     case UPLOAD_AVATAR:
-      const { userId, avatar } = action.uploadData;
+      const { userId } = action.uploadData;
+      const uploadImages = { ...action.uploadData };
       if (userId === state.current_user?.id) {
+        delete uploadImages.userId;
         return {
           ...state,
           current_user: {
             ...state.current_user,
-            avatar: avatar,
+            ...uploadImages,
           },
         };
       }

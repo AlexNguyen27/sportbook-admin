@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Button, IconButton, Tooltip } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 import { Row, Col } from "reactstrap";
-import Paper from "@material-ui/core/Paper";
 import _ from "lodash";
 import SaveIcon from "@material-ui/icons/Save";
 import RotateLeftIcon from "@material-ui/icons/RotateLeft";
 import DateFnsUtils from "@date-io/date-fns";
 import moment from "moment";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
-import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+import { MuiPickersUtilsProvider, DatePicker, s } from "@material-ui/pickers";
 import {
   GET_ERRORS,
   CLEAR_ERRORS,
@@ -20,19 +18,18 @@ import {
 import { trimObjProperties } from "../../../utils/formatString";
 import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
-import {
-  editUserInfo,
-  getUserInfo,
-  uploadAvatar,
-} from "../../../store/actions/user";
+import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
-import { GENDER, FAVORITE_FOOT } from "../../../utils/common";
+import { GENDER, FAVORITE_FOOT, ROLE } from "../../../utils/common";
 import REGIONS from "../../locales/regions.json";
 import DISTRICTS from "../../locales/districts.json";
 import WARDS from "../../locales/wards.json";
 
 import { validateEmail } from "../../../utils/commonFunction";
-import { storage } from "../../../constants/firebase";
+import SocialNetworkForm from "./component/SocialNetworkForm";
+import ExtraInfoForm from "./component/ExtraInfoForm";
+import MomoUpload from "./component/MomoUpload";
+import AvatarUpload from "./component/AvatarUpload";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -60,6 +57,11 @@ const useStyles = makeStyles((theme) => ({
     right: "116px",
     top: "155px",
   },
+  btnUploadMomo: {
+    position: "absolute",
+    right: "116px",
+    top: "450px",
+  },
   inputFile: {
     display: "none",
   },
@@ -72,13 +74,16 @@ const UserInfo = ({
   editUserInfo,
   getUserInfo,
   viewType,
-  uploadAvatar,
+  isManager,
+  match,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const imageUrl = BASE_IMAGE_URL;
   const [avatar, setAvatar] = useState("");
+  const [momoQRCode, setMomoQRCode] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   const [formData, setformData] = useState({
@@ -88,24 +93,52 @@ const UserInfo = ({
     phone: "",
     address: "",
     gender: "",
-    playRole: "",
+    // playRole: "",
     createdAt: "",
     updatedAt: "",
   });
+
+  const [socialNetworkForm, setSocialNetworkForm] = useState({
+    facebook: "",
+    zalo: "",
+    twitter: "",
+  });
+
+  const [extraInfoForm, setExtraInfoForm] = useState({
+    favoriteFoot: "",
+    playRole: "",
+    shirtNumber: "",
+    teamName: "",
+    favoritePlayTime: "",
+  });
+
+  const onChangeSocialNetworkForm = (e) => {
+    setSocialNetworkForm({
+      ...socialNetworkForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onChangeExtraInfoForm = (e) => {
+    setExtraInfoForm({
+      ...extraInfoForm,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const genderArr = Object.keys(GENDER).map((key) => ({
     key: key,
     value: GENDER[key],
   }));
 
-  const favoriteFootArr = Object.keys(FAVORITE_FOOT).map((key) => ({
-    key: key,
-    value: FAVORITE_FOOT[key],
-  }));
+  // const favoriteFootArr = Object.keys(FAVORITE_FOOT).map((key) => ({
+  //   key: key,
+  //   value: FAVORITE_FOOT[key],
+  // }));
 
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedGenderKey: "",
-    selectedFavoriteFootKey: "",
+    // selectedFavoriteFootKey: "",
     selectedRegionCode: "",
     selectedDistrictCode: "",
     selectedWardCode: "",
@@ -116,7 +149,7 @@ const UserInfo = ({
     selectedRegionCode,
     selectedDistrictCode,
     selectedWardCode,
-    selectedFavoriteFootKey,
+    // selectedFavoriteFootKey,
   } = selectedDropdownData;
 
   const regionArr = Object.keys(REGIONS).map((key) => ({
@@ -195,18 +228,30 @@ const UserInfo = ({
         email: user.email || "",
         phone: user.phone || "",
         address: user.address ? address.address : "",
-        playRole: user.playRole || "",
-        createdAt: user.createdAt || "",
-        updatedAt: user.updatedAt || "",
+        // playRole: user.playRole || "",
+        createdAt: moment(user.createdAt).format("DD/MM/YYYY HH:mm A") || "",
+        updatedAt: moment(user.updatedAt).format("DD/MM/YYYY HH:mm A") || "",
       });
       setSelectedDropdownData({
         selectedRegionCode: _.get(address, "regionCode") || "",
         selectedDistrictCode: _.get(address, "districtCode") || "",
         selectedWardCode: _.get(address, "wardCode") || "",
-        selectedFavoriteFootKey: _.get(user, "favoriteFoot") || "",
+        // selectedFavoriteFootKey: _.get(user, "favoriteFoot") || "",
         selectedGenderKey: _.get(user, "gender", "") || "",
       });
       setAvatar(user.avatar || imageUrl);
+      setMomoQRCode(user.momoQRCode || imageUrl);
+
+      if (user.socialNetwork) {
+        setSocialNetworkForm({
+          ...JSON.parse(user.socialNetwork),
+        });
+      }
+      if (user.extraInfo) {
+        setExtraInfoForm({
+          ...JSON.parse(user.extraInfo),
+        });
+      }
     } else {
       const address = JSON.parse(_.get(current_user, "address"));
       setformData({
@@ -216,32 +261,52 @@ const UserInfo = ({
         phone: _.get(current_user, "phone") || "",
         address: _.get(current_user, "address") ? address.address : "",
         avatar: _.get(current_user, "avatar") || "",
-        playRole: _.get(current_user, "playRole") || "",
-        createdAt: _.get(current_user, "createdAt") || "",
-        updatedAt: _.get(current_user, "updatedAt") || "",
+        // playRole: _.get(current_user, "playRole") || "",
+        createdAt:
+          moment(current_user.createdAt).format("DD/MM/YYYY HH:mm A") || "",
+        updatedAt:
+          moment(current_user.updatedAt).format("DD/MM/YYYY HH:mm A") || "",
       });
       setSelectedDropdownData({
         selectedRegionCode: _.get(address, "regionCode") || "",
         selectedDistrictCode: _.get(address, "districtCode") || "",
         selectedWardCode: _.get(address, "wardCode") || "",
-        selectedFavoriteFootKey: _.get(current_user, "favoriteFoot") || "",
+        // selectedFavoriteFootKey: _.get(current_user, "favoriteFoot") || "",
         selectedGenderKey: _.get(current_user, "gender", "") || "",
       });
       setAvatar(current_user.avatar || imageUrl);
+      setMomoQRCode(current_user.momoQRCode || imageUrl);
+
+      if (current_user.socialNetwork) {
+        setSocialNetworkForm({
+          ...JSON.parse(current_user.socialNetwork),
+        });
+      }
+      if (current_user.extraInfo) {
+        setExtraInfoForm({
+          ...JSON.parse(current_user.extraInfo),
+        });
+      }
     }
   };
 
+  console.log("match-----------------------", match);
   useEffect(() => {
-    getUserInfo(user.id, setLoading);
+    if (viewType === ROLE.admin) {
+      getUserInfo(match.params.userId, setLoading);
+    } else {
+      getUserInfo(user.id, setLoading);
+    }
     setInit();
-  }, [viewType]);
+  }, [match?.params?.userId || viewType]);
 
   const onSubmit = (e) => {
     const formatData = trimObjProperties(formData);
 
+    const notRequireds = ["avatar"];
     let error = {};
     Object.keys(formatData).map((key) => {
-      if (formatData[key].trim() === "") {
+      if (formatData[key].trim() === "" && !notRequireds.includes(key)) {
         error[key] = "This field is required";
       }
     });
@@ -249,11 +314,15 @@ const UserInfo = ({
     if (JSON.stringify(error) === "{}" && !validateEmail(email)) {
       error.email = "Email is invalid!";
     }
-    if (!selectedFavoriteFootKey.trim()) {
-      error.favoriteFoot = "This field is required";
-    }
+    // if (!selectedFavoriteFootKey.trim()) {
+    //   error.favoriteFoot = "This field is required";
+    // }
     if (!selectedGenderKey.trim()) {
       error.gender = "This field is required";
+    }
+    let dob = moment(selectedDate || '').format("DD/MM/YYYY");
+    if (!dob.trim()|| !selectedDate) {
+      error.dob = "This field is required";
     }
 
     dispatch({
@@ -269,7 +338,10 @@ const UserInfo = ({
     formatData.regionCode = selectedRegionCode;
     formatData.districtCode = selectedDistrictCode;
     formatData.wardCode = selectedWardCode;
-    formatData.favoriteFoot = selectedFavoriteFootKey;
+    // formatData.favoriteFoot = selectedFavoriteFootKey;
+    formatData.extraInfo = { ...extraInfoForm };
+    formatData.socialNetwork = { ...socialNetworkForm };
+    console.log("sd------------------", socialNetworkForm);
 
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
@@ -290,7 +362,7 @@ const UserInfo = ({
 
   const [selectedDate, setSelectedDate] = useState(
     viewType === "user"
-      ? user.dob
+      ? user?.dob
         ? new Date(user.dob)
         : null
       : current_user.dob
@@ -322,49 +394,14 @@ const UserInfo = ({
     });
   };
 
-  const onChangeFavoriteFoot = (code) => {
-    setSelectedDropdownData({
-      ...selectedDropdownData,
-      selectedFavoriteFootKey: code,
-    });
-  };
+  // const onChangeFavoriteFoot = (code) => {
+  //   setSelectedDropdownData({
+  //     ...selectedDropdownData,
+  //     selectedFavoriteFootKey: code,
+  //   });
+  // };
 
-  const [loadingUpload, setLoadingUpload] = useState(false);
-
-  const handleUpload = (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        setLoadingUpload(true);
-        const uploadTask = storage.ref(`/user/avatars/${file.name}`).put(file);
-        uploadTask.on("state_changed", console.log, console.error, () => {
-          storage
-            .ref("/user/avatars")
-            .child(file.name)
-            .getDownloadURL()
-            .then((url) => {
-              setAvatar(url);
-              uploadAvatar(
-                setLoadingUpload,
-                url,
-                viewType === "user" ? user.id : current_user.id
-              );
-              // Swal.fire({
-              //   position: "center",
-              //   type: "success",
-              //   title: "Uploaded successfully!",
-              //   showConfirmButton: false,
-              //   timer: 1500,
-              // });
-            });
-        });
-      } catch (error) {
-        console.log(error, "upload error------------------");
-      }
-    }
-  };
-
+  console.log("viewtype===============", viewType);
   return (
     <PageLoader loading={loading}>
       <div className={classes.root}>
@@ -372,41 +409,20 @@ const UserInfo = ({
           <Grid item xs={12}>
             <Row>
               <Col xs="3">
-                <Paper className={classes.paper}>
-                  <PageLoader loading={loadingUpload}>
-                    <img
-                      src={avatar || imageUrl}
-                      alt="Girl in a jacket"
-                      width="100%"
-                      height={200}
-                      className={classes.iamge}
-                    />
-                    <Tooltip title="Upload new avatar" aria-label="image">
-                      <div>
-                        <input
-                          accept="image/*"
-                          className={classes.inputFile}
-                          id="icon-button-file"
-                          multiple
-                          type="file"
-                          onChange={handleUpload}
-                        />
-                        <label htmlFor="icon-button-file">
-                          <IconButton
-                            aria-label="upload"
-                            className={classes.btnUpload}
-                            component="span"
-                          >
-                            <CloudUploadIcon fontSize="large" />
-                          </IconButton>
-                        </label>
-                      </div>
-                    </Tooltip>
-                    <h6 className="mb-0 font-weight-bold">
-                      {firstName} {lastName}
-                    </h6>
-                  </PageLoader>
-                </Paper>
+                <AvatarUpload
+                  avatar={avatar}
+                  setAvatar={setAvatar}
+                  firstName={firstName}
+                  lastName={lastName}
+                  userId={viewType === "user" ? user.id : current_user.id}
+                />
+                {viewType === "user" && isManager && (
+                  <MomoUpload
+                    momoQRCode={momoQRCode}
+                    setMomoQRCode={setMomoQRCode}
+                    userId={viewType === "user" ? user.id : current_user.id}
+                  />
+                )}
               </Col>
               <Col xs="9">
                 <h4 className="text-center">User Information</h4>
@@ -489,12 +505,14 @@ const UserInfo = ({
                           margin="normal"
                           id="date-picker-inline"
                           label="Date of birth"
+                          disableFuture={true}
                           value={selectedDate}
                           onChange={(date) => setSelectedDate(date)}
                           KeyboardButtonProps={{
                             "aria-label": "change date",
                           }}
-                        />
+                          error={errors.dob}
+                            />
                       </MuiPickersUtilsProvider>
                     </Col>
                   </Row>
@@ -547,8 +565,7 @@ const UserInfo = ({
                     </Col>
                   </Row>
                   {/* Extra information */}
-                  <h6 className="font-weight-bold mt-4">Extra information: </h6>
-                  <Row className="mt-2">
+                  {/* <Row className="mt-4">
                     <Col xs={6}>
                       <DropdownV2
                         fullWidth
@@ -576,7 +593,7 @@ const UserInfo = ({
                         variant="outlined"
                       />
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row className="mt-4">
                     <Col xs={6}>
                       <TextFieldInputWithHeader
@@ -610,6 +627,24 @@ const UserInfo = ({
                       />
                     </Col>
                   </Row>
+
+                  {current_user?.role === "user" ? (
+                    <>
+                      <ExtraInfoForm
+                        formData={extraInfoForm}
+                        onChange={onChangeExtraInfoForm}
+                      />
+                      <SocialNetworkForm
+                        formData={socialNetworkForm}
+                        onChange={onChangeSocialNetworkForm}
+                      />
+                    </>
+                  ) : (
+                    <SocialNetworkForm
+                      formData={socialNetworkForm}
+                      onChange={onChangeSocialNetworkForm}
+                    />
+                  )}
                 </form>
               </Col>
             </Row>
@@ -640,9 +675,9 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
   user: state.auth.user,
   current_user: state.user.current_user,
+  isManager: state.auth.isManager,
 });
 export default connect(mapStateToProps, {
   editUserInfo,
   getUserInfo,
-  uploadAvatar,
 })(UserInfo);
