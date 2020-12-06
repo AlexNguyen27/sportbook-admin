@@ -398,7 +398,7 @@ const DashBoard = ({
         case "/users/:userId":
           return (
             <>
-              <UserInfo viewType={"admin"} />
+              <UserInfo viewType={"admin"} match={match} />
             </>
           );
         case "/ground-management":
@@ -418,7 +418,7 @@ const DashBoard = ({
         case "/orders-list/:orderId":
           return (
             <>
-              <HistoryList orderId={match.params.orderId}/>
+              <HistoryList orderId={match.params.orderId} />
             </>
           );
         default:

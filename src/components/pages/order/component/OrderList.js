@@ -37,6 +37,7 @@ import {
 } from "../../../../utils/commonFunction";
 import { getOrders, updateOrderStatus } from "../../../../store/actions/order";
 import DropdownV2 from "../../../custom/DropdownV2";
+import { CsvBuilder } from 'filefy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -70,7 +71,7 @@ const OrderList = ({
   auth: { isAdmin },
 }) => {
   const history = useHistory();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId) => ({
     ...orders[orderId],
@@ -86,7 +87,6 @@ const OrderList = ({
   useEffect(() => {
     getOrders(setLoading);
   }, []);
-
 
   // const [orderStatus, setOrderStatus] = useState();
   const [state, setState] = useState({
@@ -220,7 +220,7 @@ const OrderList = ({
           columns={state.columns}
           data={orderArr || []}
           options={{
-            pageSize: 8,
+            pageSize: 7,
             headerStyle: {
               fontWeight: "bold",
             },
@@ -228,6 +228,26 @@ const OrderList = ({
               overflowX: "auto",
             },
             actionsColumnIndex: -1,
+            exportButton: true,
+            // exportCsv: (toolbar, columns, renderData) => {
+            //   console.log('column------------------', columns)
+            //   const csvColumns = columns;
+            //   // const csvColumns = ['Sub ground name']
+          
+            //   const data = columns.map(rowData =>
+            //     csvColumns.map(columnDef => rowData[columnDef.field])
+            //   );
+
+            //   console.log(data, 'data--------------------------', renderData)
+          
+            //   const builder = new CsvBuilder(('foo') + '.csv')
+            //     .setDelimeter(',')
+            //     .setColumns(csvColumns.map(columnDef => columnDef))
+            //     .addRows(data)
+            //     .exportFile();
+          
+            //   // toolbar.setState({ exportButtonAnchorEl: null }); // this is the reason to pass the m-table-toolbar object
+            // }
           }}
           actions={[
             {

@@ -88,6 +88,7 @@ export default function TableUser({ dataSource }) {
         headerStyle: {
           fontWeight: "bold",
         },
+        exportButton: true
       }}
     />
   );

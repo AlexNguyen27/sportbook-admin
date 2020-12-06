@@ -8,6 +8,8 @@ import {
   GET_USER_PROFILE,
   EDIT_USER_INFO,
   UPLOAD_AVATAR,
+  UPLOAD_MOMO_QR_CODE,
+  SAVE_CURRENT_USER,
 } from "./types";
 import { arrayToObject } from "../../utils/commonFunction";
 import { hera } from "hera-js";
@@ -42,8 +44,8 @@ export const getUsers = ({ role }, setLoading) => async (
               address
               dob
               avatar
-              favoriteFoot
-              playRole
+              socialNetwork
+              extraInfo
             }
           }
         `,
@@ -72,13 +74,15 @@ export const getUsers = ({ role }, setLoading) => async (
 };
 
 // GET majors data
-export const getUserInfo = (id, setLoading) => async (dispatch, getState) => {
+export const getUserInfo = (userId, setLoading) => async (
+  dispatch,
+  getState
+) => {
   const {
     token,
     user: { id: authUserId, role },
   } = getState().auth;
 
-  let userId = id;
   // manager role
   if (role === ROLE.owner) {
     userId = authUserId;
@@ -106,8 +110,9 @@ export const getUserInfo = (id, setLoading) => async (dispatch, getState) => {
               dob,
               avatar,
               role,
-              favoriteFoot
-              playRole
+              socialNetwork
+              extraInfo
+              momoQRCode
               createdAt,
               updatedAt
             }   
@@ -119,12 +124,12 @@ export const getUserInfo = (id, setLoading) => async (dispatch, getState) => {
   });
 
   if (!errors) {
-    if (authUserId === userId) {
-      dispatch({
-        type: GET_USER_PROFILE,
-        user_profile: data.getUserProfile,
-      });
-    }
+    // if (authUserId === userId) {
+    dispatch({
+      type: SAVE_CURRENT_USER,
+      currentUser: data.getUserById,
+    });
+    // }
 
     setLoading(false);
   } else {
@@ -240,9 +245,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
     address,
     dob,
     email,
-    favoriteFoot,
     phone,
-    playRole,
     gender,
     regionCode,
     districtCode,
@@ -266,12 +269,12 @@ export const editUserInfo = (setLoading, userData, userId) => async (
               email: $email,
               dob: $dob,
               address: $address
-              playRole: $playRole
               regionCode: $regionCode,
               districtCode: $districtCode, 
               wardCode: $wardCode
-              favoriteFoot: $favoriteFoot
               gender: $gender
+              extraInfo: $extraInfo
+              socialNetwork: $socialNetwork
               ) {
                 id
                 email
@@ -280,10 +283,12 @@ export const editUserInfo = (setLoading, userData, userId) => async (
                 phone
                 gender
                 address
+                role
                 dob
-                favoriteFoot
                 avatar
-                playRole
+                momoQRCode
+                extraInfo
+                socialNetwork
                 createdAt
                 updatedAt
             }
@@ -296,13 +301,17 @@ export const editUserInfo = (setLoading, userData, userId) => async (
       phone,
       dob,
       address,
-      playRole,
       email,
       regionCode,
       districtCode,
       wardCode,
-      favoriteFoot,
       gender,
+      extraInfo: {
+        ...userData.extraInfo,
+      },
+      socialNetwork: {
+        ...userData.socialNetwork,
+      },
     },
   });
 
@@ -351,6 +360,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
     setLoading(false);
   }
 };
+
 
 //
 export const deleteUser = (setLoading, userId) => async (
@@ -446,6 +456,65 @@ export const uploadAvatar = (setLoading, avatar, userId) => async (
       uploadData: {
         userId,
         avatar,
+      },
+    });
+
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
+
+    setLoading(false);
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Uploaded successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
+export const uploadMomoQRCode = (setLoading, momoQRCode, userId) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+          mutation {
+            uploadMomoQRCode(
+              momoQRCode: $momoQRCode
+            ) {
+              id
+              momoQRCode
+            }
+          }
+        `,
+    variables: {
+      momoQRCode,
+    },
+  });
+
+  if (!errors) {
+    dispatch({
+      type: UPLOAD_MOMO_QR_CODE,
+      uploadData: {
+        userId,
+        momoQRCode,
       },
     });
 
