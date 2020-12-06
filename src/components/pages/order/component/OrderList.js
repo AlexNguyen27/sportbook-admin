@@ -70,7 +70,25 @@ const OrderList = ({
   auth: { isAdmin },
 }) => {
   const history = useHistory();
-  const [orderStatus, setOrderStatus] = useState();
+  const [loading, setLoading] = useState(false);
+  const getDateTime = (date) => moment(date).format(DATE_TIME);
+  const orderArr = Object.keys(orders).map((orderId) => ({
+    ...orders[orderId],
+    subGroundName: orders[orderId]?.subGround?.name || "",
+    amount: (
+      (orders[orderId].price * (100 - orders[orderId].discount)) /
+      100
+    ).toString(),
+    discount: orders[orderId].discount.toString(),
+    createdAt: getDateTime(orders[orderId].createdAt),
+  }));
+
+  useEffect(() => {
+    getOrders(setLoading);
+  }, []);
+
+
+  // const [orderStatus, setOrderStatus] = useState();
   const [state, setState] = useState({
     columns: [
       {
@@ -125,13 +143,16 @@ const OrderList = ({
         field: "status",
         editComponent: (props) => {
           const { id } = props.rowData;
-          const oldRowStatus = orders[id].status;
-          const statusArr = Object.keys(ORDER_STATUS_OPTION[oldRowStatus]).map(
-            (key) => ({
-              key: key,
-              value: ORDER_STATUS_OPTION[oldRowStatus][key],
-            })
-          );
+          console.log("did-----------------", props);
+          console.log("order----------------", orders);
+          console.log("rodera rray =============", orderArr);
+          const oldRowStatus = orders[id]?.status;
+          const statusArr = Object.keys(
+            ORDER_STATUS_OPTION[oldRowStatus] || {}
+          ).map((key) => ({
+            key: key,
+            value: ORDER_STATUS_OPTION[oldRowStatus][key],
+          }));
           return (
             <DropdownV2
               fullWidth
@@ -188,22 +209,8 @@ const OrderList = ({
     ],
   });
 
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    getOrders(setLoading);
-  }, []);
+  // console.log(orderStatus);
 
-  const getDateTime = (date) => moment(date).format(DATE_TIME);
-  const orderArr = Object.keys(orders).map((orderId) => ({
-    ...orders[orderId],
-    subGroundName: orders[orderId]?.subGround?.name || "",
-    amount: (
-      (orders[orderId].price * (100 - orders[orderId].discount)) /
-      100
-    ).toString(),
-    discount: orders[orderId].discount.toString(),
-    createdAt: getDateTime(orders[orderId].createdAt),
-  }));
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -243,8 +250,11 @@ const OrderList = ({
               }),
             isEditHidden: (rowData) =>
               ["cancelled", "paid"].includes(rowData.status) || isAdmin,
+            // onClick: (rowData) => {
+            //   setOrderStatus(rowData.status);
+            // },
           }}
-          onRowClick={(event, rowData) => setOrderStatus(rowData.status)}
+          // onRowClick={(event, rowData) => setOrderStatus(rowData.status)}
         />
       </div>
     </PageLoader>

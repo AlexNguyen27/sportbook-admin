@@ -7,6 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { connect } from "react-redux";
 import PriceList from "../../price/PriceList";
+import { truncateMultilineString } from "../../../../utils/formatString";
+import Tooltip from "@material-ui/core/Tooltip";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -64,6 +66,7 @@ const SubGroundList = ({ subGrounds, onDelete, onEdit }) => {
   );
 
   const handleChange = (event, newValue) => {
+    console.log('new0--------------', newValue)
     setValue(newValue);
   };
 
@@ -90,19 +93,29 @@ const SubGroundList = ({ subGrounds, onDelete, onEdit }) => {
           >
             {subGroundArr.map((subGround) => (
               <Tab
+                key={subGround.id}
                 value={subGround.id}
-                label={subGround.name}
+                label={
+                  <Tooltip title={subGround.name} placement="left">
+                    <div>{truncateMultilineString(subGround.name, 12)}</div>
+                  </Tooltip>
+                }
                 {...a11yProps(subGround.id)}
               />
             ))}
           </Tabs>
           {subGroundArr.map((subGround) => (
             <TabPanel
+              key={subGround.id}
               value={value}
               index={subGround.id}
-              style={{ width: "100%" }}
+              style={{ width: "90%" }}
             >
-              <PriceList subGround={subGround} onDelete={onDelete} onEdit={onEdit}/>
+              <PriceList
+                subGround={subGround}
+                onDelete={onDelete}
+                onEdit={onEdit}
+              />
             </TabPanel>
           ))}
         </div>
