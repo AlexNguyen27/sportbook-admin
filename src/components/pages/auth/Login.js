@@ -13,6 +13,7 @@ import Landing from "../../layout/Landing";
 import { loginUser } from "../../../store/actions/auth";
 import { GET_ERRORS } from "../../../store/actions/types";
 import { validateEmail } from "../../../utils/commonFunction";
+import GoogleLoginCustom from "./component/GoogleLoginCustom";
 const Login = ({
   errors,
   history,
@@ -95,18 +96,11 @@ const Login = ({
                     style={{ backgroundColor: "#3f72af", color: "white" }}
                     type="submit"
                   >
-                    Facebook
+                    Login with Facebook
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <Button
-                    className="mt-3 w-100"
-                    variant="contained"
-                    type="submit"
-                    style={{ backgroundColor: "#ec524b", color: "white" }}
-                  >
-                    Google
-                  </Button>
+                  <GoogleLoginCustom />
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>

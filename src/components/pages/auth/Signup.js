@@ -89,7 +89,7 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
                     style={{ backgroundColor: "#3f72af", color: "white" }}
                     type="submit"
                   >
-                    Facebook
+                    Login with Facebook
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
@@ -99,7 +99,7 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
                     type="submit"
                     style={{ backgroundColor: "#ec524b", color: "white" }}
                   >
-                    Google
+                    Login with Google
                   </Button>
                 </Grid>
               </Grid>
