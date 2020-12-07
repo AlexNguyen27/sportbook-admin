@@ -3,18 +3,25 @@ import { GET_ERRORS, CLEAR_ERRORS, AUTHENTICATE, BASE_URL } from "./types";
 import { hera } from "hera-js";
 
 import Swal from "sweetalert2";
-import { ROLE } from "../../utils/common";    
+import { ROLE } from "../../utils/common";
 //LOGIN User
-export const loginUser = ({ email, password }) => async (dispatch) => {
-  // try {
-  // const res = await axios.post('', data: {});
+export const loginUser = ({ email, password, hashPassword }) => async (
+  dispatch
+) => {
+  const query = !hashPassword
+    ? "password: $password"
+    : "hashPassword: $hashPassword";
+
+  const variables = !hashPassword
+    ? { email, password }
+    : { email, hashPassword };
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
     },
     query: `
         query {
-          login(email: $email, password: $password) {
+          login(email: $email, ${query}) {
             id,
             token,
             email,
@@ -36,8 +43,7 @@ export const loginUser = ({ email, password }) => async (dispatch) => {
         }
       `,
     variables: {
-      email,
-      password,
+      ...variables,
     },
   });
   if (errors) {
@@ -155,8 +161,9 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
   }
 };
 
-
-export const loginWithGoogle = (setLoading, setModal, userData) => async (dispatch) => {
+export const loginWithGoogle = (setLoading, setModal, userData) => async (
+  dispatch
+) => {
   const { email, password, firstName, lastName, avatar } = userData;
   console.log("herer-----------------", userData);
   const { data, errors } = await hera({
@@ -260,7 +267,7 @@ export const loginWithGoogle = (setLoading, setModal, userData) => async (dispat
       const { token } = resData;
       const userData = { ...resData };
       delete userData.token;
-  
+
       if (resData.role === ROLE.owner) {
         userData.isManager = true;
       } else if (resData.role === ROLE.admin) {
@@ -274,7 +281,7 @@ export const loginWithGoogle = (setLoading, setModal, userData) => async (dispat
         });
         return;
       }
-  
+
       dispatch({
         type: AUTHENTICATE,
         user: {
@@ -285,9 +292,9 @@ export const loginWithGoogle = (setLoading, setModal, userData) => async (dispat
         token,
       });
     }
-      // close modal
-      setModal(false);
-    
+    // close modal
+    setModal(false);
+
     dispatch({
       type: CLEAR_ERRORS,
     });

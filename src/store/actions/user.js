@@ -5,7 +5,6 @@ import {
   DELETE_USER,
   EDIT_USER,
   BASE_URL,
-  GET_USER_PROFILE,
   EDIT_USER_INFO,
   UPLOAD_AVATAR,
   UPLOAD_MOMO_QR_CODE,
@@ -538,3 +537,48 @@ export const uploadMomoQRCode = (setLoading, momoQRCode, userId) => async (
     });
   }
 };
+
+export const checkExitsEmail = (setLoading, email, setIsExitsEmail) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+          query {
+            checkExitsEmail(email: $email) {
+              status
+              hashPassword
+            }
+          }
+        `,
+    variables: {
+      email,
+    },
+  });
+
+  if (!errors) {
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
+
+    setLoading(false);
+    setIsExitsEmail({ ...data.checkExitsEmail });
+    return;
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
