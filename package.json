@@ -21,7 +21,7 @@
     "jquery": "^3.5.0",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.20",
-    "material-table": "^1.68.1",
+    "material-table": "^1.69.2",
     "material-ui-dropzone": "^3.5.0",
     "moment": "^2.24.0",
     "react": "^16.13.1",

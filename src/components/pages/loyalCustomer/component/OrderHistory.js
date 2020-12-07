@@ -35,7 +35,7 @@ import {
   capitalizeFirstLetter,
   formatThousandVND,
 } from "../../../../utils/commonFunction";
-import { getOrders, updateOrderStatus } from "../../../../store/actions/order";
+import { getOrdersByUserId, updateOrderStatus } from "../../../../store/actions/order";
 import DropdownV2 from "../../../custom/DropdownV2";
 import { CsvBuilder } from 'filefy';
 
@@ -64,11 +64,12 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const OrderList = ({
-  getOrders,
+const OrderHistory = ({
+  getOrdersByUserId,
   orders,
   updateOrderStatus,
   auth: { isAdmin },
+  userId,
 }) => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
@@ -85,7 +86,7 @@ const OrderList = ({
   }));
 
   useEffect(() => {
-    getOrders(setLoading);
+    getOrdersByUserId(setLoading, userId);
   }, []);
 
   // const [orderStatus, setOrderStatus] = useState();
@@ -286,6 +287,6 @@ const mapStateToProps = (state) => ({
   orders: state.order.orders,
   auth: state.auth,
 });
-export default connect(mapStateToProps, { getOrders, updateOrderStatus })(
-  withRouter(OrderList)
+export default connect(mapStateToProps, { getOrdersByUserId, updateOrderStatus })(
+  withRouter(OrderHistory)
 );

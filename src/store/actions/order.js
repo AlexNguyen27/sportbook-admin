@@ -67,6 +67,68 @@ export const getOrders = (setLoading) => async (dispatch, getState) => {
   }
 };
 
+export const getOrdersByUserId = (setLoading, userId) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+                query {
+                  orders(userId: $userId) {
+                    id
+                    subGroundId
+                    userId
+                    startDay
+                    startTime
+                    endTime
+                    paymentType
+                    status
+                    discount
+                    price
+                    subGround {
+                        id
+                        name
+                    }
+                    user {
+                        id
+                        firstName
+                        lastName
+                    }
+                    createdAt
+                    updatedAt
+                  }
+                }
+            `,
+    variables: {
+      userId,
+    },
+  });
+  if (!errors) {
+    const orders = arrayToObject(data.orders);
+
+    dispatch({
+      type: GET_ORDERS,
+      orders,
+    });
+    setLoading(false);
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
 export const addOrder = (setLoading, orderData) => async (
   dispatch,
   getState
@@ -220,5 +282,4 @@ export const updateOrderStatus = (setLoading, orderData) => async (
     });
   }
   setLoading(false);
-
 };
