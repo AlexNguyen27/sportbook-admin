@@ -1,5 +1,5 @@
-import moment from 'moment';
-import { DATE_TIME } from './common';
+import moment from "moment";
+import { DATE_TIME } from "./common";
 export const arrayToObject = (array) => {
   return array.reduce((obj, item) => {
     if (item.id) {
@@ -22,7 +22,6 @@ export function getPopularPost(o, n) {
   return keys.slice(0, n);
 }
 
-
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
@@ -30,8 +29,7 @@ export const validateEmail = (email) => {
 
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
+};
 
 export const getFullname = (firstname, lastname) => {
   let fullname = "";
@@ -47,5 +45,11 @@ export const getFullname = (firstname, lastname) => {
 export const getDateTime = (date) => moment(date).format(DATE_TIME);
 
 export const formatThousandVND = (n, currency, toFixed = 2) => {
-  return n.toFixed(toFixed).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + currency;
-}
+  return n.toFixed(toFixed).replace(/(\d)(?=(\d{3})+\.)/g, "$1,") + currency;
+};
+
+export const isSameOrAfterNow = (startTime, selectedStartDay) => {
+  const day = selectedStartDay + " " + startTime;
+  console.log("da----", day);
+  return moment(day, "DD-MM-YYYY HH:mm:ss").isSameOrAfter(moment());
+};
