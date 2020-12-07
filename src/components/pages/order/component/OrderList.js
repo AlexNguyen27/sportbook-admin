@@ -34,10 +34,10 @@ import PageLoader from "../../../custom/PageLoader";
 import {
   capitalizeFirstLetter,
   formatThousandVND,
+  getFullname,
 } from "../../../../utils/commonFunction";
 import { getOrders, updateOrderStatus } from "../../../../store/actions/order";
 import DropdownV2 from "../../../custom/DropdownV2";
-import { CsvBuilder } from 'filefy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -73,7 +73,7 @@ const OrderList = ({
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const getDateTime = (date) => moment(date).format(DATE_TIME);
-  const orderArr = Object.keys(orders).map((orderId) => ({
+  const orderArr = Object.keys(orders).map((orderId, index) => ({
     ...orders[orderId],
     subGroundName: orders[orderId]?.subGround?.name || "",
     amount: (
@@ -82,15 +82,52 @@ const OrderList = ({
     ).toString(),
     discount: orders[orderId].discount.toString(),
     createdAt: getDateTime(orders[orderId].createdAt),
+    index,
+    fullName: getFullname(
+      orders[orderId]?.user?.firstName,
+      orders[orderId]?.user?.lastName
+    ),
+    phone: orders[orderId]?.user?.phone,
+    email: orders[orderId]?.user?.email,
+    groundName: orders[orderId]?.subGround?.ground?.title,
   }));
 
   useEffect(() => {
     getOrders(setLoading);
   }, []);
 
-  // const [orderStatus, setOrderStatus] = useState();
   const [state, setState] = useState({
     columns: [
+      {
+        title: "ID",
+        field: "index",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Full Name",
+        field: "fullName",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Phone",
+        field: "phone",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Email",
+        field: "email",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Ground Name",
+        field: "groundName",
+        hidden: true,
+        export: true,
+      },
       {
         title: "Sub ground name",
         field: "subGroundName",
@@ -132,7 +169,8 @@ const OrderList = ({
       {
         title: "Payment",
         field: "paymentType",
-        headerStyle: {minWidth: 40}, cellStyle: {minWidth: 40},
+        headerStyle: { minWidth: 40 },
+        cellStyle: { minWidth: 40 },
         lookup: PAYMENT_TYPE,
         render: (rowData) => {
           return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
@@ -142,7 +180,8 @@ const OrderList = ({
       {
         title: "Status",
         field: "status",
-        headerStyle: {minWidth: 200}, cellStyle: {minWidth: 200},
+        headerStyle: { minWidth: 200 },
+        cellStyle: { minWidth: 200 },
         editComponent: (props) => {
           const { id } = props.rowData;
           console.log("did-----------------", props);
@@ -211,8 +250,6 @@ const OrderList = ({
     ],
   });
 
-  // console.log(orderStatus);
-
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -231,25 +268,7 @@ const OrderList = ({
             },
             actionsColumnIndex: -1,
             exportButton: true,
-            // exportCsv: (toolbar, columns, renderData) => {
-            //   console.log('column------------------', columns)
-            //   const csvColumns = columns;
-            //   // const csvColumns = ['Sub ground name']
-          
-            //   const data = columns.map(rowData =>
-            //     csvColumns.map(columnDef => rowData[columnDef.field])
-            //   );
-
-            //   console.log(data, 'data--------------------------', renderData)
-          
-            //   const builder = new CsvBuilder(('foo') + '.csv')
-            //     .setDelimeter(',')
-            //     .setColumns(csvColumns.map(columnDef => columnDef))
-            //     .addRows(data)
-            //     .exportFile();
-          
-            //   // toolbar.setState({ exportButtonAnchorEl: null }); // this is the reason to pass the m-table-toolbar object
-            // }
+            exportAllData: true,
           }}
           actions={[
             {
@@ -272,11 +291,7 @@ const OrderList = ({
               }),
             isEditHidden: (rowData) =>
               ["cancelled", "paid"].includes(rowData.status) || isAdmin,
-            // onClick: (rowData) => {
-            //   setOrderStatus(rowData.status);
-            // },
           }}
-          // onRowClick={(event, rowData) => setOrderStatus(rowData.status)}
         />
       </div>
     </PageLoader>

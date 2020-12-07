@@ -38,10 +38,17 @@ export const getOrders = (setLoading) => async (dispatch, getState) => {
                     subGround {
                         id
                         name
+                        ground {
+                          id
+                          title
+                        }
                     }
                     user {
                         id
                         firstName
+                        lastName
+                        phone
+                        email
                     }
                     createdAt
                     updatedAt
@@ -95,13 +102,19 @@ export const getOrdersByUserId = (setLoading, userId) => async (
                     discount
                     price
                     subGround {
+                      id
+                      name
+                      ground {
                         id
-                        name
+                        title
+                      }
                     }
                     user {
                         id
                         firstName
                         lastName
+                        phone
+                        email
                     }
                     createdAt
                     updatedAt
