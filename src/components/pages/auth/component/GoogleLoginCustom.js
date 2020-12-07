@@ -8,7 +8,11 @@ import { connect } from "react-redux";
 import { loginUser } from "../../../../store/actions/auth";
 
 // TODO ADD ENVIRONMENT KEY
-const GoogleLoginCustom = ({ checkExitsEmail, loginUser }) => {
+const GoogleLoginCustom = ({
+  checkExitsEmail,
+  loginUser,
+  title = "Login with Google",
+}) => {
   const [googleData, setGoogleData] = useState();
   const [loginModal, setLoginModal] = useState(false);
   const [exitEmail, setIsExitEmail] = useState({});
@@ -56,12 +60,11 @@ const GoogleLoginCustom = ({ checkExitsEmail, loginUser }) => {
             variant="contained"
             type="submit"
             style={{ backgroundColor: "#ec524b", color: "white" }}
-            size="small"
             onClick={renderProps.onClick}
             disabled={renderProps.disabled}
             startIcon={<i className="fab fa-google-plus-g" />}
           >
-            Login with Google
+            {title}
           </Button>
         )}
         onSuccess={ohSuccess}

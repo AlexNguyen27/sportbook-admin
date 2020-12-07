@@ -66,7 +66,13 @@ export const loginUser = ({ email, password, hashPassword }) => async (
       userData.isAdmin = true;
     } else if (resData.role === ROLE.user) {
       logoutDispatch(dispatch);
-      // Set errors
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: "An error occurred!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
       dispatch({
         type: GET_ERRORS,
         errors: { message: "Email or password is incorrect!" },
