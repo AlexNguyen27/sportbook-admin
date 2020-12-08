@@ -38,10 +38,17 @@ export const getOrders = (setLoading) => async (dispatch, getState) => {
                     subGround {
                         id
                         name
+                        ground {
+                          id
+                          title
+                        }
                     }
                     user {
                         id
                         firstName
+                        lastName
+                        phone
+                        email
                     }
                     createdAt
                     updatedAt
@@ -49,6 +56,74 @@ export const getOrders = (setLoading) => async (dispatch, getState) => {
                 }
             `,
     variables: {},
+  });
+  if (!errors) {
+    const orders = arrayToObject(data.orders);
+
+    dispatch({
+      type: GET_ORDERS,
+      orders,
+    });
+    setLoading(false);
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
+export const getOrdersByUserId = (setLoading, userId) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+                query {
+                  orders(userId: $userId) {
+                    id
+                    subGroundId
+                    userId
+                    startDay
+                    startTime
+                    endTime
+                    paymentType
+                    status
+                    discount
+                    price
+                    subGround {
+                      id
+                      name
+                      ground {
+                        id
+                        title
+                      }
+                    }
+                    user {
+                        id
+                        firstName
+                        lastName
+                        phone
+                        email
+                    }
+                    createdAt
+                    updatedAt
+                  }
+                }
+            `,
+    variables: {
+      userId,
+    },
   });
   if (!errors) {
     const orders = arrayToObject(data.orders);
@@ -220,5 +295,4 @@ export const updateOrderStatus = (setLoading, orderData) => async (
     });
   }
   setLoading(false);
-
 };

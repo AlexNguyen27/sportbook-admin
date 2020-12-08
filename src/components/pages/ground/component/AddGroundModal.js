@@ -31,7 +31,6 @@ import { getCategories } from "../../../../store/actions/category";
 import { trimObjProperties } from "../../../../utils/formatString";
 import { addGround } from "../../../../store/actions/ground";
 
-
 const AddGroundModal = ({
   errors,
   clearErrors,
@@ -40,7 +39,7 @@ const AddGroundModal = ({
   getBenefits,
   getCategories,
   categories,
-  addGround
+  addGround,
 }) => {
   const dispatch = useDispatch();
   const categoryArr = Object.keys(categories).map((cateId) => ({
@@ -137,6 +136,7 @@ const AddGroundModal = ({
       selectedCategoryId: "",
     });
     setChecked({});
+    setUrls([]);
   };
 
   const [urls, setUrls] = useState([]);
@@ -166,7 +166,7 @@ const AddGroundModal = ({
     });
 
     formatedData.benefit = Object.keys(checked).toString();
-    
+
     if (JSON.stringify(error) === "{}") {
       setLoading(true);
       formatedData.image = JSON.stringify(urls);
@@ -212,13 +212,13 @@ const AddGroundModal = ({
       ...selectedDropdownData,
       selectedCategoryId: id,
     });
-  }; 
+  };
 
   const getMapAddress = () => {
     const test = `${address}, ${WARDS[selectedWardCode]?.name_with_type}, ${
       DISTRICTS[selectedDistrictCode]?.name_with_type
     }, ${REGIONS[selectedRegionCode]?.name_with_type || ""}`;
-    console.log('test--------------------', test);
+    console.log("test--------------------", test);
     return test;
   };
 
@@ -289,13 +289,13 @@ const AddGroundModal = ({
                 <Benefits checked={checked} setChecked={setChecked} />
               </Col>
               {/* ADDRESS */}
-              <Col xs={12} >
+              <Col xs={12}>
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="address"
                   label="Address"
                   fullWidth
-                  value={address || ''}
+                  value={address || ""}
                   onChange={(e) => onChange(e)}
                   error={errors.address}
                   variant="outlined"
@@ -337,10 +337,10 @@ const AddGroundModal = ({
                   error={errors.wardCode}
                 />
               </Col>
-             
+
               {/* MAP */}
               <Col xs={12} className="mt-4">
-                <ReactGoogleMaps address={getMapAddress()}/>
+                <ReactGoogleMaps address={getMapAddress()} />
               </Col>
 
               {/* IMAGE */}
@@ -376,5 +376,5 @@ export default connect(mapStateToProps, {
   clearErrors,
   getBenefits,
   getCategories,
-  addGround
+  addGround,
 })(AddGroundModal);

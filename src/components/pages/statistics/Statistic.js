@@ -13,8 +13,10 @@ import {
 import StatisticTable from "../../layout/StatictisTable";
 import { getGroundsByDate, getReports } from "../../../store/actions/statistic";
 import PageLoader from "../../custom/PageLoader";
+import ExportCSV from "../../custom/ExportCSV";
+import { Row, Col } from "reactstrap";
 
-const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
+const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedDateId: "7days",
   });
@@ -66,9 +68,7 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
     (key) => grounds[key].totalAmount
   );
 
-  const orderTimes = Object.keys(grounds).map(
-    (key) => grounds[key].orderCount
-  );
+  const orderTimes = Object.keys(grounds).map((key) => grounds[key].orderCount);
 
   useEffect(() => {
     setReportLoading(true);
@@ -76,6 +76,11 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
   }, [selectedStartDate, selectedEndDate]);
 
   console.log(groundNames, totalAmounts);
+
+  const dataSource = Object.keys(reports).map((key) => ({
+    ...reports[key],
+    totalAmount: reports[key].totalAmount || 0,
+  }));
 
   return (
     <div className="mb-4">
@@ -100,7 +105,7 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
           title="Base on Total Amount"
         />
       </PageLoader>
-    <hr></hr>
+      <hr></hr>
       <PageLoader loading={loading}>
         <MultipleSummary
           name={groundNames || []}
@@ -112,40 +117,47 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
       </PageLoader>
       <hr className="m-4" />
       <h4>Customizable timed sales reports</h4>
-      <Grid item className="mb-4">
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            disableToolbar
-            className="mr-4"
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="date-picker-inline"
-            label="From date"
-            value={selectedStartDate}
-            onChange={(date) => setSelectedStartDate(date)}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-          />
-          <KeyboardDatePicker
-            disableToolbar
-            className="mr-4"
-            variant="inline"
-            format="MM/dd/yyyy"
-            margin="normal"
-            id="date-picker-inline"
-            label="To date"
-            value={selectedEndDate}
-            onChange={(date) => setSelectedEndDate(date)}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-          />
-        </MuiPickersUtilsProvider>
-      </Grid>
+      <Row className="mb-4">
+        <Col xs={8}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              disableToolbar
+              className="mr-4"
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="date-picker-inline"
+              label="From date"
+              value={selectedStartDate}
+              onChange={(date) => setSelectedStartDate(date)}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+            <KeyboardDatePicker
+              disableToolbar
+              className="mr-4"
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="date-picker-inline"
+              label="To date"
+              value={selectedEndDate}
+              onChange={(date) => setSelectedEndDate(date)}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </MuiPickersUtilsProvider>
+        </Col>
+        <Col xs={4} className="text-right align-self-center">
+          {/* EXPORT REPORTS */}
+          <ExportCSV dataSource={dataSource} />
+        </Col>
+      </Row>
+
       <PageLoader loading={reportLoading}>
-        <StatisticTable />
+        <StatisticTable dataSource={dataSource} />
       </PageLoader>
     </div>
   );
@@ -153,6 +165,7 @@ const Statistic = ({ grounds, getGroundsByDate, getReports }) => {
 
 const mapStateToProps = (state) => ({
   grounds: state.statistic.grounds,
+  reports: state.statistic.reports,
 });
 export default connect(mapStateToProps, { getGroundsByDate, getReports })(
   Statistic

@@ -84,6 +84,7 @@ const PriceList = ({
       {
         title: "From time",
         field: "startTime",
+
         render: (rowData) => (
           <span>
             {moment(rowData.startTime, "HH:mm:ss A").format("hh:mm A")}
@@ -99,6 +100,7 @@ const PriceList = ({
                 helperText: "Start time should be after end time!",
               };
         },
+        initialEditValue: moment().format("HH:mm:00"),
         editComponent: (props) => {
           return (
             <>
@@ -106,6 +108,7 @@ const PriceList = ({
                 id="startTime"
                 type="time"
                 size="small"
+                // defaultValue={moment().format("HH:mm:ss")}
                 defaultValue={props.value}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
@@ -132,6 +135,7 @@ const PriceList = ({
         render: (rowData) => (
           <span>{moment(rowData.endTime, "HH:mm:ss A").format("hh:mm A")}</span>
         ),
+        initialEditValue: moment().add(1, "hours").format("HH:mm:00"),
         editComponent: (props) => {
           return (
             <>
@@ -141,9 +145,10 @@ const PriceList = ({
                 format=""
                 size="small"
                 defaultValue={props.value}
+                // defaultValue={moment().add(1, "hours").format("HH:mm:ss")}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
-                InputProps={{ inputProps: { min: "12:12:00", max: 10 } }}
+                // InputProps={{ inputProps: { min: "", max: 10 } }}
                 error={props.helperText}
                 helperText={props.helperText}
               />
@@ -157,9 +162,7 @@ const PriceList = ({
         type: "numeric",
         initialEditValue: 0,
         render: (rowData) => (
-          <span>
-            {formatThousandVND(rowData.price, ' VND', 1)}
-          </span>
+          <span>{formatThousandVND(rowData.price, " VND", 1)}</span>
         ),
       },
 
@@ -170,9 +173,7 @@ const PriceList = ({
         initialEditValue: 0,
         validate: (rowData) => rowData.discount > -1 && rowData.discount < 101,
         render: (rowData) => (
-          <span>
-            {formatThousandVND(rowData.discount, ' %', 1)}
-          </span>
+          <span>{formatThousandVND(rowData.discount, " %", 1)}</span>
         ),
       },
       // {

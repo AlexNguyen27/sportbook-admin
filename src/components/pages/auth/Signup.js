@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
 
@@ -14,7 +14,14 @@ import Landing from "../../layout/Landing";
 import { signUpUser } from "../../../store/actions/auth";
 import { GET_ERRORS } from "../../../store/actions/types";
 import { validateEmail } from "../../../utils/commonFunction";
-const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
+import GoogleLoginCustom from "./component/GoogleLoginCustom";
+
+const Signup = ({
+  errors,
+  auth: { isAuthenticated, isUser },
+  history,
+  signUpUser,
+}) => {
   const dispatch = useDispatch();
   // FORM DATA STATE
   const [formData, setFormData] = useState({
@@ -66,6 +73,10 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
     });
   };
 
+  if (isAuthenticated && isUser) {
+    return <Redirect to="/user/info/yourInfo" />;
+  }
+
   return (
     <Fragment>
       <Grid
@@ -89,18 +100,11 @@ const Signup = ({ errors, auth: { isAuthenticated }, history, signUpUser }) => {
                     style={{ backgroundColor: "#3f72af", color: "white" }}
                     type="submit"
                   >
-                    Facebook
+                    Signup with Facebook
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <Button
-                    className="mt-3 w-100"
-                    variant="contained"
-                    type="submit"
-                    style={{ backgroundColor: "#ec524b", color: "white" }}
-                  >
-                    Google
-                  </Button>
+                  <GoogleLoginCustom title={"Siggup with google"} />
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>

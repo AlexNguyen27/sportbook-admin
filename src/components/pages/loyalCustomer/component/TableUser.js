@@ -17,6 +17,9 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import { getFullname } from "../../../../utils/commonFunction";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import Colors from "../../../../constants/Colors";
+import { useHistory } from "react-router-dom";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -47,8 +50,19 @@ export default function TableUser({ dataSource }) {
       { title: "Name", field: "name" },
       { title: "Phone", field: "phone" },
       // { title: "Play times", field: "playTimes", type: "numeric" },
-      { title: "Email", field: 'email'},
-      { title: "Order times", field: 'orderCount'},
+      { title: "Email", field: "email" },
+      {
+        cellStyle: {
+          width: 20,
+          maxWidth: 20,
+        },
+        headerStyle: {
+          width: 20,
+          maxWidth: 20,
+        },
+        title: "Order times",
+        field: "orderCount",
+      },
       {
         title: "Usually play at",
         field: "startDay",
@@ -59,24 +73,26 @@ export default function TableUser({ dataSource }) {
         name: "Thanh nguyen",
         phone: "09123123123",
         playTimes: 12,
-        email: 'test@.gmail.com',
+        email: "test@.gmail.com",
         createdAt: "12/12/2020",
       },
       {
         name: "Thanh nguyen",
         phone: "09123123123",
-        email: 'test@.gmail.com',
+        email: "test@.gmail.com",
         playTimes: 12,
         createdAt: "12/12/2020",
       },
     ],
   });
 
-  const formatData = dataSource.map(user => ({
-    ...user, 
+  const formatData = dataSource.map((user) => ({
+    ...user,
     name: getFullname(user.firstName, user.lastName),
+  }));
 
-  }))
+  const history = useHistory();
+
   return (
     <MaterialTable
       icons={tableIcons}
@@ -88,8 +104,18 @@ export default function TableUser({ dataSource }) {
         headerStyle: {
           fontWeight: "bold",
         },
-        exportButton: true
+        exportButton: true,
+        actionsColumnIndex: -1,
       }}
+      actions={[
+        {
+          icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+          tooltip: "View all order of this user",
+          onClick: (event, rowData) => {
+            history.push(`/loyal-customer/${rowData.id}`);
+          },
+        },
+      ]}
     />
   );
 }

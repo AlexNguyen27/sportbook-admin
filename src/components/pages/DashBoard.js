@@ -65,6 +65,7 @@ import ManagersList from "./admin/ManagersList";
 import BenefitsList from "./benefit/BenefitsList";
 import OrdersList from "./admin/OrdersList";
 import HistoryList from "./history/HistoryList";
+import OrderHistory from "./loyalCustomer/component/OrderHistory";
 
 const drawerWidth = 260;
 
@@ -457,6 +458,12 @@ const DashBoard = ({
               <LoyalCustomer />
             </>
           );
+        case "/loyal-customer/:userId":
+          return (
+            <>
+              <OrderHistory userId={match.params.userId}/>
+            </>
+          );
         case "/my-account":
           return (
             <>
@@ -611,6 +618,10 @@ const DashBoard = ({
     }
 
     if (match.path.match("orderId")) {
+      return "Order History";
+    }
+
+    if (match.path.match("/loyal-customer/:userId")) {
       return "Order History";
     }
 
