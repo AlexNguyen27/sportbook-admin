@@ -15,6 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import PlaceRoundedIcon from "@material-ui/icons/PlaceRounded";
 import Colors from "../../constants/Colors";
 import { deleteGround } from "../../store/actions/ground";
+import { truncateMultilineString } from "../../utils/formatString";
 
 const DEFAULT_GROUND_IMAGE =
   "https://daily.jstor.org/wp-content/uploads/2018/06/soccer_europe_1050x700.jpg";
@@ -63,7 +64,7 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
       />
       <CardContent>
         <Typography variant="body2" component="p">
-          {description}
+           {truncateMultilineString(description, 95)}
         </Typography>
         <Typography variant="caption" color="textSecondary" component="p">
           Created at: {moment(createdAt).format("DD/MM/YYYY HH:MM:ss")}

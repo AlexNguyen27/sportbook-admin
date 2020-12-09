@@ -9,7 +9,7 @@ const GroundList = ({ grounds, onDelete, onEdit }) => {
   return (
     <Grid container type="flex" justify="center" spacing={3}>
       {groundArr.map((ground) => (
-        <Grid item xs={3} key={ground.id}>
+        <Grid item xs={3} key={ground.id} style={{ height: '100%'}}>
           <GroundCard ground={ground} onDelete={onDelete} onEdit={onEdit}/>
         </Grid>
       ))}

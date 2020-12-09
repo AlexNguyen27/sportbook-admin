@@ -50,7 +50,7 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
       <PageLoader loading={loading}>
         <Row className="mt-4">
           {urls.map((url, index) => (
-            <Col xs={4} key={index + 1}>
+            <Col xs={4} key={index + 1} className="mb-3">
               <img
                 style={{ position: "relative" }}
                 width="100%"

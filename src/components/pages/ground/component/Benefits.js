@@ -48,9 +48,9 @@ const Benefits = ({ benefits, checked, setChecked }) => {
       <FormControl component="fieldset" className={classes.formControl}>
         <FormLabel component="legend">Benefits</FormLabel>
         <FormGroup row>
-          {Object.keys(benefits).map((key) => (
+          {Object.keys(benefits).map((key, index) => (
             <FormControlLabel
-              key={benefits[key].id}
+              key={index + 1}
               control={
                 <GreenCheckbox
                   checked={checked[key] ? true : false}

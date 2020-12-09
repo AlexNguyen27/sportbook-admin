@@ -94,7 +94,7 @@ const EditGroundModal = ({
 
       const benefit = ground.benefit
         .split(",")
-        .map((benefitId) => ({ [benefitId]: true }));
+        .reduce((acc,benefitId) => ({ ...acc, [benefitId]: true }), {});
       setChecked(benefit);
     }
   };
@@ -254,7 +254,6 @@ const EditGroundModal = ({
     const test = `${address}, ${WARDS[selectedWardCode]?.name_with_type}, ${
       DISTRICTS[selectedDistrictCode]?.name_with_type
     }, ${REGIONS[selectedRegionCode]?.name_with_type || ""}`;
-    console.log('test--------------------', test);
     return test;
   };
   return (
