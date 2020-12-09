@@ -69,6 +69,8 @@ const OrderList = ({
   orders,
   updateOrderStatus,
   auth: { isAdmin },
+  modal,
+  setModal,
 }) => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
@@ -95,6 +97,14 @@ const OrderList = ({
   useEffect(() => {
     getOrders(setLoading);
   }, []);
+
+  useEffect(() => {
+    // AFTER ADD NEW ORDER, WE SHOULD GET ALL ORDER AGAIN
+    if (modal === false) {
+      setLoading(true);
+      getOrders(setLoading);
+    }
+  }, [modal, setModal]);
 
   const [state, setState] = useState({
     columns: [
