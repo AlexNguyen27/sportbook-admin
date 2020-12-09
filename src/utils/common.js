@@ -38,7 +38,7 @@ export const ORDER_STATUS = {
   cancelled: "Cancelled",
   approved: "Approved",
   paid: "Paid",
-  // finished: "Finished" AUTO FINISHED WHEN OUT OF TIME
+  finished: "Finished"
 };
 
 export const ORDER_STATUS_OPTION = {

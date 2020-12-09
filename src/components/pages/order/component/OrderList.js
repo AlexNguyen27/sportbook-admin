@@ -212,7 +212,7 @@ const OrderList = ({
               className="m-0 text-center"
               color={COLOR_ORDER_STATUS[rowData.status]}
             >
-              {capitalizeFirstLetter(ORDER_STATUS[rowData.status])}
+              {ORDER_STATUS[rowData.status]}
             </Alert>
           );
         },
@@ -290,7 +290,7 @@ const OrderList = ({
                 }
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
+              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
