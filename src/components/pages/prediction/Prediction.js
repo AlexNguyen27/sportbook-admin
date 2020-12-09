@@ -71,7 +71,7 @@ const Prediction = ({ getPredictionGround, predictions = [], getDescribe }) => {
                 <Col xs={6}>
                   <h5>
                     Day:{" "}
-                    {moment(item.datetime, "YYYY-MM-DD").format("DD-MM-YYYY")}
+                    {moment(item.datetime, "YYYY-MM-DD").format("DD-MM-YYYY")} | Accuracy: {item.predicted_rate}%
                   </h5>
                   <GroupedBarChart labels={startTimes} dataSource={item} />
                 </Col>
