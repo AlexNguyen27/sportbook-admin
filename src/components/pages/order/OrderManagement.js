@@ -48,7 +48,7 @@ const OrderManagement = (props) => {
           </Button>
         </Col>
         <Col xs={12} className="mt-4">
-          <OrderList />
+          <OrderList modal={modelAdd} setModal={setModelAdd}/>
         </Col>
       </Row>
       <hr/>

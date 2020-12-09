@@ -31,7 +31,10 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Alert } from "reactstrap";
 import Colors from "../../../constants/Colors";
 import PageLoader from "../../custom/PageLoader";
-import { capitalizeFirstLetter, formatThousandVND } from "../../../utils/commonFunction";
+import {
+  capitalizeFirstLetter,
+  formatThousandVND,
+} from "../../../utils/commonFunction";
 import { getOrders, updateOrderStatus } from "../../../store/actions/order";
 import DropdownV2 from "../../custom/DropdownV2";
 
@@ -91,7 +94,7 @@ const OrdersList = ({
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{formatThousandVND(Number(rowData.amount), '', 1)}</span>
+            <span>{formatThousandVND(Number(rowData.amount), "", 1)}</span>
           );
         },
       },
@@ -114,7 +117,7 @@ const OrdersList = ({
               className="m-0 text-center"
               color={COLOR_ORDER_STATUS[rowData.status]}
             >
-              {capitalizeFirstLetter(ORDER_STATUS[rowData.status])}
+              {ORDER_STATUS[rowData.status]}
             </Alert>
           );
         },
@@ -234,11 +237,10 @@ const OrdersList = ({
                 if (newData.status !== oldData.status) {
                   setLoading(true);
                   updateOrderStatus(setLoading, { id, status });
-
                 }
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
+              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>

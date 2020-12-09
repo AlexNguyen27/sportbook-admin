@@ -105,9 +105,10 @@ const AddOrderModal = ({
 
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
 
-  const getEndTimes = () => {
+  const getEndTimes = (startTime = '') => {
+    let selectedStartTime = startTime || selectedDate.startTime;
     let endTimes = [];
-    if (!selectedDate.startTime.trim()) {
+    if (!selectedStartTime.trim()) {
       return endTimes;
     }
 
@@ -120,7 +121,7 @@ const AddOrderModal = ({
       return newEndTime;
     });
 
-    endTimes = _.filter(endTimeArray, ["startTime", selectedDate.startTime]);
+    endTimes = _.filter(endTimeArray, ["startTime", selectedStartTime]);
     return endTimes;
   };
 
@@ -148,10 +149,23 @@ const AddOrderModal = ({
   };
 
   const handleStartTimeChange = (date) => {
-    setSelectedDate({
-      ...selectedDate,
-      startTime: date,
-    });
+    const entimeArr = getEndTimes(date);
+    if (entimeArr.length === 1) {
+      setSelectedDate({
+        ...selectedDate,
+        startTime: date,
+        selectedPriceId: entimeArr[0].priceId,
+      });
+      setFormData({
+        price: prices[entimeArr[0].priceId].price,
+        discount: prices[entimeArr[0].priceId].discount.toString(),
+      });
+    } else {
+      setSelectedDate({
+        ...selectedDate,
+        startTime: date,
+      });
+    }
   };
 
   const handleEndTimeChange = (priceId) => {
@@ -302,7 +316,7 @@ const AddOrderModal = ({
                   name="price"
                   label="Price"
                   fullWidth
-                  value={price || ""}
+                  value={price || 0}
                   onChange={onChange}
                 />
               </Col>
@@ -314,7 +328,7 @@ const AddOrderModal = ({
                   name="discount"
                   label="Discount"
                   fullWidth
-                  value={discount || ""}
+                  value={discount || 0}
                   onChange={onChange}
                 />
               </Col>

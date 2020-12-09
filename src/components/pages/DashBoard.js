@@ -22,6 +22,8 @@ import Badge from "@material-ui/core/Badge";
 import CategoryIcon from "@material-ui/icons/Category";
 import Collapse from "@material-ui/core/Collapse";
 import "../../css/index.css";
+import LocalFloristIcon from "@material-ui/icons/LocalFlorist";
+import RedditIcon from "@material-ui/icons/Reddit";
 
 // MATERIAL ICONS
 import MenuIcon from "@material-ui/icons/Menu";
@@ -66,6 +68,7 @@ import BenefitsList from "./benefit/BenefitsList";
 import OrdersList from "./admin/OrdersList";
 import HistoryList from "./history/HistoryList";
 import OrderHistory from "./loyalCustomer/component/OrderHistory";
+import Prediction from "./prediction/Prediction";
 
 const drawerWidth = 260;
 
@@ -461,13 +464,19 @@ const DashBoard = ({
         case "/loyal-customer/:userId":
           return (
             <>
-              <OrderHistory userId={match.params.userId}/>
+              <OrderHistory userId={match.params.userId} />
             </>
           );
         case "/my-account":
           return (
             <>
               <UserInfo viewType={"user"} />
+            </>
+          );
+        case "/prediction":
+          return (
+            <>
+              <Prediction />
             </>
           );
         case "/order-management/:orderId":
@@ -513,9 +522,15 @@ const DashBoard = ({
     },
     {
       key: "customer",
-      icon: <LoyaltyIcon />,
+      icon: <LocalFloristIcon />,
       to: `/loyal-customer`,
       title: "Loyal Customers",
+    },
+    {
+      key: "prediction",
+      icon: <RedditIcon />, // TODO
+      to: `/prediction`,
+      title: "Prediction",
     },
   ];
 

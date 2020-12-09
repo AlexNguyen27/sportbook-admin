@@ -69,6 +69,8 @@ const OrderList = ({
   orders,
   updateOrderStatus,
   auth: { isAdmin },
+  modal,
+  setModal,
 }) => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
@@ -95,6 +97,14 @@ const OrderList = ({
   useEffect(() => {
     getOrders(setLoading);
   }, []);
+
+  useEffect(() => {
+    // AFTER ADD NEW ORDER, WE SHOULD GET ALL ORDER AGAIN
+    if (modal === false) {
+      setLoading(true);
+      getOrders(setLoading);
+    }
+  }, [modal, setModal]);
 
   const [state, setState] = useState({
     columns: [
@@ -212,7 +222,7 @@ const OrderList = ({
               className="m-0 text-center"
               color={COLOR_ORDER_STATUS[rowData.status]}
             >
-              {capitalizeFirstLetter(ORDER_STATUS[rowData.status])}
+              {ORDER_STATUS[rowData.status]}
             </Alert>
           );
         },
@@ -290,7 +300,7 @@ const OrderList = ({
                 }
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "paid"].includes(rowData.status) || isAdmin,
+              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
