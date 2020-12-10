@@ -199,7 +199,6 @@ const UserInfo = ({
     email,
     phone,
     address,
-    playRole,
     createdAt,
     updatedAt,
   } = formData;
@@ -320,8 +319,8 @@ const UserInfo = ({
     if (!selectedGenderKey.trim()) {
       error.gender = "This field is required";
     }
-    let dob = moment(selectedDate || '').format("DD/MM/YYYY");
-    if (!dob.trim()|| !selectedDate) {
+    let dob = moment(selectedDate || "").format("DD/MM/YYYY");
+    if (!dob.trim() || !selectedDate) {
       error.dob = "This field is required";
     }
 
@@ -338,12 +337,11 @@ const UserInfo = ({
     formatData.regionCode = selectedRegionCode;
     formatData.districtCode = selectedDistrictCode;
     formatData.wardCode = selectedWardCode;
-    // formatData.favoriteFoot = selectedFavoriteFootKey;
     formatData.extraInfo = { ...extraInfoForm };
     formatData.socialNetwork = { ...socialNetworkForm };
-    console.log("sd------------------", socialNetworkForm);
-
+    
     if (JSON.stringify(error) === "{}") {
+      formatData.phone = formData.phone.replace(/\s/g, "");
       setLoading(true);
       editUserInfo(
         setLoading,
@@ -512,7 +510,7 @@ const UserInfo = ({
                             "aria-label": "change date",
                           }}
                           error={errors.dob}
-                            />
+                        />
                       </MuiPickersUtilsProvider>
                     </Col>
                   </Row>

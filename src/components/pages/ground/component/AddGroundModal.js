@@ -218,7 +218,6 @@ const AddGroundModal = ({
     const test = `${address}, ${WARDS[selectedWardCode]?.name_with_type}, ${
       DISTRICTS[selectedDistrictCode]?.name_with_type
     }, ${REGIONS[selectedRegionCode]?.name_with_type || ""}`;
-    console.log("test--------------------", test);
     return test;
   };
 
