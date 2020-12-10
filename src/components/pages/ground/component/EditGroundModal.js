@@ -67,14 +67,13 @@ const EditGroundModal = ({
 
   const initFormData = () => {
     if (ground) {
-      const { title, description, phone, address, categoryId, image } = ground;
-      const addressData = JSON.parse(address || "");
-      const { regionCode, wardCode, districtCode } = addressData;
+      const { title, description, phone, address: addressObj, categoryId, image } = ground;
+      const { regionCode, wardCode, districtCode, address } = addressObj;
       setFormData({
         title,
         description,
         phone,
-        address: addressData.address,
+        address,
       });
 
 
@@ -92,10 +91,10 @@ const EditGroundModal = ({
         setUrls([])
       }
 
-      const benefit = ground.benefit
+      const benefit = ground.benefit && ground.benefit
         .split(",")
         .reduce((acc,benefitId) => ({ ...acc, [benefitId]: true }), {});
-      setChecked(benefit);
+      setChecked(benefit || {});
     }
   };
 

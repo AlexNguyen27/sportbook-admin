@@ -30,9 +30,14 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
                     title 
                     description
                     phone
-                    address,
                     benefit
                     image,
+                    address {
+                      regionCode
+                      districtCode
+                      wardCode
+                      address
+                    }
                     createdAt 
                     categoryId
                     category {
@@ -82,9 +87,6 @@ export const addGround = (setLoading, groundData) => async (
                 phone: $phone
                 address: $address
                 categoryId: $categoryId
-                regionCode: $regionCode
-                districtCode: $districtCode
-                wardCode: $wardCode
                 benefit: $benefit   
                 image: $image
             ) {
@@ -92,7 +94,12 @@ export const addGround = (setLoading, groundData) => async (
                 title
                 description
                 phone
-                address,
+                address {
+                  regionCode
+                  districtCode
+                  wardCode
+                  address
+                }
                 benefit
                 image,
                 createdAt
@@ -106,6 +113,12 @@ export const addGround = (setLoading, groundData) => async (
       `,
     variables: {
       ...groundData,
+      address: {
+        regionCode: groundData.regionCode,
+        districtCode: groundData.districtCode,
+        wardCode: groundData.wardCode,
+        address: groundData.address,
+      },
     },
   });
 
@@ -205,14 +218,14 @@ export const updateGround = (setLoading, groundData) => async (
 ) => {
   const { token } = getState().auth;
   const { data, errors } = await hera({
-      options: {
-          url: BASE_URL,
-          headers: {
-              token,
-              "Content-Type": "application/json",
-          },
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
       },
-      query: `
+    },
+    query: `
       mutation {
        updateGround(
           id: $id
@@ -221,9 +234,6 @@ export const updateGround = (setLoading, groundData) => async (
           phone: $phone
           address: $address
           categoryId: $categoryId
-          regionCode: $regionCode
-          districtCode: $districtCode
-          wardCode: $wardCode
           benefit: $benefit   
           image: $image
          ) {
@@ -231,7 +241,12 @@ export const updateGround = (setLoading, groundData) => async (
           title
           description
           phone
-          address,
+          address {
+            regionCode
+            districtCode
+            wardCode
+            address
+          }
           benefit
           image,
           createdAt
@@ -243,41 +258,47 @@ export const updateGround = (setLoading, groundData) => async (
         }
       } 
     `,
-      variables: {
-         ...groundData,
+    variables: {
+      ...groundData,
+      address: {
+        regionCode: groundData.regionCode,
+        districtCode: groundData.districtCode,
+        wardCode: groundData.wardCode,
+        address: groundData.address,
       },
+    },
   });
   if (!errors) {
-      dispatch({
-          type: CLEAR_ERRORS,
-      });
+    dispatch({
+      type: CLEAR_ERRORS,
+    });
 
-      dispatch({
-          type: EDIT_GROUND,
-          ground: data.updateGround,
-      });
-      setLoading(false);
-      Swal.fire({
-          position: "center",
-          type: "success",
-          title: "Your work has been save!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      setLoading(false);
+    dispatch({
+      type: EDIT_GROUND,
+      ground: data.updateGround,
+    });
+    setLoading(false);
+    Swal.fire({
+      position: "center",
+      type: "success",
+      title: "Your work has been save!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    setLoading(false);
   } else {
-      console.log(errors);
-      Swal.fire({
-          position: "center",
-          type: "Warning",
-          title: "Please check the input!",
-          showConfirmButton: false,
-          timer: 1500,
-      });
-      logoutDispatch(dispatch, errors);
-      dispatch({
-          type: GET_ERRORS,
-          errors: errors[0].message,
-      });
+    console.log(errors);
+    Swal.fire({
+      position: "center",
+      type: "Warning",
+      title: "Please check the input!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
   }
 };
