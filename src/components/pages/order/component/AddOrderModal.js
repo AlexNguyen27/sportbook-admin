@@ -31,6 +31,7 @@ import { trimObjProperties } from "../../../../utils/formatString";
 import { getPrices } from "../../../../store/actions/price";
 import { addOrder } from "../../../../store/actions/order";
 import { isSameOrAfterNow } from "../../../../utils/commonFunction";
+import { getGrounds } from "../../../../store/actions/ground";
 
 const AddOrderModal = ({
   errors,
@@ -42,6 +43,8 @@ const AddOrderModal = ({
   getPrices,
   prices,
   addOrder,
+  getGrounds,
+  grounds,
 }) => {
   const dispatch = useDispatch();
 
@@ -53,16 +56,25 @@ const AddOrderModal = ({
     subGroundArr[0]?.id || ""
   );
 
+  const groundArr = Object.keys(grounds).map((ground) => grounds[ground]);
+  const [selectedGroundId, setSelectedGroundId] = useState(
+    groundArr[0]?.id || ""
+  );
+
   useEffect(() => {
-    getSubGrounds(setLoading).then(() => {
-      setLoading(true);
-      getPrices(setLoading, selectedSubGroundId);
-    });
+    getGrounds(setLoading);
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    getPrices(setLoading, selectedSubGroundId);
+    if (selectedGroundId) {
+      getSubGrounds(setLoading, selectedGroundId);
+    }
+  }, [selectedGroundId, setSelectedGroundId]);
+
+  useEffect(() => {
+    if(selectedSubGroundId) {
+      getPrices(setLoading, selectedSubGroundId);
+    }
   }, [setSelectedSubGroundId, selectedSubGroundId]);
 
   const [formData, setFormData] = useState({
@@ -70,6 +82,7 @@ const AddOrderModal = ({
     discount: "",
   });
 
+  // ONLY SHOW START TIME AFTER NOW
   const startTimeArr = () => {
     const startTimes = [];
     Object.keys(prices).map((key) => {
@@ -105,7 +118,7 @@ const AddOrderModal = ({
 
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
 
-  const getEndTimes = (startTime = '') => {
+  const getEndTimes = (startTime = "") => {
     let selectedStartTime = startTime || selectedDate.startTime;
     let endTimes = [];
     if (!selectedStartTime.trim()) {
@@ -190,7 +203,6 @@ const AddOrderModal = ({
       endTime: prices[selectedDate.selectedPriceId]?.endTime || "",
       paymentType: selectedPaymentType,
     });
-    console.log("ffff--------------------", formatedData);
 
     Object.keys(formatedData).map((key) => {
       if (!formatedData[key]) {
@@ -207,20 +219,11 @@ const AddOrderModal = ({
     });
 
     if (JSON.stringify(error) === "{}") {
-      // setLoading(true);
       formatedData.price = price;
       formatedData.discount = Number(discount);
       setLoading(true);
       addOrder(setLoading, formatedData);
     }
-  };
-
-  // Save on change input value
-  const onChange = (e) => {
-    // setFormData({
-    //   ...formData,
-    //   [e.target.name]: e.target.value,
-    // });
   };
 
   return (
@@ -239,7 +242,20 @@ const AddOrderModal = ({
               <Col xs="12">
                 <DropdownV2
                   fullWidth
-                  label="Select a sub ground"
+                  label="Select Ground Name"
+                  value={selectedGroundId.toString() || ""}
+                  options={groundArr || []}
+                  valueBasedOnProperty="id"
+                  displayProperty="title"
+                  onChange={(id) => setSelectedGroundId(id)}
+                  error={errors.groundId}
+                  variant="outlined"
+                />
+              </Col>
+              <Col xs="12" className="mt-4">
+                <DropdownV2
+                  fullWidth
+                  label="Select Sub Ground Name"
                   value={selectedSubGroundId.toString() || ""}
                   options={subGroundArr || []}
                   valueBasedOnProperty="id"
@@ -317,7 +333,6 @@ const AddOrderModal = ({
                   label="Price"
                   fullWidth
                   value={price || 0}
-                  onChange={onChange}
                 />
               </Col>
               <Col xs="6" className="mt-4">
@@ -329,7 +344,6 @@ const AddOrderModal = ({
                   label="Discount"
                   fullWidth
                   value={discount || 0}
-                  onChange={onChange}
                 />
               </Col>
             </Row>
@@ -356,10 +370,12 @@ const mapStateToProps = (state) => ({
   errors: state.errors,
   subGrounds: state.subGround.subGrounds,
   prices: state.price.prices,
+  grounds: state.ground.grounds,
 });
 export default connect(mapStateToProps, {
   clearErrors,
   addOrder,
   getPrices,
   getSubGrounds,
+  getGrounds,
 })(AddOrderModal);

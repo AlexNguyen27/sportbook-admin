@@ -4,6 +4,7 @@ import {
   ADD_SUB_GROUND,
   EDIT_SUB_GROUND,
   DELETE_SUB_GROUND,
+  CLEAR_PRICE_SUB_GROUND,
 } from "../actions/types";
 
 const initialState = {
@@ -34,6 +35,7 @@ export default function (state = initialState, action) {
         ...state,
         subGrounds: newSubGrounds,
       };
+    case CLEAR_PRICE_SUB_GROUND:
     case UNAUTHENTICATE:
       return initialState;
     default:

@@ -98,14 +98,6 @@ const OrderList = ({
     getOrders(setLoading);
   }, []);
 
-  useEffect(() => {
-    // AFTER ADD NEW ORDER, WE SHOULD GET ALL ORDER AGAIN
-    if (modal === false) {
-      setLoading(true);
-      getOrders(setLoading);
-    }
-  }, [modal, setModal]);
-
   const [state, setState] = useState({
     columns: [
       {
@@ -135,13 +127,14 @@ const OrderList = ({
       {
         title: "Ground Name",
         field: "groundName",
-        hidden: true,
         export: true,
+        editable: "never",
       },
       {
         title: "Sub ground name",
         field: "subGroundName",
-        editable: "never",
+        hidden: true,
+        export: true,
       },
       { title: "Start day", field: "startDay", editable: "never" },
       {
@@ -194,9 +187,6 @@ const OrderList = ({
         cellStyle: { minWidth: 200 },
         editComponent: (props) => {
           const { id } = props.rowData;
-          console.log("did-----------------", props);
-          console.log("order----------------", orders);
-          console.log("rodera rray =============", orderArr);
           const oldRowStatus = orders[id]?.status;
           const statusArr = Object.keys(
             ORDER_STATUS_OPTION[oldRowStatus] || {}

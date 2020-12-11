@@ -7,6 +7,7 @@ import {
   ADD_SUB_GROUND,
   DELETE_SUB_GROUND,
   EDIT_SUB_GROUND,
+  CLEAR_PRICE_SUB_GROUND,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -16,8 +17,11 @@ export const getSubGrounds = (setLoading, groundId) => async (
   dispatch,
   getState
 ) => {
+  dispatch({
+    type: CLEAR_PRICE_SUB_GROUND,
+  });
+  
   const { token } = getState().auth;
-
   let subGroundQuery = "";
   let variables = {};
   if (groundId) {
@@ -28,9 +32,6 @@ export const getSubGrounds = (setLoading, groundId) => async (
   if (subGroundQuery.length > 0) {
     subGroundQuery = `(${subGroundQuery})`;
   }
-
-  console.log("valirad-----------------", variables);
-  console.log("valirad-----------sdsdsd------", subGroundQuery);
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
@@ -39,7 +40,7 @@ export const getSubGrounds = (setLoading, groundId) => async (
         "Content-Type": "application/json",
       },
     },
-      query: `
+    query: `
           query {
             subGrounds${subGroundQuery} {
               id

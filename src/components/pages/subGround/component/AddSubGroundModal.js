@@ -1,0 +1,149 @@
+import React, { useState } from "react";
+import { connect, useDispatch } from "react-redux";
+// COMPONENTS
+import Button from "@material-ui/core/Button";
+import { clearErrors } from "../../../../utils/common";
+
+import {
+  Row,
+  Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Form,
+} from "reactstrap";
+import PageLoader from "../../../custom/PageLoader";
+import TextFieldInput from "../../../custom/TextFieldInputWithheader";
+import {
+  addSubGround,
+} from "../../../../store/actions/subGround";
+import { trimObjProperties } from "../../../../utils/formatString";
+import { GET_ERRORS } from "../../../../store/actions/types";
+
+const AddSubGroundModal = ({
+  errors,
+  clearErrors,
+  modal,
+  setModal,
+  selectedGroundId,
+  addSubGround,
+}) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    numberOfPlayers: "",
+  });
+
+  const { numberOfPlayers, name } = formData;
+
+  // CLOSE MODAL ACTION
+  const closeModal = () => {
+    setModal(false);
+    clearErrors();
+    setFormData({
+      name: "",
+      numberOfPlayers: "",
+    });
+  };
+
+  // HANDLE ON SUBMIT FROM ADD NEW GROUP
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const error = {};
+
+    const formatedData = trimObjProperties({
+      ...formData,
+      groundId: selectedGroundId,
+    });
+
+    console.log("here---------------", formatedData);
+    Object.keys(formatedData).map((key) => {
+      if (!formatedData[key]) {
+        error[key] = "This field is required";
+      }
+    });
+
+    dispatch({
+      type: GET_ERRORS,
+      errors: error,
+    });
+
+    if (JSON.stringify(error) === "{}") {
+      formatedData.numberOfPlayers = Number(formData.numberOfPlayers);
+      setLoading(true)
+      addSubGround(setLoading, formatedData);
+    }
+  };
+
+  // Save on change input value
+  const onChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  return (
+    <Modal isOpen={modal} toggle={() => closeModal()} centered={true}>
+      <PageLoader loading={loading} noPadding>
+        <ModalHeader toggle={() => closeModal()}>
+          Add new sub ground
+        </ModalHeader>
+        {/** MODAL BODY */}
+        <Form onSubmit={(e) => onSubmit(e)}>
+          <ModalBody>
+            <Row>
+              <Col xs="12">
+                <TextFieldInput
+                  required
+                  variant="outlined"
+                  name="name"
+                  label="Subground name"
+                  fullWidth
+                  value={name || ""}
+                  onChange={onChange}
+                  error={errors.name}
+                />
+              </Col>
+              <Col xs="12" className="mt-4">
+                <TextFieldInput
+                  required
+                  name="numberOfPlayers"
+                  label="Number of players"
+                  fullWidth
+                  variant="outlined"
+                  type="number"
+                  value={numberOfPlayers}
+                  onChange={onChange}
+                  error={errors.numberOfPlayers}
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+
+          {/** MODAL FOOTER */}
+          <ModalFooter>
+            <Button variant="contained" color="primary" type="submit">
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              className="ml-2"
+              onClick={() => closeModal()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Form>
+      </PageLoader>
+    </Modal>
+  );
+};
+const mapStateToProps = (state) => ({
+  errors: state.errors,
+});
+export default connect(mapStateToProps, { clearErrors, addSubGround })(
+  AddSubGroundModal
+);
