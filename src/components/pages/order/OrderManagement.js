@@ -28,7 +28,7 @@ const OrderManagement = (props) => {
   const classes = useStyles();
   const [selectedDate, setSelectedDate] = React.useState(new Date(moment()));
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [modelAdd, setModelAdd] = useState(false);
 
   const handleDateChange = (date) => {

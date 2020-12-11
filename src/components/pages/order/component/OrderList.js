@@ -92,6 +92,7 @@ const OrderList = ({
     phone: orders[orderId]?.user?.phone,
     email: orders[orderId]?.user?.email,
     groundName: orders[orderId]?.subGround?.ground?.title,
+    defaultStatus: orders[orderId].status,
   }));
 
   useEffect(() => {
@@ -183,11 +184,11 @@ const OrderList = ({
       {
         title: "Status",
         field: "status",
+        customSort: (a, b) =>a.status.length - b.status.length,
         headerStyle: { minWidth: 200 },
         cellStyle: { minWidth: 200 },
         editComponent: (props) => {
-          const { id } = props.rowData;
-          const oldRowStatus = orders[id]?.status;
+          const oldRowStatus = props.rowData?.defaultStatus;
           const statusArr = Object.keys(
             ORDER_STATUS_OPTION[oldRowStatus] || {}
           ).map((key) => ({
@@ -259,7 +260,9 @@ const OrderList = ({
           columns={state.columns}
           data={orderArr || []}
           options={{
+            sorting: true,
             pageSize: 7,
+            pageSizeOptions: [5, 7, 10, 20],
             headerStyle: {
               fontWeight: "bold",
             },

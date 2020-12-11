@@ -224,6 +224,7 @@ const OrderHistory = ({
           data={orderArr || []}
           options={{
             pageSize: 7,
+            pageSizeOptions: [5, 7, 10, 20],
             headerStyle: {
               fontWeight: "bold",
             },

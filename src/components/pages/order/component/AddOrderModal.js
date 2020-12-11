@@ -72,7 +72,7 @@ const AddOrderModal = ({
   }, [selectedGroundId, setSelectedGroundId]);
 
   useEffect(() => {
-    if(selectedSubGroundId) {
+    if (selectedSubGroundId) {
       getPrices(setLoading, selectedSubGroundId);
     }
   }, [setSelectedSubGroundId, selectedSubGroundId]);
@@ -247,7 +247,9 @@ const AddOrderModal = ({
                   options={groundArr || []}
                   valueBasedOnProperty="id"
                   displayProperty="title"
-                  onChange={(id) => setSelectedGroundId(id)}
+                  onChange={(id) => {
+                    setSelectedGroundId(id);
+                  }}
                   error={errors.groundId}
                   variant="outlined"
                 />

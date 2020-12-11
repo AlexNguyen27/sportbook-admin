@@ -157,7 +157,7 @@ const OrdersList = ({
     data: [
       {
         subGroundName: "home",
-        status: "new",
+        status: "waiting_for_approve",
         startTime: "12:00",
         endTime: "13:00",
         paymentType: "online",
@@ -176,6 +176,24 @@ const OrdersList = ({
       {
         subGroundName: "home",
         status: "approved",
+        startTime: "12:00",
+        endTime: "13:00",
+        paymentType: "online",
+        price: "100000",
+        createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
+      },
+      {
+        subGroundName: "home",
+        status: "finished",
+        startTime: "12:00",
+        endTime: "13:00",
+        paymentType: "online",
+        price: "100000",
+        createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
+      },
+      {
+        subGroundName: "home",
+        status: "paid",
         startTime: "12:00",
         endTime: "13:00",
         paymentType: "online",
@@ -208,15 +226,17 @@ const OrdersList = ({
           icons={tableIcons}
           title="List Of Orders"
           columns={state.columns}
-          data={orderArr || []}
+          data={state.data || []}
           options={{
             pageSize: 7,
+            pageSizeOptions: [5, 7, 10, 20],
             headerStyle: {
               fontWeight: "bold",
             },
             rowStyle: {
               overflowX: "auto",
             },
+            sorting: true,
             actionsColumnIndex: -1,
           }}
           actions={[
