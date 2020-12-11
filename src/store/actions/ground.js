@@ -7,6 +7,7 @@ import {
   GET_GROUNDS,
   DELETE_GROUND,
   EDIT_GROUND,
+  CLEAR_PRICE_SUB_GROUND
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -56,6 +57,11 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
       type: GET_GROUNDS,
       grounds,
     });
+
+    dispatch({
+      type: CLEAR_PRICE_SUB_GROUND,
+    });
+
     setLoading(false);
   } else {
     logoutDispatch(dispatch, errors);
