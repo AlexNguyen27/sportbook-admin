@@ -21,11 +21,7 @@ function TabPanel(props) {
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }
@@ -48,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: "flex",
-    height: 600,
+    // height: 600,
+    marginTop: '20px'
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -66,7 +63,6 @@ const SubGroundList = ({ subGrounds, onDelete, onEdit }) => {
   );
 
   const handleChange = (event, newValue) => {
-    console.log('new0--------------', newValue)
     setValue(newValue);
   };
 

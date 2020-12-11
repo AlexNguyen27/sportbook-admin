@@ -84,7 +84,6 @@ const PriceList = ({
       {
         title: "From time",
         field: "startTime",
-
         render: (rowData) => (
           <span>
             {moment(rowData.startTime, "HH:mm:ss A").format("hh:mm A")}
@@ -138,13 +137,13 @@ const PriceList = ({
         initialEditValue: moment().add(1, "hours").format("HH:mm:00"),
         editComponent: (props) => {
           return (
-            <>
               <TextField
                 id="endTime"
                 type="time"
                 format=""
                 size="small"
                 defaultValue={props.value}
+                value={props.value}
                 // defaultValue={moment().add(1, "hours").format("HH:mm:ss")}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
@@ -152,7 +151,6 @@ const PriceList = ({
                 error={props.helperText}
                 helperText={props.helperText}
               />
-            </>
           );
         },
       },
@@ -213,6 +211,7 @@ const PriceList = ({
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     getPrices(setLoading, subGround.id);
   }, [subGround]);
 
@@ -227,33 +226,16 @@ const PriceList = ({
           actionsColumnIndex: -1,
           search: false,
           headerStyle: {
-            // backgroundColor: "#01579b",
             fontWeight: "bold",
             color: "#393e46",
           },
           cellStyle: {
             fontSize: "14px",
           },
-          pageSize: 7,
+          pageSize: 9,
+          pageSizeOptions: [5, 9, 10, 20]
         }}
         actions={[
-          // {
-          //   icon: () => <AddBox style={{ color: Colors.primary }} />,
-          //   tooltip: "Add price",
-          //   isFreeAction: true,
-          //   onClick: (event, newData) => {
-          //     new Promise((resolve) => {
-          //       setTimeout(() => {
-          //         resolve();
-          //         setState((prevState) => {
-          //           const data = [...prevState.data];
-          //           data.push(newData);
-          //           return { ...prevState, data };
-          //         });
-          //       }, 600);
-          //     });
-          //   },
-          // },
           {
             icon: () => <Edit style={{ color: Colors.orange }} />,
             tooltip: "Edit sub ground",
@@ -290,7 +272,6 @@ const PriceList = ({
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {
               console.log("new data--------------------", newData);
-              resolve();
               setLoading(true);
               const priceData = {
                 id: oldData.id,
@@ -301,6 +282,7 @@ const PriceList = ({
                 subGroundId: subGround.id,
               };
               updatePrice(setLoading, priceData);
+              resolve();
             }),
           onRowDelete: (oldData) =>
             new Promise((resolve) => {

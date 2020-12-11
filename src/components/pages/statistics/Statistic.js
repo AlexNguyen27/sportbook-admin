@@ -89,11 +89,8 @@ const Statistic = ({
     getReports(setReportLoading, selectedStartDate, selectedEndDate);
   }, [selectedStartDate, selectedEndDate]);
 
-  console.log(groundNames, totalAmounts);
-
   const getBenefitNames = (benefit) => {
     const arr = benefit ? benefit.split(",") : [];
-    console.log("add------------", arr);
     const benefitName = arr
       .reduce(
         (acc, curr) =>
