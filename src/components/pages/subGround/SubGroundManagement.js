@@ -7,12 +7,11 @@ import AddCircleIcon from "@material-ui/icons/AddCircle";
 import { getGrounds } from "../../../store/actions/ground";
 import DropdownV2 from "../../custom/DropdownV2";
 import {
-  addSubGround,
   getSubGrounds,
   deleteSubGround,
 } from "../../../store/actions/subGround";
 import Swal from "sweetalert2";
-import EditSubGroundModal from "./component/AddSubGroundModal";
+import EditSubGroundModal from "./component/EditSubGroundModal";
 import PageLoader from "../../custom/PageLoader";
 import AddSubGroundModal from "./component/AddSubGroundModal";
 
@@ -20,7 +19,6 @@ const SubGroundManagement = ({
   getGrounds,
   grounds,
   errors,
-  addSubGround,
   getSubGrounds,
   deleteSubGround,
 }) => {
@@ -28,7 +26,7 @@ const SubGroundManagement = ({
   const [modelEdit, setModelEdit] = useState(false);
   const [modelAdd, setModelAdd] = useState(false);
   const [subGroundData, setSubGroundData] = useState();
-  
+
   const groundArr = Object.keys(grounds).map((groundId) => grounds[groundId]);
 
   const [selectedGroundId, setSelectedGroundId] = useState(
@@ -46,7 +44,6 @@ const SubGroundManagement = ({
     setLoading(true);
     getSubGrounds(setLoading, selectedGroundId);
   }, [setSelectedGroundId, selectedGroundId]);
-
 
   const onDeleteSubGround = (subGroundId) => {
     Swal.fire({
@@ -122,7 +119,6 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getGrounds,
-  addSubGround,
   getSubGrounds,
   deleteSubGround,
 })(SubGroundManagement);

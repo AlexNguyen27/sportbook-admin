@@ -6,6 +6,7 @@ import {
   GET_ORDERS,
   ADD_ORDER,
   EDIT_ORDER_STATUS,
+  SAVE_SELECTED_ORDER_DETAIL,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -288,6 +289,90 @@ export const updateOrderStatus = (setLoading, orderData) => async (
       title: errors[0].message || "An error occurred!",
       showConfirmButton: true,
     });
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+  setLoading(false);
+};
+
+export const getOrderById = (setLoading, id) => async (dispatch, getState) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+              query {
+                getOrderById(id: $id) {
+                  id
+                  subGroundId
+                  userId
+                  startDay
+                  startTime
+                  endTime
+                  paymentType
+                  status
+                  discount
+                  price
+                  createdAt
+                  subGround {
+                    id
+                    name
+                    numberOfPlayers
+                    groundId
+                    ground {
+                      id
+                      title
+                      address {
+                        regionCode
+                        districtCode
+                        wardCode
+                        address
+                      }
+                      benefit
+                      phone
+                      user {
+                        firstName
+                        lastName
+                        email
+                        phone
+                      }
+                    }
+                  }
+                  user {
+                    id
+                    firstName
+                    lastName
+                    email
+                    phone
+                    address
+                    avatar
+                  }
+                  histories {
+                    createdAt
+                    orderStatus
+                  }
+                }
+              }
+          `,
+    variables: {
+      id,
+    },
+  });
+  if (!errors) {
+    dispatch({
+      type: SAVE_SELECTED_ORDER_DETAIL,
+      selected_order: data.getOrderById,
+    });
+  } else {
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,

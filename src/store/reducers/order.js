@@ -5,10 +5,13 @@ import {
   EDIT_ORDER,
   EDIT_ORDER_STATUS,
   DELETE_ORDER,
+  SAVE_SELECTED_ORDER_DETAIL,
+  
 } from "../actions/types";
 
 const initialState = {
   orders: {},
+  selected_order: {},
 };
 
 export default function (state = initialState, action) {
@@ -43,6 +46,11 @@ export default function (state = initialState, action) {
         ...state,
         orders: newOrders,
       };
+      case SAVE_SELECTED_ORDER_DETAIL:
+        return {
+          ...state,
+          selected_order: action.selected_order,
+        };
     case UNAUTHENTICATE:
       return initialState;
     default:

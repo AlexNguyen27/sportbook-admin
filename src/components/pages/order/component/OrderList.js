@@ -10,7 +10,7 @@ import {
   COLOR_ORDER_STATUS,
   ORDER_STATUS_OPTION,
 } from "../../../../utils/common";
-
+import HistoryIcon from '@material-ui/icons/History';
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -92,6 +92,7 @@ const OrderList = ({
     phone: orders[orderId]?.user?.phone,
     email: orders[orderId]?.user?.email,
     groundName: orders[orderId]?.subGround?.ground?.title,
+    defaultStatus: orders[orderId].status,
   }));
 
   useEffect(() => {
@@ -183,11 +184,11 @@ const OrderList = ({
       {
         title: "Status",
         field: "status",
+        customSort: (a, b) =>a.status.length - b.status.length,
         headerStyle: { minWidth: 200 },
         cellStyle: { minWidth: 200 },
         editComponent: (props) => {
-          const { id } = props.rowData;
-          const oldRowStatus = orders[id]?.status;
+          const oldRowStatus = props.rowData?.defaultStatus;
           const statusArr = Object.keys(
             ORDER_STATUS_OPTION[oldRowStatus] || {}
           ).map((key) => ({
@@ -259,7 +260,9 @@ const OrderList = ({
           columns={state.columns}
           data={orderArr || []}
           options={{
+            sorting: true,
             pageSize: 7,
+            pageSizeOptions: [5, 7, 10, 20],
             headerStyle: {
               fontWeight: "bold",
             },
@@ -271,11 +274,18 @@ const OrderList = ({
             exportAllData: true,
           }}
           actions={[
+            // {
+            //   icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
+            //   tooltip: "History",
+            //   onClick: (event, rowData) => {
+            //     history.push(`order-management/${rowData.id}`);
+            //   },
+            // },
             {
               icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
-              tooltip: "History",
+              tooltip: "Order Detai",
               onClick: (event, rowData) => {
-                history.push(`order-management/${rowData.id}`);
+                history.push(`order-detail/${rowData.id}`);
               },
             },
           ]}

@@ -84,6 +84,7 @@ const GroundCard = ({ ground, onDelete, onEdit }) => {
           onClick={() => onDelete(ground.id)}
           className="ml-0"
           aria-label="Edit this ground"
+          disabled // TODO: TEMPORARILY
           style={{ color: Colors.red }}
         >
           <span style={{ fontSize: "16px" }}> Delete</span>

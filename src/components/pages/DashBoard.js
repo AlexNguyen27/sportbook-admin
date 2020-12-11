@@ -69,6 +69,7 @@ import OrdersList from "./admin/OrdersList";
 import HistoryList from "./history/HistoryList";
 import OrderHistory from "./loyalCustomer/component/OrderHistory";
 import Prediction from "./prediction/Prediction";
+import OrderDetail from "./order/component/orderDetail/OrderDetail";
 
 const drawerWidth = 260;
 
@@ -483,6 +484,12 @@ const DashBoard = ({
           return (
             <>
               <HistoryList orderId={match.params.orderId} />
+            </>
+          );
+        case "/order-detail/:orderId":
+          return (
+            <>
+              <OrderDetail orderId={match.params.orderId} />
             </>
           );
         default:
