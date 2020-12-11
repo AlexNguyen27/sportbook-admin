@@ -15,6 +15,7 @@ import { signUpUser } from "../../../store/actions/auth";
 import { GET_ERRORS } from "../../../store/actions/types";
 import { validateEmail } from "../../../utils/commonFunction";
 import GoogleLoginCustom from "./component/GoogleLoginCustom";
+import { Row, Col } from "reactstrap";
 
 const Signup = ({
   errors,
@@ -28,9 +29,11 @@ const Signup = ({
     email: "",
     password: "",
     confirmPassword: "",
+    firstName: "",
+    lastName: "",
   });
 
-  const { email, password, confirmPassword } = formData;
+  const { email, password, confirmPassword, firstName, lastName } = formData;
 
   // Click button Login
   const onSubmit = (e) => {
@@ -108,6 +111,34 @@ const Signup = ({
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>
+                <Row className="row-margin">
+                  <Col xs={6}>
+                    <TextFieldInputWithHeader
+                      header="First Name"
+                      name="firstName"
+                      className="mt-0"
+                      fullWidth
+                      value={firstName}
+                      onChange={onChange}
+                      error={errors.firstName}
+                      placeholder="Enter First Name"
+                      size="small"
+                    />
+                  </Col>
+                  <Col xs={6}>
+                    <TextFieldInputWithHeader
+                      header="Last Name"
+                      name="lastName"
+                      className="mt-0"
+                      fullWidth
+                      value={lastName}
+                      onChange={onChange}
+                      error={errors.lastName}
+                      placeholder="Enter Last Name"
+                      size="small"
+                    />
+                  </Col>
+                </Row>
                 <TextFieldInputWithHeader
                   header="Email"
                   name="email"

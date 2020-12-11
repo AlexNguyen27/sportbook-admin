@@ -4,9 +4,9 @@ import { Button } from "reactstrap";
 
 const defaultHeaders = [
   { label: "Ground name", key: "title" },
-  { label: "Phone", key: "groundPhone" },
+  { label: "Phone", key: "phone" },
   { label: "Address", key: "address" },
-  { label: "Benefit", key: "benefits" },
+  { label: "Benefit", key: "benefit" },
   { label: "Order times", key: "orderCount" },
   { label: "Amount", key: "totalAmount" },
   // { label: "Total Orders", key: "totalOrders" },
