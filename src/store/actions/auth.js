@@ -102,14 +102,14 @@ export const logoutUser = () => (dispatch) => {
 export const signUpUser = (isAuthenticated, history, userData) => async (
   dispatch
 ) => {
-  const { email, password } = userData;
+  const { email, password, firstName, lastName } = userData;
   const { data, errors } = await hera({
     options: {
       url: BASE_URL,
     },
     query: `
         mutation {
-          createUser(email: $email, password: $password, role: $role ) {
+          createUser(email: $email, password: $password, role: $role, firstName: $firstName, lastName: $lastName) {
             id,
             email,
             firstName,
@@ -131,6 +131,8 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
     variables: {
       email,
       password,
+      firstName, 
+      lastName,
       role: "owner",
     },
   });
