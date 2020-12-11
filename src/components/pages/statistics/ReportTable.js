@@ -15,7 +15,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import { connect } from "react-redux";
-import { formatThousandVND } from "../../utils/commonFunction";
+import { formatThousandVND } from "../../../utils/commonFunction";
 import TableHead from "@material-ui/core/TableHead";
 
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +95,7 @@ function TablePaginationActions(props) {
   );
 }
 
-const StatictisTable = ({ reports, dataSource }) => {
+const ReportTable = ({ reports, dataSource }) => {
   const classes = useStyles();
 
   const totalOrders = dataSource
@@ -107,9 +107,6 @@ const StatictisTable = ({ reports, dataSource }) => {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, dataSource.length - page * rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -126,6 +123,9 @@ const StatictisTable = ({ reports, dataSource }) => {
           <TableRow>
             <TableCell align="left" className="font-weight-bold">
               Ground name
+            </TableCell>
+            <TableCell align="left" className="font-weight-bold">
+              Benefits
             </TableCell>
             <TableCell align="center" className="font-weight-bold">
               Order Times
@@ -145,18 +145,14 @@ const StatictisTable = ({ reports, dataSource }) => {
           ).map((row) => (
             <TableRow key={row.id}>
               <TableCell align="left">{row.title}</TableCell>
+              <TableCell align="left">{row.benefit}</TableCell>
               <TableCell align="center">{row.orderCount}</TableCell>
               <TableCell align="right" colSpan={2}>
                 {formatThousandVND(row.totalAmount || 0, " VND")}
               </TableCell>
+              
             </TableRow>
           ))}
-
-          {/* {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )} */}
 
           <TableRow>
             <TableCell rowSpan={3} />
@@ -198,4 +194,4 @@ const StatictisTable = ({ reports, dataSource }) => {
 const mapStateToProps = (state) => ({
   reports: state.statistic.reports,
 });
-export default connect(mapStateToProps, null)(StatictisTable);
+export default connect(mapStateToProps, null)(ReportTable);

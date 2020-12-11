@@ -1,5 +1,9 @@
 import moment from "moment";
 import { DATE_TIME } from "./common";
+import REGIONS from "../components/locales/regions.json";
+import DISTRICTS from "../components/locales/districts.json";
+import WARDS from "../components/locales/wards.json";
+
 export const arrayToObject = (array) => {
   return array.reduce((obj, item) => {
     if (item.id) {
@@ -52,4 +56,14 @@ export const isSameOrAfterNow = (startTime, selectedStartDay) => {
   const day = selectedStartDay + " " + startTime;
   console.log("da----", day);
   return moment(day, "DD-MM-YYYY HH:mm:ss").isSameOrAfter(moment());
+};
+
+export const getAddress = (data) => {
+  if (data) {
+    const { address, regionCode, districtCode, wardCode } = data;
+    return `${address}, ${WARDS[wardCode]?.name_with_type}, ${
+      DISTRICTS[districtCode]?.name_with_type
+    }, ${REGIONS[regionCode]?.name_with_type || ""}`;
+  }
+  return "";
 };

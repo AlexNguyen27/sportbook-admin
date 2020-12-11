@@ -10,13 +10,22 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
-import StatisticTable from "../../layout/StatictisTable";
+import ReportTable from "./ReportTable";
 import { getGroundsByDate, getReports } from "../../../store/actions/statistic";
+import { getBenefits } from "../../../store/actions/benefit";
 import PageLoader from "../../custom/PageLoader";
 import ExportCSV from "../../custom/ExportCSV";
 import { Row, Col } from "reactstrap";
+import { getAddress } from "../../../utils/commonFunction";
 
-const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
+const Statistic = ({
+  grounds,
+  getGroundsByDate,
+  getReports,
+  reports,
+  getBenefits,
+  benefits,
+}) => {
   const [selectedDropdownData, setSelectedDropdownData] = useState({
     selectedDateId: "7days",
   });
@@ -38,6 +47,11 @@ const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
   };
 
   const { selectedDateId } = selectedDropdownData;
+
+  useEffect(() => {
+    setLoading(true);
+    getBenefits(setLoading);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -77,9 +91,23 @@ const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
 
   console.log(groundNames, totalAmounts);
 
+  const getBenefitNames = (benefit) => {
+    const arr = benefit ? benefit.split(",") : [];
+    console.log("add------------", arr);
+    const benefitName = arr
+      .reduce(
+        (acc, curr) =>
+          benefits[curr] ? [...acc, benefits[curr]?.title] : [...acc],
+        []
+      )
+      .join(", ");
+    return benefitName || "No benefits";
+  };
   const dataSource = Object.keys(reports).map((key) => ({
     ...reports[key],
     totalAmount: reports[key].totalAmount || 0,
+    address: getAddress(reports[key].address),
+    benefit: getBenefitNames(reports[key].benefit),
   }));
 
   return (
@@ -157,7 +185,7 @@ const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
       </Row>
 
       <PageLoader loading={reportLoading}>
-        <StatisticTable dataSource={dataSource} />
+        <ReportTable dataSource={dataSource} />
       </PageLoader>
     </div>
   );
@@ -166,7 +194,10 @@ const Statistic = ({ grounds, getGroundsByDate, getReports, reports }) => {
 const mapStateToProps = (state) => ({
   grounds: state.statistic.grounds,
   reports: state.statistic.reports,
+  benefits: state.benefit.benefits,
 });
-export default connect(mapStateToProps, { getGroundsByDate, getReports })(
-  Statistic
-);
+export default connect(mapStateToProps, {
+  getGroundsByDate,
+  getReports,
+  getBenefits,
+})(Statistic);

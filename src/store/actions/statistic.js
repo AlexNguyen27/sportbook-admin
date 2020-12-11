@@ -73,6 +73,14 @@ export const getReports = (setLoading, startDate, endDate) => async (
               grounds(startDate: $startDate, endDate: $endDate) {
                   id
                   title 
+                  phone
+                  address {
+                    address
+                    regionCode
+                    districtCode
+                    wardCode
+                  }
+                  benefit
                   totalAmount
                   orderCount
               }
