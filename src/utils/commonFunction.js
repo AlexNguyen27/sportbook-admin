@@ -57,11 +57,22 @@ export const isSameOrAfterNow = (startTime, selectedStartDay) => {
   return moment(day, "DD-MM-YYYY HH:mm:ss").isSameOrAfter(moment());
 };
 
-export const getAddress = (data) => {
-  if (data) {
-    const { address, regionCode, districtCode, wardCode } = data;
-    return `${address}, ${WARDS[wardCode]?.name_with_type}, ${
-      DISTRICTS[districtCode]?.name_with_type
+export const getAddress = (addressObj) => {
+  if (addressObj.address) {
+    const { address, regionCode, districtCode, wardCode } = addressObj;
+    return `${address || ""}, ${WARDS[wardCode]?.name_with_type || ""}, ${
+      DISTRICTS[districtCode]?.name_with_type || ""
+    }, ${REGIONS[regionCode]?.name_with_type || ""}`;
+  }
+  return "";
+};
+
+export const getUserAddress = (addressStr) => {
+  const addressObj = JSON.parse(addressStr);
+  if (addressStr) {
+    const { address, regionCode, districtCode, wardCode } = addressObj;
+    return `${address || ""}, ${WARDS[wardCode]?.name_with_type || ""}, ${
+      DISTRICTS[districtCode]?.name_with_type || ""
     }, ${REGIONS[regionCode]?.name_with_type || ""}`;
   }
   return "";

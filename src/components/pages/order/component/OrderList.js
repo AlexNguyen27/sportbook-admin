@@ -10,7 +10,7 @@ import {
   COLOR_ORDER_STATUS,
   ORDER_STATUS_OPTION,
 } from "../../../../utils/common";
-
+import HistoryIcon from '@material-ui/icons/History';
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -275,10 +275,17 @@ const OrderList = ({
           }}
           actions={[
             {
-              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+              icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
               tooltip: "History",
               onClick: (event, rowData) => {
                 history.push(`order-management/${rowData.id}`);
+              },
+            },
+            {
+              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+              tooltip: "Order Detai",
+              onClick: (event, rowData) => {
+                history.push(`order-detail/${rowData.id}`);
               },
             },
           ]}
