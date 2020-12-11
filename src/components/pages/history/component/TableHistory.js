@@ -48,7 +48,7 @@ export default function TableHistory({ dataSource }) {
   const [state, setState] = React.useState({
     columns: [
       { title: "Created at", field: "createdAt" },
-      { title: "Updated by", field: "email" },
+      { title: "Created by", field: "email" },
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Full name", field: "fullName" },
       { title: "Phone", field: "phone" },

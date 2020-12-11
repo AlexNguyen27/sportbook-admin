@@ -51,7 +51,6 @@ const OrderDetail = ({
         <Col xs={12} className="text-left" style={{ marginBottom: "30px" }}>
           <Button
             variant="contained"
-            size="small"
             color="default"
             className={classes.btn}
             startIcon={<ArrowBackIosIcon />}

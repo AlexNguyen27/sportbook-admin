@@ -274,13 +274,13 @@ const OrderList = ({
             exportAllData: true,
           }}
           actions={[
-            {
-              icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
-              tooltip: "History",
-              onClick: (event, rowData) => {
-                history.push(`order-management/${rowData.id}`);
-              },
-            },
+            // {
+            //   icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
+            //   tooltip: "History",
+            //   onClick: (event, rowData) => {
+            //     history.push(`order-management/${rowData.id}`);
+            //   },
+            // },
             {
               icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
               tooltip: "Order Detai",
