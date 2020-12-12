@@ -117,27 +117,27 @@ const CategoriesList = ({
             actionsColumnIndex: -1
           }}
           actions={[
-            {
-              icon: () => <Delete style={{ color: Colors.red }} />,
-              tooltip: "Delete Category",
-              onClick: (event, rowData) => {
-                Swal.fire({
-                  title: `Are you sure to delete ?`,
-                  text: "You won't be able to revert this!",
-                  type: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#3085d6",
-                  cancelButtonColor: "#d33",
-                  confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                  if (result.value) {
-                    setLoading(true);
-                    deleteCatgory(setLoading, rowData.id);
-                    // deleteUser(setLoading, rowData.id);
-                  }
-                });
-              },
-            },
+            // {
+            //   icon: () => <Delete style={{ color: Colors.red }} />,
+            //   tooltip: "Delete Category",
+            //   onClick: (event, rowData) => {
+            //     Swal.fire({
+            //       title: `Are you sure to delete ?`,
+            //       text: "You won't be able to revert this!",
+            //       type: "warning",
+            //       showCancelButton: true,
+            //       confirmButtonColor: "#3085d6",
+            //       cancelButtonColor: "#d33",
+            //       confirmButtonText: "Yes, delete it!",
+            //     }).then((result) => {
+            //       if (result.value) {
+            //         setLoading(true);
+            //         deleteCatgory(setLoading, rowData.id);
+            //         // deleteUser(setLoading, rowData.id);
+            //       }
+            //     });
+            //   },
+            // },
           ]}
           editable={{
             onRowAdd: (newData) =>
