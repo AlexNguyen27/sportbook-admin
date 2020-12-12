@@ -567,36 +567,6 @@ const UserInfo = ({
                       />
                     </Col>
                   </Row>
-                  {/* Extra information */}
-                  {/* <Row className="mt-4">
-                    <Col xs={6}>
-                      <DropdownV2
-                        fullWidth
-                        label="Farovite Foot"
-                        variant="outlined"
-                        disabledPlaceholder="None"
-                        value={selectedFavoriteFootKey.toString()}
-                        options={favoriteFootArr || []}
-                        valueBasedOnProperty="key"
-                        displayProperty="value"
-                        onChange={(code) => onChangeFavoriteFoot(code)}
-                        error={errors.favoriteFoot || ""}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="playRole"
-                        label="Play role"
-                        fullWidth
-                        value={playRole}
-                        onChange={onChange}
-                        placeHolder="Enter play role"
-                        error={errors.playRole}
-                        variant="outlined"
-                      />
-                    </Col>
-                  </Row> */}
                   <Row className="mt-4">
                     <Col xs={6}>
                       <TextFieldInputWithHeader
