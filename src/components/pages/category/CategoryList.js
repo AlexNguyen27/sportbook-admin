@@ -12,7 +12,7 @@ import {
 } from "../../../store/actions/category";
 
 import { forwardRef } from "react";
- 
+
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -70,11 +70,16 @@ const CategoriesList = ({
       {
         title: "Name",
         field: "name",
-
         validate: (rowData) =>
           rowData.name === ""
             ? { isValid: false, helperText: "Name cannot be empty" }
             : true,
+      },
+      {
+        title: "Status",
+        field: "status",
+        lookup: { enabled: "Enable", disabled: "Disabled" }, // SHOWED IS ENABLE
+        initialEditValue: "enabled",
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -114,38 +119,17 @@ const CategoriesList = ({
             rowStyle: {
               overflowX: "auto",
             },
-            actionsColumnIndex: -1
+            actionsColumnIndex: -1,
           }}
-          actions={[
-            // {
-            //   icon: () => <Delete style={{ color: Colors.red }} />,
-            //   tooltip: "Delete Category",
-            //   onClick: (event, rowData) => {
-            //     Swal.fire({
-            //       title: `Are you sure to delete ?`,
-            //       text: "You won't be able to revert this!",
-            //       type: "warning",
-            //       showCancelButton: true,
-            //       confirmButtonColor: "#3085d6",
-            //       cancelButtonColor: "#d33",
-            //       confirmButtonText: "Yes, delete it!",
-            //     }).then((result) => {
-            //       if (result.value) {
-            //         setLoading(true);
-            //         deleteCatgory(setLoading, rowData.id);
-            //         // deleteUser(setLoading, rowData.id);
-            //       }
-            //     });
-            //   },
-            // },
-          ]}
           editable={{
             onRowAdd: (newData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const { name } = newData;
-                  setLoading(true);
-                  addCategory(setLoading, name);
+                  const { name, status } = newData;
+                  if (name && name.trim()) {
+                    setLoading(true);
+                    addCategory(setLoading, name.trim(), status);
+                  }
                   resolve();
                 }, 1000);
               }),
@@ -153,18 +137,12 @@ const CategoriesList = ({
               new Promise((resolve, reject) => {
                 setTimeout(() => {
                   resolve();
-                  // edit categories
-                  setLoading(true);
-                  const { name, id } = newData;
-                  updateCategory(setLoading, name, id);
-                  if (oldData) {
-                    setState((prevState) => {
-                      const data = [...prevState.data];
-                      data[data.indexOf(oldData)] = newData;
-                      return { ...prevState, data };
-                    });
+                  const { name, id, status } = newData;
+                  if (name && name.trim()) {
+                    setLoading(true);
+                    updateCategory(setLoading, name.trim(), status, id);
                   }
-                }, 100);
+                }, 1000);
               }),
           }}
         />
