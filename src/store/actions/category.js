@@ -11,9 +11,10 @@ import {
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
 import Swal from "sweetalert2";
+import { BENEFIT_STATUS } from "../../utils/common";
 
 export const getCategories = (setLoading) => async (dispatch, getState) => {
-  const { token } = getState().auth;
+  const { token, isAdmin } = getState().auth;
 
   const { data, errors } = await hera({
     options: {
@@ -28,18 +29,22 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
                 categories {
                     id, 
                     name,
+                    status
                     createdAt,
-                    grounds {
-                      id
-                      title
-                    }
                   }
             }
         `,
     variables: {},
   });
   if (!errors) {
-    const categories = arrayToObject(data.categories);
+    let categoryArr = [...data.categories];
+    if (!isAdmin) {
+      categoryArr = categoryArr.filter(
+        (item) => item.status === BENEFIT_STATUS.enabled
+      );
+    }
+
+    const categories = arrayToObject(categoryArr);
 
     dispatch({
       type: GET_CATEGORIES,
@@ -55,7 +60,10 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
   }
 };
 
-export const addCategory = (setLoading, name) => async (dispatch, getState) => {
+export const addCategory = (setLoading, name, status) => async (
+  dispatch,
+  getState
+) => {
   const { token } = getState().auth;
 
   const { data, errors } = await hera({
@@ -68,15 +76,17 @@ export const addCategory = (setLoading, name) => async (dispatch, getState) => {
     },
     query: `
       mutation {
-        createCategory(name: $name) {
+        createCategory(name: $name, status: $status) {
           id, 
           name,
+          status
           createdAt
         }
       } 
     `,
     variables: {
       name,
+      status: status || BENEFIT_STATUS.enabled,
     },
   });
 
@@ -170,7 +180,7 @@ export const deleteCatgory = (setLoading, id) => async (dispatch, getState) => {
   }
 };
 
-export const updateCategory = (setLoading, name, id) => async (
+export const updateCategory = (setLoading, name, status, id) => async (
   dispatch,
   getState
 ) => {
@@ -185,9 +195,10 @@ export const updateCategory = (setLoading, name, id) => async (
     },
     query: `
       mutation {
-        updateCategory(id: $id, name: $name) {
+        updateCategory(id: $id, name: $name, status: $status) {
           id
           name
+          status
           createdAt
         }
       } 
@@ -195,6 +206,7 @@ export const updateCategory = (setLoading, name, id) => async (
     variables: {
       id,
       name,
+      status: status || BENEFIT_STATUS.enabled,
     },
   });
   if (!errors) {

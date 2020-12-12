@@ -147,34 +147,34 @@ const ManagersList = ({
                 // Do save operation
               },
             },
-            {
-              icon: () => <Delete style={{ color: Colors.red }} />,
-              tooltip: "Delete User",
-              onClick: (event, rowData) => {
-                Swal.fire({
-                  title: `Are you sure to delete ?`,
-                  text: "You won't be able to revert this!",
-                  type: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#3085d6",
-                  cancelButtonColor: "#d33",
-                  confirmButtonText: "Yes, delete it!",
-                }).then((result) => {
-                  if (result.value) {
-                    setLoading(true);
-                    deleteUser(setLoading, rowData.id);
-                  }
-                });
-              },
-            },
-            rowData => ({
-              icon: () => <EqualizerTwoToneIcon />,
-              tooltip: "Statictis",
-              onClick: (event, rowData) => {
-                history.push(`statistics/${rowData.id}`);
-              },
-              // disabled: !rowData.posts.length
-            }),
+            // {
+            //   icon: () => <Delete style={{ color: Colors.red }} />,
+            //   tooltip: "Delete User",
+            //   onClick: (event, rowData) => {
+            //     Swal.fire({
+            //       title: `Are you sure to delete ?`,
+            //       text: "You won't be able to revert this!",
+            //       type: "warning",
+            //       showCancelButton: true,
+            //       confirmButtonColor: "#3085d6",
+            //       cancelButtonColor: "#d33",
+            //       confirmButtonText: "Yes, delete it!",
+            //     }).then((result) => {
+            //       if (result.value) {
+            //         setLoading(true);
+            //         deleteUser(setLoading, rowData.id);
+            //       }
+            //     });
+            //   },
+            // },
+            // rowData => ({
+            //   icon: () => <EqualizerTwoToneIcon />,
+            //   tooltip: "Statictis",
+            //   onClick: (event, rowData) => {
+            //     history.push(`statistics/${rowData.id}`);
+            //   },
+            //   // disabled: !rowData.posts.length
+            // }),
 
           ]}
         />

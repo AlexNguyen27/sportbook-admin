@@ -80,3 +80,8 @@ export const SOCIAL_NETWORK_LABEL = {
   zalo: "Zalo",
   twitter: "Twitter",
 };
+
+export const BENEFIT_STATUS = {
+  enabled: 'enabled',
+  disabled: 'disabled',
+};

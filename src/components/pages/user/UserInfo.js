@@ -20,7 +20,7 @@ import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
 import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
-import { GENDER, FAVORITE_FOOT, ROLE } from "../../../utils/common";
+import { GENDER, ROLE } from "../../../utils/common";
 import REGIONS from "../../locales/regions.json";
 import DISTRICTS from "../../locales/districts.json";
 import WARDS from "../../locales/wards.json";
@@ -74,6 +74,10 @@ const UserInfo = ({
   editUserInfo,
   getUserInfo,
   viewType,
+  auth: {
+    isAdmin,
+    user: { id: authId },
+  },
   isManager,
   match,
 }) => {
@@ -289,7 +293,6 @@ const UserInfo = ({
     }
   };
 
-  console.log("match-----------------------", match);
   useEffect(() => {
     if (viewType === ROLE.admin) {
       getUserInfo(match.params.userId, setLoading);
@@ -339,7 +342,7 @@ const UserInfo = ({
     formatData.wardCode = selectedWardCode;
     formatData.extraInfo = { ...extraInfoForm };
     formatData.socialNetwork = { ...socialNetworkForm };
-    
+
     if (JSON.stringify(error) === "{}") {
       formatData.phone = formData.phone.replace(/\s/g, "");
       setLoading(true);
@@ -400,6 +403,7 @@ const UserInfo = ({
   // };
 
   console.log("viewtype===============", viewType);
+  // console.log(isAdmin, match?.params?.userId,  authId)
   return (
     <PageLoader loading={loading}>
       <div className={classes.root}>
@@ -458,6 +462,7 @@ const UserInfo = ({
                         name="email"
                         label="Email"
                         fullWidth
+                        disabled={isAdmin && match?.params?.userId !== authId}
                         value={email}
                         onChange={onChange}
                         className="mt-4"
@@ -562,36 +567,6 @@ const UserInfo = ({
                       />
                     </Col>
                   </Row>
-                  {/* Extra information */}
-                  {/* <Row className="mt-4">
-                    <Col xs={6}>
-                      <DropdownV2
-                        fullWidth
-                        label="Farovite Foot"
-                        variant="outlined"
-                        disabledPlaceholder="None"
-                        value={selectedFavoriteFootKey.toString()}
-                        options={favoriteFootArr || []}
-                        valueBasedOnProperty="key"
-                        displayProperty="value"
-                        onChange={(code) => onChangeFavoriteFoot(code)}
-                        error={errors.favoriteFoot || ""}
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="playRole"
-                        label="Play role"
-                        fullWidth
-                        value={playRole}
-                        onChange={onChange}
-                        placeHolder="Enter play role"
-                        error={errors.playRole}
-                        variant="outlined"
-                      />
-                    </Col>
-                  </Row> */}
                   <Row className="mt-4">
                     <Col xs={6}>
                       <TextFieldInputWithHeader
@@ -674,6 +649,7 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
   current_user: state.user.current_user,
   isManager: state.auth.isManager,
+  auth: state.auth,
 });
 export default connect(mapStateToProps, {
   editUserInfo,

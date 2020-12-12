@@ -70,6 +70,7 @@ import HistoryList from "./history/HistoryList";
 import OrderHistory from "./loyalCustomer/component/OrderHistory";
 import Prediction from "./prediction/Prediction";
 import OrderDetail from "./order/component/orderDetail/OrderDetail";
+import GroundDetail from "./admin/ground/GroundDetail";
 
 const drawerWidth = 260;
 
@@ -412,7 +413,12 @@ const DashBoard = ({
               <GroundManagement />
             </>
           );
-
+        case "/ground-management/:groundId":
+          return (
+            <>
+              <GroundDetail groundId={match.params.groundId} />
+            </>
+          );
         case "/statistics":
           return (
             <>
@@ -424,6 +430,12 @@ const DashBoard = ({
           return (
             <>
               <HistoryList orderId={match.params.orderId} />
+            </>
+          );
+        case "/order-detail/:orderId":
+          return (
+            <>
+              <OrderDetail orderId={match.params.orderId} />
             </>
           );
         default:
@@ -566,12 +578,12 @@ const DashBoard = ({
       to: "/ground-management",
       title: "Ground Management",
     },
-    {
-      key: "statistics",
-      icon: <MultilineChartIcon />,
-      to: `/statistics`,
-      title: "Statistics And Charts",
-    },
+    // {
+    //   key: "statistics",
+    //   icon: <MultilineChartIcon />,
+    //   to: `/statistics`,
+    //   title: "Statistics And Charts",
+    // },
     {
       key: "category",
       icon: <CategoryIcon />,
@@ -641,6 +653,10 @@ const DashBoard = ({
 
     if (match.path.match("orderId")) {
       return "Order History";
+    }
+
+    if (match.path.match("groundId")) {
+      return "Subgrounds and pricing";
     }
 
     if (match.path.match("/loyal-customer/:userId")) {

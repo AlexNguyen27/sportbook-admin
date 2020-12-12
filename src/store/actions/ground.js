@@ -45,6 +45,12 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
                       id
                       name
                     }
+                    user {
+                      firstName
+                      lastName
+                      email
+                      phone
+                    }
                 }
               }
           `,

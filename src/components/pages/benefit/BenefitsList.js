@@ -5,8 +5,6 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import MaterialTable from "material-table";
 
-
-import Tooltip from '@material-ui/core/Tooltip';
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -21,15 +19,14 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-
 import PageLoader from "../../custom/PageLoader";
-import AddBenefitModal from "./component/AddBenefitModal";
-import EditBenefitModal from "./component/EditBenefitModal";
-
 import Colors from "../../../constants/Colors";
 import { DATE_TIME } from "../../../utils/common";
-import { getBenefits, addBenefit, updateBenefit } from "../../../store/actions/benefit";
-import { truncateMultilineString } from "../../../utils/formatString";
+import {
+  getBenefits,
+  addBenefit,
+  updateBenefit,
+} from "../../../store/actions/benefit";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -56,10 +53,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const BenefitsList = ({
-  benefits,
-  getBenefits,
-}) => {
+const BenefitsList = ({ benefits, getBenefits, updateBenefit, addBenefit }) => {
   const [state, setState] = useState({
     columns: [
       {
@@ -67,12 +61,10 @@ const BenefitsList = ({
         field: "title",
       },
       {
-        title: "Description",
-        field: "description",
-        render: ({ description }) => description.length <= 50 ? <p style={{ margin: 0 }}>{description}</p>
-          : <Tooltip placement="top" title={description}>
-            <p style={{ margin: 0 }}>{truncateMultilineString(description, 50)}</p>
-          </Tooltip>
+        title: "Status",
+        field: "status",
+        lookup: { enabled: "Enable", disabled: "Disabled" }, // SHOWED IS ENABLE
+        initialEditValue: "enabled",
       },
       { title: "Created At", field: "createdAt", editable: "never" },
     ],
@@ -86,9 +78,6 @@ const BenefitsList = ({
   });
 
   const [loading, setLoading] = useState(true);
-  const [modelAdd, setModelAdd] = useState(false);
-  const [modelEdit, setModelEdit] = useState(false);
-  const [benefit, setBenefit] = useState();
 
   useEffect(() => {
     getBenefits(setLoading);
@@ -97,13 +86,8 @@ const BenefitsList = ({
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const benefitArr = Object.keys(benefits).map((benefitId) => ({
     ...benefits[benefitId],
-    createdAt: getDateTime(benefits[benefitId].createdAt)
+    createdAt: getDateTime(benefits[benefitId].createdAt),
   }));
-
-  const onEditBenefit = (benefit) => {
-    setModelEdit(true);
-    setBenefit(benefit);
-  };
 
   return (
     <PageLoader loading={loading}>
@@ -121,36 +105,28 @@ const BenefitsList = ({
             rowStyle: {
               overflowX: "auto",
             },
-            actionsColumnIndex: -1
+            actionsColumnIndex: -1,
           }}
-          actions={[
-            // {
-            //   icon: () => <Visibility style={{ color: Colors.view }} />,
-            //   tooltip: "View benefit",
-            //   onClick: (event, rowData) => {
-            //     console.log(rowData);
-            //   },
-            // },
-            {
-              icon: () => <AddBox style={{ color: Colors.primary }} />,
-              tooltip: 'Add benefit',
-              isFreeAction: true,
-              onClick: (event) => {
-                setModelAdd(true);
-              }
-            },
-            {
-              icon: () => <Edit style={{ color: Colors.orange }} />,
-              tooltip: "Edit benefit",
-              onClick: (event, rowData) => {
-                onEditBenefit(rowData);
-              },
-            },
-          ]}
+          editable={{
+            onRowAdd: (newData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  setLoading(true);
+                  addBenefit(setLoading, newData);
+                  resolve();
+                }, 1000);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve();
+                  setLoading(true);
+                  updateBenefit(setLoading, newData);
+                }, 100);
+              }),
+          }}
         />
       </div>
-      <AddBenefitModal modal={modelAdd} setModal={setModelAdd} />
-      <EditBenefitModal modal={modelEdit} setModal={setModelEdit} editedData={benefit} />
     </PageLoader>
   );
 };
