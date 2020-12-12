@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { BENEFIT_STATUS } from "../../utils/common";
 
 export const getBenefits = (setLoading) => async (dispatch, getState) => {
-  const { token } = getState().auth;
+  const { token, isAdmin } = getState().auth;
 
   const { data, errors } = await hera({
     options: {
@@ -37,7 +37,14 @@ export const getBenefits = (setLoading) => async (dispatch, getState) => {
     variables: {},
   });
   if (!errors) {
-    const benefits = arrayToObject(data.benefits);
+    let benefitArr = [...data.benefits];
+    if (!isAdmin) {
+      benefitArr = benefitArr.filter(
+        (item) => item.status === BENEFIT_STATUS.enabled
+      );
+    }
+
+    const benefits = arrayToObject(benefitArr);
 
     dispatch({
       type: GET_BENEFITS,
