@@ -31,6 +31,7 @@ import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { formatThousandVND } from "../../../utils/commonFunction";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -77,6 +78,7 @@ const PriceList = ({
   prices,
   updatePrice,
   deletePrice,
+  auth: { isAdmin },
 }) => {
   const classes = useStyles();
   const [state, setState] = React.useState({
@@ -137,20 +139,20 @@ const PriceList = ({
         initialEditValue: moment().add(1, "hours").format("HH:mm:00"),
         editComponent: (props) => {
           return (
-              <TextField
-                id="endTime"
-                type="time"
-                format=""
-                size="small"
-                defaultValue={props.value}
-                value={props.value}
-                // defaultValue={moment().add(1, "hours").format("HH:mm:ss")}
-                className={classes.textField}
-                onChange={(e) => props.onChange(e.target.value)}
-                // InputProps={{ inputProps: { min: "", max: 10 } }}
-                error={props.helperText}
-                helperText={props.helperText}
-              />
+            <TextField
+              id="endTime"
+              type="time"
+              format=""
+              size="small"
+              defaultValue={props.value}
+              value={props.value}
+              // defaultValue={moment().add(1, "hours").format("HH:mm:ss")}
+              className={classes.textField}
+              onChange={(e) => props.onChange(e.target.value)}
+              // InputProps={{ inputProps: { min: "", max: 10 } }}
+              error={props.helperText}
+              helperText={props.helperText}
+            />
           );
         },
       },
@@ -224,7 +226,7 @@ const PriceList = ({
         data={priceArr}
         options={{
           actionsColumnIndex: -1,
-          search: false,
+          search: isAdmin,
           headerStyle: {
             fontWeight: "bold",
             color: "#393e46",
@@ -233,64 +235,79 @@ const PriceList = ({
             fontSize: "14px",
           },
           pageSize: 9,
-          pageSizeOptions: [5, 9, 10, 20]
+          pageSizeOptions: [5, 9, 10, 20],
         }}
-        actions={[
-          {
-            icon: () => <Edit style={{ color: Colors.orange }} />,
-            tooltip: "Edit sub ground",
-            onClick: (event, rowData) => {
-              console.log("d00000000000 eidt", subGround);
-              onEdit(subGround);
+        actions={
+          !isAdmin && [
+            {
+              icon: () => <FileCopyIcon style={{ color: "#79a3b1" }} />,
+              tooltip: "Copy price value from sub ground",
+              onClick: (event, rowData) => {
+                // TODO DO IT LATER
+                // DROP DOWN SELECT TO CHOOSE OTHER SUB GROUND
+                // console.log("d00000000000 eidt", subGround);
+                // onEdit(subGround);
+              },
+              isFreeAction: true,
             },
-            isFreeAction: true,
-          },
-          {
-            icon: () => <Delete style={{ color: Colors.red }} />,
-            tooltip: "Delete sub ground",
-            onClick: (event, rowData) => {
-              console.log("d00000000000", subGround.id);
-              onDelete(subGround.id);
+            {
+              icon: () => <Edit style={{ color: Colors.orange }} />,
+              tooltip: "Edit sub ground",
+              onClick: (event, rowData) => {
+                console.log("d00000000000 eidt", subGround);
+                onEdit(subGround);
+              },
+              isFreeAction: true,
             },
-            isFreeAction: true,
-          },
-        ]}
-        editable={{
-          onRowAdd: (newData) =>
-            new Promise((resolve) => {
-              resolve();
-              setLoading(false);
-              const priceData = {
-                price: newData.price,
-                discount: newData.discount,
-                startTime: newData.startTime,
-                endTime: newData.endTime,
-                subGroundId: subGround.id,
-              };
-              addPrice(setLoading, priceData);
-            }),
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve) => {
-              console.log("new data--------------------", newData);
-              setLoading(true);
-              const priceData = {
-                id: oldData.id,
-                price: newData.price,
-                discount: newData.discount,
-                startTime: newData.startTime,
-                endTime: newData.endTime,
-                subGroundId: subGround.id,
-              };
-              updatePrice(setLoading, priceData);
-              resolve();
-            }),
-          onRowDelete: (oldData) =>
-            new Promise((resolve) => {
-              resolve();
-              setLoading(true);
-              deletePrice(setLoading, oldData.id);
-            }),
-        }}
+            {
+              icon: () => <Delete style={{ color: Colors.red }} />,
+              tooltip: "Delete sub ground",
+              onClick: (event, rowData) => {
+                console.log("d00000000000", subGround.id);
+                onDelete(subGround.id);
+              },
+              isFreeAction: true,
+            },
+          ]
+        }
+        editable={
+          !isAdmin && {
+            onRowAdd: (newData) =>
+              new Promise((resolve) => {
+                resolve();
+                setLoading(false);
+                const priceData = {
+                  price: newData.price,
+                  discount: newData.discount,
+                  startTime: newData.startTime,
+                  endTime: newData.endTime,
+                  subGroundId: subGround.id,
+                };
+                addPrice(setLoading, priceData);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve) => {
+                console.log("new data--------------------", newData);
+                setLoading(true);
+                const priceData = {
+                  id: oldData.id,
+                  price: newData.price,
+                  discount: newData.discount,
+                  startTime: newData.startTime,
+                  endTime: newData.endTime,
+                  subGroundId: subGround.id,
+                };
+                updatePrice(setLoading, priceData);
+                resolve();
+              }),
+            onRowDelete: (oldData) =>
+              new Promise((resolve) => {
+                resolve();
+                setLoading(true);
+                deletePrice(setLoading, oldData.id);
+              }),
+          }
+        }
       />
     </PageLoader>
   );
@@ -299,6 +316,7 @@ const PriceList = ({
 const mapStateToProps = (state) => ({
   errors: state.errors,
   prices: state.price.prices,
+  auth: state.auth,
 });
 export default connect(mapStateToProps, {
   getPrices,

@@ -10,7 +10,7 @@ import {
   COLOR_ORDER_STATUS,
   ORDER_STATUS_OPTION,
 } from "../../../utils/common";
-
+// import HistoryIcon from '@material-ui/icons/History';
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -34,6 +34,7 @@ import PageLoader from "../../custom/PageLoader";
 import {
   capitalizeFirstLetter,
   formatThousandVND,
+  getFullname,
 } from "../../../utils/commonFunction";
 import { getOrders, updateOrderStatus } from "../../../store/actions/order";
 import DropdownV2 from "../../custom/DropdownV2";
@@ -68,25 +69,96 @@ const OrdersList = ({
   orders,
   updateOrderStatus,
   auth: { isAdmin },
+  modal,
+  setModal,
 }) => {
   const history = useHistory();
+  const [loading, setLoading] = useState(true);
+  const getDateTime = (date) => moment(date).format(DATE_TIME);
+  const orderArr = Object.keys(orders).map((orderId, index) => ({
+    ...orders[orderId],
+    subGroundName: orders[orderId]?.subGround?.name || "",
+    amount: (
+      (orders[orderId].price * (100 - orders[orderId].discount)) /
+      100
+    ).toString(),
+    discount: orders[orderId].discount.toString(),
+    createdAt: getDateTime(orders[orderId].createdAt),
+    index,
+    fullName: getFullname(
+      orders[orderId]?.user?.firstName,
+      orders[orderId]?.user?.lastName
+    ),
+    phone: orders[orderId]?.user?.phone,
+    email: orders[orderId]?.user?.email,
+    groundName: orders[orderId]?.subGround?.ground?.title,
+    defaultStatus: orders[orderId].status,
+  }));
+
+  useEffect(() => {
+    getOrders(setLoading);
+  }, []);
+
   const [state, setState] = useState({
     columns: [
       {
+        title: "ID",
+        field: "index",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Full Name",
+        field: "fullName",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Phone",
+        field: "phone",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Email",
+        field: "email",
+        hidden: true,
+        export: true,
+      },
+      {
+        title: "Ground Name",
+        field: "groundName",
+        export: true,
+        editable: "never",
+      },
+      {
         title: "Sub ground name",
         field: "subGroundName",
-        editable: "never",
+        hidden: true,
+        export: true,
       },
       { title: "Start day", field: "startDay", editable: "never" },
       {
         title: "Start time",
         field: "startTime",
         editable: "never",
+        render: (rowData) => {
+          return (
+            <span>
+              {moment(rowData.startTime, "HH:mm:ss").format("hh:mm A")}
+            </span>
+          );
+        },
       },
       {
         title: "End time",
         field: "endTime",
         editable: "never",
+        render: (rowData) => {
+          return (
+            <span>{moment(rowData.endTime, "HH:mm:ss").format("hh:mm A")}</span>
+          );
+        },
       },
       {
         title: "Amount(VND)",
@@ -94,13 +166,15 @@ const OrdersList = ({
         editable: "never",
         render: (rowData) => {
           return (
-            <span>{formatThousandVND(Number(rowData.amount), "", 1)}</span>
+            <span>{formatThousandVND(Number(rowData.amount) || 0, "đ")}</span>
           );
         },
       },
       {
         title: "Payment",
         field: "paymentType",
+        headerStyle: { minWidth: 40 },
+        cellStyle: { minWidth: 40 },
         lookup: PAYMENT_TYPE,
         render: (rowData) => {
           return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
@@ -110,26 +184,17 @@ const OrdersList = ({
       {
         title: "Status",
         field: "status",
-        lookup: ORDER_STATUS,
-        render: (rowData) => {
-          return (
-            <Alert
-              className="m-0 text-center"
-              color={COLOR_ORDER_STATUS[rowData.status]}
-            >
-              {ORDER_STATUS[rowData.status]}
-            </Alert>
-          );
-        },
+        customSort: (a, b) =>a.status.length - b.status.length,
+        headerStyle: { minWidth: 200 },
+        cellStyle: { minWidth: 200 },
         editComponent: (props) => {
-          const { id } = props.rowData;
-          const oldRowStatus = orders[id].status;
-          const statusArr = Object.keys(ORDER_STATUS_OPTION[oldRowStatus]).map(
-            (key) => ({
-              key: key,
-              value: ORDER_STATUS_OPTION[oldRowStatus][key],
-            })
-          );
+          const oldRowStatus = props.rowData?.defaultStatus;
+          const statusArr = Object.keys(
+            ORDER_STATUS_OPTION[oldRowStatus] || {}
+          ).map((key) => ({
+            key: key,
+            value: ORDER_STATUS_OPTION[oldRowStatus][key],
+          }));
           return (
             <DropdownV2
               fullWidth
@@ -142,22 +207,23 @@ const OrdersList = ({
             />
           );
         },
-        initialEditValue: "waiting_for_approve",
-      },
-      {
-        title: "Payment",
-        field: "paymentType",
-        lookup: PAYMENT_TYPE,
         render: (rowData) => {
-          return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
+          return (
+            <Alert
+              className="m-0 text-center"
+              color={COLOR_ORDER_STATUS[rowData.status]}
+            >
+              {ORDER_STATUS[rowData.status]}
+            </Alert>
+          );
         },
-        editable: "never",
+        initialEditValue: "waiting_for_approve",
       },
     ],
     data: [
       {
         subGroundName: "home",
-        status: "waiting_for_approve",
+        status: "new",
         startTime: "12:00",
         endTime: "13:00",
         paymentType: "online",
@@ -182,43 +248,9 @@ const OrdersList = ({
         price: "100000",
         createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
       },
-      {
-        subGroundName: "home",
-        status: "finished",
-        startTime: "12:00",
-        endTime: "13:00",
-        paymentType: "online",
-        price: "100000",
-        createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
-      },
-      {
-        subGroundName: "home",
-        status: "paid",
-        startTime: "12:00",
-        endTime: "13:00",
-        paymentType: "online",
-        price: "100000",
-        createdAt: moment("2020-05-29T14:49:05.661Z").format(DATE_TIME),
-      },
     ],
   });
 
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    getOrders(setLoading);
-  }, []);
-
-  const getDateTime = (date) => moment(date).format(DATE_TIME);
-  const orderArr = Object.keys(orders).map((orderId) => ({
-    ...orders[orderId],
-    subGroundName: orders[orderId]?.subGround?.name || "",
-    amount: (
-      (orders[orderId].price * (100 - orders[orderId].discount)) /
-      100
-    ).toString(),
-    discount: orders[orderId].discount.toString(),
-    createdAt: getDateTime(orders[orderId].createdAt),
-  }));
   return (
     <PageLoader loading={loading}>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
@@ -226,8 +258,9 @@ const OrdersList = ({
           icons={tableIcons}
           title="List Of Orders"
           columns={state.columns}
-          data={state.data || []}
+          data={orderArr || []}
           options={{
+            sorting: true,
             pageSize: 7,
             pageSizeOptions: [5, 7, 10, 20],
             headerStyle: {
@@ -236,22 +269,29 @@ const OrdersList = ({
             rowStyle: {
               overflowX: "auto",
             },
-            sorting: true,
             actionsColumnIndex: -1,
+            exportButton: true,
+            exportAllData: true,
           }}
           actions={[
+            // {
+            //   icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
+            //   tooltip: "History",
+            //   onClick: (event, rowData) => {
+            //     history.push(`order-management/${rowData.id}`);
+            //   },
+            // },
             {
               icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
-              tooltip: "History",
+              tooltip: "Order Detai",
               onClick: (event, rowData) => {
-                history.push(`orders-list/${rowData.id}`);
+                history.push(`order-detail/${rowData.id}`);
               },
             },
           ]}
           editable={{
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
-                resolve();
                 resolve();
                 const { status, id } = newData;
                 if (newData.status !== oldData.status) {
