@@ -3,7 +3,7 @@ import MaterialTable from "material-table";
 import moment from "moment";
 import { connect } from "react-redux";
 import { withRouter, useHistory } from "react-router-dom";
-import { DATE_TIME } from "../../../utils/common";
+import { DATE_TIME, GROUND_STATUS_DISPLAY } from "../../../utils/common";
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -103,6 +103,12 @@ const GroundsList = ({ grounds, getGrounds, onEdit }) => {
       {
         title: "Category",
         field: "category",
+      },
+      {
+        title: "Status",
+        field: "status",
+        lookup: GROUND_STATUS_DISPLAY, // SHOWED IS ENABLE
+        initialEditValue: "public",
       },
       {
         title: "Updated at",

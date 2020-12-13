@@ -48,12 +48,12 @@ const OrderManagement = (props) => {
           </Button>
         </Col>
         <Col xs={12} className="mt-4">
-          <OrderList modal={modelAdd} setModal={setModelAdd}/>
+          <OrderList modal={modelAdd} setModal={setModelAdd} />
         </Col>
       </Row>
-      <hr/>
+      {/* <hr /> */}
 
-      <Row className="mt-4 mb-4">
+      {/* <Row className="mt-4 mb-4">
         <Col xs={12} className="text-center">
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
@@ -75,7 +75,7 @@ const OrderManagement = (props) => {
         <Col xs={12} style={{ width: "100%" }}>
           <MyCalendar />
         </Col>
-      </Row>
+      </Row> */}
       <AddOrderModal modal={modelAdd} setModal={setModelAdd} />
     </>
   );

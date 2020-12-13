@@ -20,7 +20,11 @@ import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
 import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
-import { GENDER, ROLE } from "../../../utils/common";
+import {
+  GENDER,
+  ROLE,
+  USER_STATUS_DISPLAY,
+} from "../../../utils/common";
 import REGIONS from "../../locales/regions.json";
 import DISTRICTS from "../../locales/districts.json";
 import WARDS from "../../locales/wards.json";
@@ -89,6 +93,12 @@ const UserInfo = ({
   const [momoQRCode, setMomoQRCode] = useState("");
 
   const [loading, setLoading] = useState(true);
+
+  const statusArr = Object.keys(USER_STATUS_DISPLAY).map((key) => ({
+    key: key,
+    value: USER_STATUS_DISPLAY[key],
+  }));
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const [formData, setformData] = useState({
     firstName: "",
@@ -235,6 +245,8 @@ const UserInfo = ({
         createdAt: moment(user.createdAt).format("DD/MM/YYYY HH:mm A") || "",
         updatedAt: moment(user.updatedAt).format("DD/MM/YYYY HH:mm A") || "",
       });
+
+      setSelectedStatus(user.status || "");
       setSelectedDropdownData({
         selectedRegionCode: _.get(address, "regionCode") || "",
         selectedDistrictCode: _.get(address, "districtCode") || "",
@@ -256,6 +268,7 @@ const UserInfo = ({
         });
       }
     } else {
+      console.log(current_user, 'd-------------------')
       const address = JSON.parse(_.get(current_user, "address"));
       setformData({
         firstName: _.get(current_user, "firstName") || "",
@@ -270,6 +283,8 @@ const UserInfo = ({
         updatedAt:
           moment(current_user.updatedAt).format("DD/MM/YYYY HH:mm A") || "",
       });
+      setSelectedStatus(current_user.status || "");
+
       setSelectedDropdownData({
         selectedRegionCode: _.get(address, "regionCode") || "",
         selectedDistrictCode: _.get(address, "districtCode") || "",
@@ -322,6 +337,10 @@ const UserInfo = ({
     if (!selectedGenderKey.trim()) {
       error.gender = "This field is required";
     }
+
+    if (!selectedStatus.trim()) {
+      error.status = "This field is required";
+    }
     let dob = moment(selectedDate || "").format("DD/MM/YYYY");
     if (!dob.trim() || !selectedDate) {
       error.dob = "This field is required";
@@ -342,6 +361,7 @@ const UserInfo = ({
     formatData.wardCode = selectedWardCode;
     formatData.extraInfo = { ...extraInfoForm };
     formatData.socialNetwork = { ...socialNetworkForm };
+    formatData.status = selectedStatus;
 
     if (JSON.stringify(error) === "{}") {
       formatData.phone = formData.phone.replace(/\s/g, "");
@@ -425,7 +445,23 @@ const UserInfo = ({
                     userId={viewType === "user" ? user.id : current_user.id}
                   />
                 )}
+                {!isAdmin ? null : (
+                  <div className="mt-4">
+                    <DropdownV2
+                      fullWidth
+                      label="Status"
+                      value={selectedStatus.toString()}
+                      options={statusArr || []}
+                      valueBasedOnProperty="key"
+                      displayProperty="value"
+                      onChange={(status) => setSelectedStatus(status)}
+                      error={errors.status || ""}
+                      variant="outlined"
+                    />
+                  </div>
+                )}
               </Col>
+
               <Col xs="9">
                 <h4 className="text-center">User Information</h4>
                 <form onSubmit={(e) => onSubmit(e)}>
