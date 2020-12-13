@@ -48,7 +48,15 @@ export default function TableUser({ dataSource }) {
   const [state, setState] = React.useState({
     columns: [
       { title: "Name", field: "name" },
-      { title: "Phone", field: "phone" },
+      {
+        title: "Phone",
+        field: "phone",
+        render: ({ phone }) => (
+          <a href={`tel:${phone}`} alt="">
+            {phone || "No phone"}
+          </a>
+        ),
+      },
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Email", field: "email" },
       {

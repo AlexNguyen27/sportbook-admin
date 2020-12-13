@@ -23,7 +23,7 @@ const GroundDetailCard = ({ orderDetail, benefits }) => {
   const getDiffDate = () => {
     const diff = moment(startDay).diff(moment());
     if (diff) {
-      const diffDay = moment(startDay, 'DD-MM-YYYY').diff(moment(), "days");
+      const diffDay = moment(startDay, "DD-MM-YYYY").diff(moment(), "days");
       return diffDay ? `(${diffDay} days from now)` : "";
     } else {
       const diffTime = moment(startTime, "HH:mm:ss").diff(moment(), "hours");
@@ -35,7 +35,12 @@ const GroundDetailCard = ({ orderDetail, benefits }) => {
     <Paper elevation={3} className="p-4">
       <h5 className="font-weight-bold">{title}</h5>
       <p className="mb-1">Address: {getAddress(address) || "No address"}</p>
-      <p>Phone: {phone || "No Phone"} </p>
+      <p>
+        Phone:{" "}
+        <a href={`tel:${phone}`} alt="">
+          {phone || "No phone"}
+        </a>{" "}
+      </p>
       <div>
         {!groundBenefit.length ? (
           <p>
