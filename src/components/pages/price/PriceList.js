@@ -26,7 +26,7 @@ import {
   deletePrice,
 } from "../../../store/actions/price";
 import PageLoader from "../../custom/PageLoader";
-import { DATE_TIME } from "../../../utils/common";
+import { DATE_TIME, GROUND_STATUS_DISPLAY } from "../../../utils/common";
 import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -109,7 +109,6 @@ const PriceList = ({
                 id="startTime"
                 type="time"
                 size="small"
-                // defaultValue={moment().format("HH:mm:ss")}
                 defaultValue={props.value}
                 className={classes.textField}
                 onChange={(e) => props.onChange(e.target.value)}
@@ -146,7 +145,6 @@ const PriceList = ({
               size="small"
               defaultValue={props.value}
               value={props.value}
-              // defaultValue={moment().add(1, "hours").format("HH:mm:ss")}
               className={classes.textField}
               onChange={(e) => props.onChange(e.target.value)}
               // InputProps={{ inputProps: { min: "", max: 10 } }}
@@ -176,16 +174,6 @@ const PriceList = ({
           <span>{formatThousandVND(rowData.discount, " %", 1)}</span>
         ),
       },
-      // {
-      //   title: "Status",
-      //   field: "status",
-      //   lookup: {
-      //     ready: "Ready",
-      //     reserved: "Reserved",
-      //   },
-      //   initialEditValue: "ready",
-      //   editable: "never",
-      // },
     ],
     data: [
       {
@@ -221,7 +209,7 @@ const PriceList = ({
     <PageLoader loading={loading}>
       <MaterialTable
         icons={tableIcons}
-        title={subGround.name}
+        title={subGround.name + `(${GROUND_STATUS_DISPLAY[subGround.status]})`}
         columns={state.columns}
         data={priceArr}
         options={{
@@ -254,7 +242,6 @@ const PriceList = ({
               icon: () => <Edit style={{ color: Colors.orange }} />,
               tooltip: "Edit sub ground",
               onClick: (event, rowData) => {
-                console.log("d00000000000 eidt", subGround);
                 onEdit(subGround);
               },
               isFreeAction: true,
@@ -263,7 +250,6 @@ const PriceList = ({
               icon: () => <Delete style={{ color: Colors.red }} />,
               tooltip: "Delete sub ground",
               onClick: (event, rowData) => {
-                console.log("d00000000000", subGround.id);
                 onDelete(subGround.id);
               },
               isFreeAction: true,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 // COMPONENTS
 import Button from "@material-ui/core/Button";
-import { clearErrors } from "../../../../utils/common";
+import { clearErrors, GROUND_STATUS_DISPLAY } from "../../../../utils/common";
 
 import {
   Row,
@@ -16,6 +16,7 @@ import {
 import PageLoader from "../../../custom/PageLoader";
 import TextFieldInput from "../../../custom/TextFieldInputWithheader";
 import { updateSubGround } from "../../../../store/actions/subGround";
+import DropdownV2 from "../../../custom/DropdownV2";
 
 const EditSubGroundModal = ({
   errors,
@@ -31,6 +32,11 @@ const EditSubGroundModal = ({
     numberOfPlayers: "",
   });
 
+  const statusArr = Object.keys(GROUND_STATUS_DISPLAY).map((key) => ({
+    key: key,
+    value: GROUND_STATUS_DISPLAY[key],
+  }));
+  const [selectedStatus, setSelectedStatus] = useState("");
   const { numberOfPlayers, name } = formData;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,6 +45,7 @@ const EditSubGroundModal = ({
       name: editedData ? editedData.name : "",
       numberOfPlayers: editedData ? editedData.numberOfPlayers : "",
     });
+    setSelectedStatus(editedData?.status || "");
   };
   useEffect(() => {
     initFormData();
@@ -57,13 +64,14 @@ const EditSubGroundModal = ({
     setLoading(true);
     const error = {};
     const { id } = editedData;
-      if (!formData.name.trim()) {
-        error.name = "This field is required";
-      }
+    if (!formData.name.trim()) {
+      error.name = "This field is required";
+    }
     updateSubGround(setLoading, {
       id,
       name,
       numberOfPlayers: Number(numberOfPlayers),
+      status: selectedStatus,
       groundId: editedData.groundId,
     });
   };
@@ -91,7 +99,7 @@ const EditSubGroundModal = ({
                   name="name"
                   label="Subground name"
                   fullWidth
-                  value={name || ''}
+                  value={name || ""}
                   onChange={onChange}
                   error={errors.name}
                 />
@@ -112,6 +120,19 @@ const EditSubGroundModal = ({
                       min: 2,
                     },
                   }}
+                />
+              </Col>
+              <Col xs="12" className="mt-4">
+                <DropdownV2
+                  fullWidth
+                  label="Status"
+                  value={selectedStatus.toString() || ""}
+                  options={statusArr || []}
+                  valueBasedOnProperty="key"
+                  displayProperty="value"
+                  onChange={(id) => setSelectedStatus(id)}
+                  error={errors.status}
+                  variant="outlined"
                 />
               </Col>
             </Row>
