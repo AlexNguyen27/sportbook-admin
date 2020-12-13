@@ -54,6 +54,10 @@ export const loginUser = ({ email, password, hashPassword }) => async (
       type: GET_ERRORS,
       errors: { message: errors[0].message },
     });
+    dispatch({
+      type: GET_ERRORS,
+      errors: { message: "Email or password is incorrect!" },
+    });
   } else {
     const resData = data.login;
     const { token } = resData;
@@ -69,13 +73,9 @@ export const loginUser = ({ email, password, hashPassword }) => async (
       Swal.fire({
         position: "center",
         type: "Warning",
-        title: "An error occurred!",
+        title: "Email already exits!",
         showConfirmButton: false,
         timer: 1500,
-      });
-      dispatch({
-        type: GET_ERRORS,
-        errors: { message: "Email or password is incorrect!" },
       });
       return;
     }
@@ -131,7 +131,7 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
     variables: {
       email,
       password,
-      firstName, 
+      firstName,
       lastName,
       role: "owner",
     },
