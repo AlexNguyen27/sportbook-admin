@@ -31,6 +31,7 @@ import Benefits from "./Benefits";
 import { getCategories } from "../../../../store/actions/category";
 import { trimObjProperties } from "../../../../utils/formatString";
 import { updateGround } from "../../../../store/actions/ground";
+import { GROUND_STATUS_DISPLAY } from "../../../../utils/common";
 
 const EditGroundModal = ({
   errors,
@@ -50,6 +51,13 @@ const EditGroundModal = ({
 
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = React.useState({});
+
+  const statusArr = Object.keys(GROUND_STATUS_DISPLAY).map((key) => ({
+    key: key,
+    value: GROUND_STATUS_DISPLAY[key],
+  }));
+  const [selectedStatus, setSelectedStatus] = useState("");
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -67,7 +75,15 @@ const EditGroundModal = ({
 
   const initFormData = () => {
     if (ground) {
-      const { title, description, phone, address: addressObj, categoryId, image } = ground;
+      const {
+        title,
+        description,
+        phone,
+        address: addressObj,
+        categoryId,
+        image,
+        status,
+      } = ground;
       const { regionCode, wardCode, districtCode, address } = addressObj;
       setFormData({
         title,
@@ -76,6 +92,7 @@ const EditGroundModal = ({
         address,
       });
 
+      setSelectedStatus(status);
 
       setSelectedDropdownData({
         selectedRegionCode: regionCode,
@@ -88,12 +105,14 @@ const EditGroundModal = ({
       if (formatImage && formatImage.length > 0) {
         setUrls(formatImage.map((item) => item));
       } else {
-        setUrls([])
+        setUrls([]);
       }
 
-      const benefit = ground.benefit && ground.benefit
-        .split(",")
-        .reduce((acc,benefitId) => ({ ...acc, [benefitId]: true }), {});
+      const benefit =
+        ground.benefit &&
+        ground.benefit
+          .split(",")
+          .reduce((acc, benefitId) => ({ ...acc, [benefitId]: true }), {});
       setChecked(benefit || {});
     }
   };
@@ -185,6 +204,7 @@ const EditGroundModal = ({
       regionCode: selectedRegionCode,
       districtCode: selectedDistrictCode,
       wardCode: selectedWardCode,
+      status: selectedStatus,
     });
 
     const error = {};
@@ -292,7 +312,7 @@ const EditGroundModal = ({
                   error={errors.phone}
                 />
               </Col>
-              <Col xs="12" className="mt-4">
+              <Col xs="9" className="mt-4">
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="title"
@@ -301,6 +321,19 @@ const EditGroundModal = ({
                   value={title || ""}
                   onChange={(e) => onChange(e)}
                   error={errors.title}
+                />
+              </Col>
+              <Col xs="3" className="mt-4">
+                <DropdownV2
+                  fullWidth
+                  label="Status"
+                  value={selectedStatus.toString() || ""}
+                  options={statusArr || []}
+                  valueBasedOnProperty="key"
+                  displayProperty="value"
+                  onChange={(id) => setSelectedStatus(id)}
+                  error={errors.status}
+                  variant="outlined"
                 />
               </Col>
               <Col xs="12" className="mt-4">
@@ -372,7 +405,7 @@ const EditGroundModal = ({
               </Col>
               {/* MAP */}
               <Col xs={12} className="mt-4">
-                <ReactGoogleMaps address={getMapAddress()}/>
+                <ReactGoogleMaps address={getMapAddress()} />
               </Col>
 
               {/* IMAGE */}

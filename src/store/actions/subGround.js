@@ -202,7 +202,6 @@ export const deleteSubGround = (setLoading, id) => async (
         type: "Warning",
         title: errors[0].message,
         showConfirmButton: true,
-        timer: 1500,
       });
     }
 
