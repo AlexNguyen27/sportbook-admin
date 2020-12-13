@@ -18,7 +18,7 @@ import {
 import { GET_ERRORS } from "../../../../store/actions/types";
 import PageLoader from "../../../custom/PageLoader";
 import { Redirect } from "react-router-dom";
-import { loginWithGoogle, loginUser } from "../../../../store/actions/auth";
+import { loginWithGoogle } from "../../../../store/actions/auth";
 
 const LoginModal = ({
   errors,
@@ -28,7 +28,7 @@ const LoginModal = ({
   userData,
   auth: { isAuthenticated, isAdmin },
   loginWithGoogle,
-  loginUser,
+  title="Google"
 }) => {
   const dispatch = useDispatch();
 
@@ -118,7 +118,7 @@ const LoginModal = ({
   return (
     <Modal isOpen={modal} centered={true}>
       <PageLoader loading={loading} noPadding>
-        <ModalHeader toggle={() => closeModal()}>Login with google</ModalHeader>
+        <ModalHeader toggle={() => closeModal()}>Login with {title}</ModalHeader>
 
         {/** MODAL BODY */}
         <Form onSubmit={(e) => onSubmit(e)}>
@@ -199,5 +199,4 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   clearErrors,
   loginWithGoogle,
-  loginUser,
 })(LoginModal);

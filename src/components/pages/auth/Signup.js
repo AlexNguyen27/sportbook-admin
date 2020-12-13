@@ -16,6 +16,7 @@ import { GET_ERRORS } from "../../../store/actions/types";
 import { validateEmail } from "../../../utils/commonFunction";
 import GoogleLoginCustom from "./component/GoogleLoginCustom";
 import { Row, Col } from "reactstrap";
+import FacebookLoginCustom from "./component/FacebookLoginCustom";
 
 const Signup = ({
   errors,
@@ -97,14 +98,7 @@ const Signup = ({
               <PageTitle title="Create new account" center="true" />
               <Grid container type="flex" spacing={2}>
                 <Grid item xs={6}>
-                  <Button
-                    className="mt-3 w-100"
-                    variant="contained"
-                    style={{ backgroundColor: "#3f72af", color: "white" }}
-                    type="submit"
-                  >
-                    Signup with Facebook
-                  </Button>
+                  <FacebookLoginCustom title={"Siggup with facebook"}/>
                 </Grid>
                 <Grid item xs={6}>
                   <GoogleLoginCustom title={"Siggup with google"} />
