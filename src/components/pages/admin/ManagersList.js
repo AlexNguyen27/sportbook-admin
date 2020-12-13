@@ -9,7 +9,7 @@ import {
   deleteUser,
 } from "../../../store/actions/user";
 import { SAVE_CURRENT_USER } from "../../../store/actions/types";
-import { DATE_TIME, ROLE } from "../../../utils/common";
+import { DATE_TIME, ROLE, USER_STATUS_DISPLAY } from "../../../utils/common";
 import { getFullname, getDateTime } from "../../../utils/commonFunction";
 
 import { forwardRef } from "react";
@@ -17,11 +17,9 @@ import { forwardRef } from "react";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
-import EqualizerTwoToneIcon from "@material-ui/icons/EqualizerTwoTone";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
 import Clear from "@material-ui/icons/Clear";
-import Delete from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import FilterList from "@material-ui/icons/FilterList";
 import FirstPage from "@material-ui/icons/FirstPage";
@@ -30,10 +28,8 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import Visibility from "@material-ui/icons/Visibility";
 
 import PageLoader from "../../custom/PageLoader";
-import Swal from "sweetalert2";
 import Colors from "../../../constants/Colors";
 
 const tableIcons = {
@@ -65,7 +61,7 @@ const ManagersList = ({
   history,
   editUserInfo,
   deleteUser,
-  user: { users }
+  user: { users },
 }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -77,14 +73,26 @@ const ManagersList = ({
         field: "role",
       },
       {
+        title: "Status",
+        field: "status",
+        lookup: USER_STATUS_DISPLAY, // SHOWED IS ENABLE
+        initialEditValue: "public",
+      },
+      {
         title: "Created at",
         field: "createdAt",
         editable: "never",
+        render: ({ createdAt }) => (
+          <span>{moment(createdAt).format("DD/MM/YYYY HH:mm:ss")}</span>
+        ),
       },
       {
         title: "Updated at",
         field: "updatedAt",
         editable: "never",
+        render: ({ updatedAt }) => (
+          <span>{moment(updatedAt).format("DD/MM/YYYY HH:mm:ss")}</span>
+        ),
       },
     ],
     data: [
@@ -92,10 +100,10 @@ const ManagersList = ({
         fullname: "Nguyen le Ngocj thanh ",
         email: "thanh@gmail.com",
         createdDate: moment("2020-05-29T14:49:05.661Z").format("MMM DD h:mm A"),
-        role: 'user',
+        role: "user",
         totalPosts: 10,
-        createdAt: '12/12/2020',
-        updatedAt: '12/12/2020'
+        createdAt: "12/12/2020",
+        updatedAt: "12/12/2020",
       },
     ],
   });
@@ -107,11 +115,8 @@ const ManagersList = ({
 
   const usersArray = Object.keys(users).map((userId) => ({
     ...users[userId],
-    createdAt: getDateTime(users[userId].createdAt),
-    updatedAt: getDateTime(users[userId].updatedAt),
     fullname: getFullname(users[userId].firstName, users[userId].lastName),
   }));
-
 
   console.log(usersArray);
 
@@ -131,7 +136,7 @@ const ManagersList = ({
             rowStyle: {
               overflowX: "auto",
             },
-            actionsColumnIndex: -1
+            actionsColumnIndex: -1,
           }}
           actions={[
             {
@@ -175,7 +180,6 @@ const ManagersList = ({
             //   },
             //   // disabled: !rowData.posts.length
             // }),
-
           ]}
         />
       </div>

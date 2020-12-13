@@ -33,6 +33,7 @@ export const loginUser = ({ email, password, hashPassword }) => async (
             address,
             dob,
             avatar,
+            status
             role,
             momoQRCode,
             extraInfo
@@ -119,6 +120,7 @@ export const signUpUser = (isAuthenticated, history, userData) => async (
             address,
             dob,
             avatar,
+            status
             role,
             momoQRCode,
             socialNetwork 
@@ -195,6 +197,7 @@ export const loginWithGoogle = (setLoading, setModal, userData) => async (
             phone,
             gender,
             address,
+            status
             dob,
             avatar,
             role,
@@ -248,6 +251,7 @@ export const loginWithGoogle = (setLoading, setModal, userData) => async (
               address,
               dob,
               avatar,
+              status
               role,
               momoQRCode,
               extraInfo

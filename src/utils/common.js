@@ -102,3 +102,8 @@ export const USER_STATUS = {
   active: 'active',
   disabled: 'disabled',
 };
+
+export const USER_STATUS_DISPLAY = {
+  active: 'Active',
+  disabled: 'Disabled',
+};

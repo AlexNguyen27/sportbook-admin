@@ -39,12 +39,15 @@ export const getUsers = ({ role }, setLoading) => async (
               lastName
               phone
               role
+              status
               gender
               address
               dob
               avatar
               socialNetwork
               extraInfo
+              createdAt
+              updatedAt
             }
           }
         `,
@@ -106,6 +109,7 @@ export const getUserInfo = (userId, setLoading) => async (
               gender,
               phone,
               address,
+              status
               dob,
               avatar,
               role,
@@ -234,6 +238,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
   const {
     auth: {
       token,
+      isAdmin,
       user: { id: authId },
     },
   } = state;
@@ -273,7 +278,8 @@ export const editUserInfo = (setLoading, userData, userId) => async (
               wardCode: $wardCode
               gender: $gender
               extraInfo: $extraInfo
-              socialNetwork: $socialNetwork
+              socialNetwork: $socialNetwork,
+              ${userData.status && isAdmin ? "status: $status" : ""}
               ) {
                 id
                 email
@@ -290,6 +296,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
                 socialNetwork
                 createdAt
                 updatedAt
+                status
             }
           }
         `,
@@ -311,6 +318,7 @@ export const editUserInfo = (setLoading, userData, userId) => async (
       socialNetwork: {
         ...userData.socialNetwork,
       },
+      status: isAdmin && userData.status ? userData.status : null,
     },
   });
 
@@ -359,7 +367,6 @@ export const editUserInfo = (setLoading, userData, userId) => async (
     setLoading(false);
   }
 };
-
 
 //
 export const deleteUser = (setLoading, userId) => async (
@@ -581,4 +588,3 @@ export const checkExitsEmail = (setLoading, email, setIsExitsEmail) => async (
     });
   }
 };
-
