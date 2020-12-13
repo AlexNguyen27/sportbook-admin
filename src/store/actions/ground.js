@@ -213,15 +213,23 @@ export const deleteGround = (setLoading, id) => async (dispatch, getState) => {
     });
     setLoading(false);
   } else {
-    console.log(errors);
     logoutDispatch(dispatch, errors);
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "Can't delete this ground cuz it has sub ground!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    if (errors[0].message === "Can not delete ground has orders!") {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: errors[0].message,
+        showConfirmButton: true,
+      });
+      setLoading(false);
+    } else {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: errors[0].message,
+        showConfirmButton: true,
+      });
+    }
     dispatch({
       type: GET_ERRORS,
       errors: errors[0].message,
@@ -307,22 +315,13 @@ export const updateGround = (setLoading, groundData) => async (
     });
     setLoading(false);
   } else {
-    if (errors[0].message === "Can not delete ground has orders!") {
-      Swal.fire({
-        position: "center",
-        type: "Warning",
-        title: errors[0].message,
-        showConfirmButton: true,
-      });
-      setLoading(false);
-    } else {
-      Swal.fire({
-        position: "center",
-        type: "Warning",
-        title: errors[0].message,
-        showConfirmButton: true,
-      });
-    }
+    Swal.fire({
+      position: "center",
+      type: "Warning",
+      title: errors[0].message || "An error occurred!",
+      showConfirmButton: true,
+    });
+    setLoading(false);
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,
