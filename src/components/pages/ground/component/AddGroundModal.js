@@ -30,6 +30,7 @@ import Benefits from "./Benefits";
 import { getCategories } from "../../../../store/actions/category";
 import { trimObjProperties } from "../../../../utils/formatString";
 import { addGround } from "../../../../store/actions/ground";
+import { GROUND_STATUS_DISPLAY } from "../../../../utils/common";
 
 const AddGroundModal = ({
   errors,
@@ -48,6 +49,12 @@ const AddGroundModal = ({
 
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = React.useState({});
+
+  const statusArr = Object.keys(GROUND_STATUS_DISPLAY).map((key) => ({
+    key: key,
+    value: GROUND_STATUS_DISPLAY[key],
+  }));
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     getBenefits(setLoading).then(() => {
@@ -150,6 +157,7 @@ const AddGroundModal = ({
       regionCode: selectedRegionCode,
       districtCode: selectedDistrictCode,
       wardCode: selectedWardCode,
+      status: selectedStatus,
     });
 
     const error = {};
@@ -258,7 +266,7 @@ const AddGroundModal = ({
                   error={errors.phone}
                 />
               </Col>
-              <Col xs="12" className="mt-4">
+              <Col xs="9" className="mt-4">
                 <TextFieldInputWithHeader
                   id="outlined-multiline-flexible"
                   name="title"
@@ -267,6 +275,19 @@ const AddGroundModal = ({
                   value={title || ""}
                   onChange={(e) => onChange(e)}
                   error={errors.title}
+                />
+              </Col>
+              <Col xs="3" className="mt-4">
+                <DropdownV2
+                  fullWidth
+                  label="Status"
+                  value={selectedStatus.toString() || ""}
+                  options={statusArr || []}
+                  valueBasedOnProperty="key"
+                  displayProperty="value"
+                  onChange={(id) => setSelectedStatus(id)}
+                  error={errors.status}
+                  variant="outlined"
                 />
               </Col>
               <Col xs="12" className="mt-4">

@@ -12,6 +12,7 @@ import {
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
 import Swal from "sweetalert2";
+import { GROUND_STATUS } from "../../utils/common";
 
 export const getSubGrounds = (setLoading, groundId) => async (
   dispatch,
@@ -20,7 +21,7 @@ export const getSubGrounds = (setLoading, groundId) => async (
   dispatch({
     type: CLEAR_PRICE_SUB_GROUND,
   });
-  
+
   const { token } = getState().auth;
   let subGroundQuery = "";
   let variables = {};
@@ -45,6 +46,7 @@ export const getSubGrounds = (setLoading, groundId) => async (
             subGrounds${subGroundQuery} {
               id
               name
+              status
               numberOfPlayers
               groundId
               createdAt
@@ -91,9 +93,11 @@ export const addSubGround = (setLoading, subGroundData) => async (
                  name: $name,
                  numberOfPlayers: $numberOfPlayers
                  groundId: $groundId
+                 status: $status
               ) {
                 id
                 name
+                status
                 numberOfPlayers
                 groundId
                 createdAt
@@ -102,6 +106,7 @@ export const addSubGround = (setLoading, subGroundData) => async (
         `,
     variables: {
       ...subGroundData,
+      status: subGroundData.status || GROUND_STATUS.public,
     },
   });
 
@@ -182,15 +187,24 @@ export const deleteSubGround = (setLoading, id) => async (
     });
     setLoading(false);
   } else {
-    console.log(errors);
     logoutDispatch(dispatch, errors);
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "Can't delete this ground cuz it has sub ground!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    if (errors[0].message === "Can not delete subground had orders!") {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: errors[0].message,
+        showConfirmButton: true,
+      });
+      setLoading(false);
+    } else {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: errors[0].message,
+        showConfirmButton: true,
+      });
+    }
+
     dispatch({
       type: GET_ERRORS,
       errors: errors[0].message,
@@ -218,17 +232,20 @@ export const updateSubGround = (setLoading, subGroundData) => async (
          name: $name
          groundId: $groundId
          numberOfPlayers: $numberOfPlayers
+         status: $status
        ) {
         id
         name
         numberOfPlayers
         groundId
+        status
         createdAt
         }
       } 
     `,
     variables: {
       ...subGroundData,
+      status: subGroundData.status || GROUND_STATUS.public,
     },
   });
   if (!errors) {
@@ -255,9 +272,9 @@ export const updateSubGround = (setLoading, subGroundData) => async (
       position: "center",
       type: "Warning",
       title: "Please check the input!",
-      showConfirmButton: false,
-      timer: 1500,
+      showConfirmButton: true,
     });
+    setLoading(false);
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,

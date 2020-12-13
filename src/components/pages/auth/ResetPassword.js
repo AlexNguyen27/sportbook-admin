@@ -69,9 +69,8 @@ const ResetPassword = ({
 
   return (
     <Fragment>
-      <Landing />
       <Grid container justify="center">
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={6} sm={4} className="m-auto">
           <form onSubmit={(e) => onSubmit(e)}>
             <PageTitle title="Forgot password" center="true" />
             <TextFieldInputWithHeader
@@ -107,6 +106,9 @@ const ResetPassword = ({
               Don't need to reset password? Login here.
             </p>
           </div>
+        </Grid>
+        <Grid item xs={6}>
+          <Landing />
         </Grid>
       </Grid>
     </Fragment>

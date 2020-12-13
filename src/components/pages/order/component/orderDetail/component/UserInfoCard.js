@@ -6,10 +6,7 @@ import {
   getFullname,
   getUserAddress,
 } from "../../../../../../utils/commonFunction";
-import {
-  PAYMENT_TYPE,
-  ORDER_STATUS,
-} from "../../../../../../utils/common";
+import { PAYMENT_TYPE, ORDER_STATUS } from "../../../../../../utils/common";
 
 const useStyles = makeStyles({
   upperCase: {
@@ -41,17 +38,24 @@ const UserInfoCard = ({ orderDetail }) => {
           </p>
           <p className={classes.pTag}>
             <span className="font-weight-bold">Phone: </span>
-            <span>{phone}</span>
+            <span>
+              {" "}
+              <a href={`tel:${phone}`} alt="">
+                {phone || "No phone"}
+              </a>
+            </span>
           </p>
           <p className={classes.pTag}>
             <span className="font-weight-bold">Address: </span>
             <span>{getUserAddress(address)}</span>
           </p>
         </Col>
-       
+
         <Col xs={12}>
-        <hr />
-          <h6 className="font-weight-bold">Payment method: {PAYMENT_TYPE[paymentType]} </h6>
+          <hr />
+          <h6 className="font-weight-bold">
+            Payment method: {PAYMENT_TYPE[paymentType]}{" "}
+          </h6>
           <span>
             {paymentType === "online"
               ? `(Wait for confirmation from the owner and cannot be guaranteed by
@@ -62,7 +66,9 @@ const UserInfoCard = ({ orderDetail }) => {
           <hr />
         </Col>
         <Col xs={12}>
-          <h6 className="font-weight-bold">Order status:   {ORDER_STATUS[orderDetail.status]}</h6>
+          <h6 className="font-weight-bold">
+            Order status: {ORDER_STATUS[orderDetail.status]}
+          </h6>
         </Col>
       </Row>
     </Paper>

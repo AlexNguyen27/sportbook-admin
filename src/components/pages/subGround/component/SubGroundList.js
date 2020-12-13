@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import PriceList from "../../price/PriceList";
 import { truncateMultilineString } from "../../../../utils/formatString";
 import Tooltip from "@material-ui/core/Tooltip";
+import { GROUND_STATUS_DISPLAY } from "../../../../utils/common";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     display: "flex",
     // height: 600,
-    marginTop: '20px'
+    marginTop: "20px",
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -92,7 +93,13 @@ const SubGroundList = ({ subGrounds, onDelete, onEdit }) => {
                 key={subGround.id}
                 value={subGround.id}
                 label={
-                  <Tooltip title={subGround.name} placement="left">
+                  <Tooltip
+                    title={
+                      subGround.name +
+                      `(${GROUND_STATUS_DISPLAY[subGround.status]})`
+                    }
+                    placement="left"
+                  >
                     <div>{truncateMultilineString(subGround.name, 12)}</div>
                   </Tooltip>
                 }

@@ -16,7 +16,10 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import { getFullname, capitalizeFirstLetter } from "../../../../utils/commonFunction";
+import {
+  getFullname,
+  capitalizeFirstLetter,
+} from "../../../../utils/commonFunction";
 import _ from "lodash";
 import { ORDER_STATUS, COLOR_ORDER_STATUS } from "../../../../utils/common";
 import { Alert } from "reactstrap";
@@ -51,7 +54,15 @@ export default function TableHistory({ dataSource }) {
       { title: "Created by", field: "email" },
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Full name", field: "fullName" },
-      { title: "Phone", field: "phone" },
+      {
+        title: "Phone",
+        field: "phone",
+        render: ({ phone }) => (
+          <a href={`tel:${phone}`} alt="">
+            {phone || "No phone"}
+          </a>
+        ),
+      },
       {
         title: "Status",
         field: "orderStatus",

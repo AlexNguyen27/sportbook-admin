@@ -85,3 +85,20 @@ export const BENEFIT_STATUS = {
   enabled: 'enabled',
   disabled: 'disabled',
 };
+
+// SUB GROUND AND GROUND
+export const GROUND_STATUS = {
+  public: 'public',
+  private: 'private',
+};
+
+export const GROUND_STATUS_DISPLAY = {
+  public: 'Public',
+  private: 'Private',
+};
+
+// USER
+export const USER_STATUS = {
+  active: 'active',
+  disabled: 'disabled',
+};

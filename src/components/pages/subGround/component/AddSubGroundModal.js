@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { connect, useDispatch } from "react-redux";
 // COMPONENTS
 import Button from "@material-ui/core/Button";
-import { clearErrors } from "../../../../utils/common";
+import { clearErrors, GROUND_STATUS_DISPLAY } from "../../../../utils/common";
 
 import {
   Row,
@@ -15,11 +15,10 @@ import {
 } from "reactstrap";
 import PageLoader from "../../../custom/PageLoader";
 import TextFieldInput from "../../../custom/TextFieldInputWithheader";
-import {
-  addSubGround,
-} from "../../../../store/actions/subGround";
+import { addSubGround } from "../../../../store/actions/subGround";
 import { trimObjProperties } from "../../../../utils/formatString";
 import { GET_ERRORS } from "../../../../store/actions/types";
+import DropdownV2 from "../../../custom/DropdownV2";
 
 const AddSubGroundModal = ({
   errors,
@@ -35,6 +34,12 @@ const AddSubGroundModal = ({
     name: "",
     numberOfPlayers: "",
   });
+
+  const statusArr = Object.keys(GROUND_STATUS_DISPLAY).map((key) => ({
+    key: key,
+    value: GROUND_STATUS_DISPLAY[key],
+  }));
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const { numberOfPlayers, name } = formData;
 
@@ -64,6 +69,9 @@ const AddSubGroundModal = ({
         error[key] = "This field is required";
       }
     });
+    if (!selectedStatus.trim()) {
+      error.status = "This field is required";
+    }
 
     dispatch({
       type: GET_ERRORS,
@@ -72,7 +80,8 @@ const AddSubGroundModal = ({
 
     if (JSON.stringify(error) === "{}") {
       formatedData.numberOfPlayers = Number(formData.numberOfPlayers);
-      setLoading(true)
+      formatedData.status = selectedStatus;
+      setLoading(true);
       addSubGround(setLoading, formatedData);
     }
   };
@@ -118,6 +127,19 @@ const AddSubGroundModal = ({
                   value={numberOfPlayers}
                   onChange={onChange}
                   error={errors.numberOfPlayers}
+                />
+              </Col>
+              <Col xs="12" className="mt-4">
+                <DropdownV2
+                  fullWidth
+                  label="Status"
+                  value={selectedStatus.toString() || ""}
+                  options={statusArr || []}
+                  valueBasedOnProperty="key"
+                  displayProperty="value"
+                  onChange={(id) => setSelectedStatus(id)}
+                  error={errors.status}
+                  variant="outlined"
                 />
               </Col>
             </Row>
