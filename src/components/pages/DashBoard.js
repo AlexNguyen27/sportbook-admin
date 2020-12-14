@@ -578,12 +578,12 @@ const DashBoard = ({
       to: "/ground-management",
       title: "Ground Management",
     },
-    // {
-    //   key: "statistics",
-    //   icon: <MultilineChartIcon />,
-    //   to: `/statistics`,
-    //   title: "Statistics And Charts",
-    // },
+    {
+      key: "statistics",
+      icon: <MultilineChartIcon />,
+      to: `/statistics`,
+      title: "Statistics And Charts",
+    },
     {
       key: "category",
       icon: <CategoryIcon />,
