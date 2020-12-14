@@ -300,7 +300,7 @@ const OrdersList = ({
                 }
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
+              ["cancelled", "finished", 'paid'].includes(rowData.status) || isAdmin,
           }}
         />
       </div>

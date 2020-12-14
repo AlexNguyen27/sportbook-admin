@@ -10,7 +10,6 @@ import {
   COLOR_ORDER_STATUS,
   ORDER_STATUS_OPTION,
 } from "../../../../utils/common";
-import HistoryIcon from '@material-ui/icons/History';
 import { forwardRef } from "react";
 
 import AddBox from "@material-ui/icons/AddBox";
@@ -300,7 +299,7 @@ const OrderList = ({
                 }
               }),
             isEditHidden: (rowData) =>
-              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
+            ["cancelled", "finished", 'paid'].includes(rowData.status) || isAdmin,
           }}
         />
       </div>
