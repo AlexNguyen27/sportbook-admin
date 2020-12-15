@@ -10,7 +10,7 @@ const ExtraInfoForm = ({ errors, formData, onChange }) => {
 
   return (
     <>
-      <CollapseCustom className="mt-4" title="Extra Information">
+      <CollapseCustom className="mt-4" title="Sport profile">
         <Row>
           {Object.keys(formData).map((key) => (
             <Col xs={6} className="mb-4">
