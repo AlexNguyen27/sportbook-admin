@@ -98,10 +98,10 @@ const Signup = ({
               <PageTitle title="Create new account" center="true" />
               <Grid container type="flex" spacing={2}>
                 <Grid item xs={6}>
-                  <FacebookLoginCustom title={"Siggup with facebook"}/>
+                  <FacebookLoginCustom title={"Signup with facebook"}/>
                 </Grid>
                 <Grid item xs={6}>
-                  <GoogleLoginCustom title={"Siggup with google"} />
+                  <GoogleLoginCustom title={"Signup with google"} />
                 </Grid>
               </Grid>
               <form onSubmit={(e) => onSubmit(e)}>
