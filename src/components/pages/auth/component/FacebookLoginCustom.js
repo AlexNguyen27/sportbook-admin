@@ -17,7 +17,8 @@ const FacebookLoginCustom = ({
   const [exitEmail, setIsExitEmail] = useState({});
 
   const handleError = (response) => {
-    if (response?.error !== "popup_closed_by_user") {
+    console.log('reponse-------', response);
+    if (response?.error) {
       Swal.fire({
         position: "center",
         type: "Warning",
