@@ -116,15 +116,29 @@ export const addPrice = (setLoading, priceData) => async (
       timer: 1500,
     });
   } else {
-    logoutDispatch(dispatch, errors);
-    setLoading(false);
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "An error occurred!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    if (errors[0]?.extensions?.payload) {
+      const { payload } = errors[0]?.extensions;
+      if (payload?.endTime && payload.startTime && payload.subGroundId) {
+        // SET ERROR FOR TEXT FIELD
+        Swal.fire({
+          position: "center",
+          type: "Warning",
+          title: "Start time and end time should be unique!",
+          showConfirmButton: true,
+        });
+      }
+    } else {
+      logoutDispatch(dispatch, errors);
+      setLoading(false);
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: "An error occurred!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+
     dispatch({
       type: GET_ERRORS,
       errors: errors[0].message,
@@ -245,19 +259,32 @@ export const updatePrice = (setLoading, priceData) => async (
     setLoading(false);
   } else {
     console.log(errors);
-    Swal.fire({
-      position: "center",
-      type: "Warning",
-      title: "Please check the input!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    setLoading(false);
+    if (errors[0]?.extensions?.payload) {
+      const { payload } = errors[0]?.extensions;
+      if (payload?.endTime && payload.startTime && payload.subGroundId) {
+        // SET ERROR FOR TEXT FIELD
+        Swal.fire({
+          position: "center",
+          type: "Warning",
+          title: "Start time and end time should be unique!",
+          showConfirmButton: true,
+        });
+      }
+    } else {
+      Swal.fire({
+        position: "center",
+        type: "Warning",
+        title: "Please check the input!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
-    logoutDispatch(dispatch, errors);
-    dispatch({
-      type: GET_ERRORS,
-      errors: errors[0].message,
-    });
+      logoutDispatch(dispatch, errors);
+      dispatch({
+        type: GET_ERRORS,
+        errors: errors[0].message,
+      });
+    }
+    setLoading(false);
   }
 };
