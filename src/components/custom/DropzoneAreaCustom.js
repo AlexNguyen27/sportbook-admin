@@ -9,7 +9,8 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
   const [loading, setLoading] = useState(false);
 
   const handleUpload = (files) => {
-    const file = files[urls.length];
+    console.log(files, "-----------herer-----------------", urls.length);
+    const file = files.length === 1 ? files[0] : files[files.length - 1];
     if (file) {
       try {
         setLoading(true);
@@ -20,8 +21,8 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
             .child(file.name)
             .getDownloadURL()
             .then((url) => {
-              console.log(url);
-              console.log(file.name);
+              console.log(url, "----------url name");
+              console.log(file.name, "anme--------------------");
               setLoading(false);
               setUrls([...urls, url]);
             });
@@ -36,7 +37,7 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
     setUrls(newUrls);
   };
 
-  console.log(urls);
+  // console.log(urls);
   return (
     <>
       <DropzoneArea
@@ -54,7 +55,7 @@ const DropzoneAreaCustom = ({ urls, setUrls }) => {
               <img
                 style={{ position: "relative" }}
                 width="100%"
-                height="100%"
+                height="120px"
                 src={url}
                 onClick={() => window.open(url, "_blank")}
                 alt={"ground"}
