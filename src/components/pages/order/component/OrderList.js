@@ -29,7 +29,6 @@ import ViewColumn from "@material-ui/icons/ViewColumn";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Alert } from "reactstrap";
 import Colors from "../../../../constants/Colors";
-import PageLoader from "../../../custom/PageLoader";
 import {
   capitalizeFirstLetter,
   formatThousandVND,
@@ -64,15 +63,12 @@ const tableIcons = {
 };
 
 const OrderList = ({
-  getOrders,
   orders,
   updateOrderStatus,
   auth: { isAdmin },
-  modal,
-  setModal,
+  setLoading,
 }) => {
   const history = useHistory();
-  const [loading, setLoading] = useState(true);
   const getDateTime = (date) => moment(date).format(DATE_TIME);
   const orderArr = Object.keys(orders).map((orderId, index) => ({
     ...orders[orderId],
@@ -93,10 +89,6 @@ const OrderList = ({
     groundName: orders[orderId]?.subGround?.ground?.title,
     defaultStatus: orders[orderId].status,
   }));
-
-  useEffect(() => {
-    getOrders(setLoading);
-  }, []);
 
   const [state, setState] = useState({
     columns: [
@@ -183,7 +175,7 @@ const OrderList = ({
       {
         title: "Status",
         field: "status",
-        customSort: (a, b) =>a.status.length - b.status.length,
+        customSort: (a, b) => a.status.length - b.status.length,
         headerStyle: { minWidth: 200 },
         cellStyle: { minWidth: 200 },
         editComponent: (props) => {
@@ -251,59 +243,58 @@ const OrderList = ({
   });
 
   return (
-    <PageLoader loading={loading}>
-      <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
-        <MaterialTable
-          icons={tableIcons}
-          title="List Of Orders"
-          columns={state.columns}
-          data={orderArr || []}
-          options={{
-            sorting: true,
-            pageSize: 7,
-            pageSizeOptions: [5, 7, 10, 20],
-            headerStyle: {
-              fontWeight: "bold",
+    <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
+      <MaterialTable
+        icons={tableIcons}
+        title="List Of Orders"
+        columns={state.columns}
+        data={orderArr || []}
+        options={{
+          sorting: true,
+          pageSize: 6,
+          pageSizeOptions: [5, 6, 10, 20],
+          headerStyle: {
+            fontWeight: "bold",
+          },
+          rowStyle: {
+            overflowX: "auto",
+          },
+          actionsColumnIndex: -1,
+          exportButton: true,
+          exportAllData: true,
+        }}
+        actions={[
+          // {
+          //   icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
+          //   tooltip: "History",
+          //   onClick: (event, rowData) => {
+          //     history.push(`order-management/${rowData.id}`);
+          //   },
+          // },
+          {
+            icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
+            tooltip: "Order Detai",
+            onClick: (event, rowData) => {
+              history.push(`order-detail/${rowData.id}`);
             },
-            rowStyle: {
-              overflowX: "auto",
-            },
-            actionsColumnIndex: -1,
-            exportButton: true,
-            exportAllData: true,
-          }}
-          actions={[
-            // {
-            //   icon: () => <HistoryIcon style={{ color: '#532e1c' }} />,
-            //   tooltip: "History",
-            //   onClick: (event, rowData) => {
-            //     history.push(`order-management/${rowData.id}`);
-            //   },
-            // },
-            {
-              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
-              tooltip: "Order Detai",
-              onClick: (event, rowData) => {
-                history.push(`order-detail/${rowData.id}`);
-              },
-            },
-          ]}
-          editable={{
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                resolve();
-                const { status, id } = newData;
-                if (newData.status !== oldData.status) {
-                  setLoading(true);
-                  updateOrderStatus(setLoading, { id, status });
-                }
-              }),
-            isEditHidden: (rowData) =>
-            ["cancelled", "finished", 'paid'].includes(rowData.status) || isAdmin,
-          }}
-        />
-      </div>
-    </PageLoader>
+          },
+        ]}
+        editable={{
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              resolve();
+              const { status, id } = newData;
+              if (newData.status !== oldData.status) {
+                setLoading(true);
+                updateOrderStatus(setLoading, { id, status });
+              }
+            }),
+          isEditHidden: (rowData) =>
+            ["cancelled", "finished", "paid"].includes(rowData.status) ||
+            isAdmin,
+        }}
+      />
+    </div>
   );
 };
 const mapStateToProps = (state) => ({
