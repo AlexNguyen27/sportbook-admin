@@ -83,7 +83,7 @@ export const getOrders = (setLoading, filter) => async (dispatch, getState) => {
   }
 };
 
-export const getOrdersByUserId = (setLoading, userId) => async (
+export const getOrdersByUserId = (setLoading, props) => async (
   dispatch,
   getState
 ) => {
@@ -99,7 +99,7 @@ export const getOrdersByUserId = (setLoading, userId) => async (
     },
     query: `
                 query {
-                  orders(userId: $userId) {
+                  orders(userId: $userId, status: $status) {
                     id
                     subGroundId
                     userId
@@ -131,7 +131,8 @@ export const getOrdersByUserId = (setLoading, userId) => async (
                 }
             `,
     variables: {
-      userId,
+      userId: props.userId || "",
+      status: props.status || ""
     },
   });
   if (!errors) {

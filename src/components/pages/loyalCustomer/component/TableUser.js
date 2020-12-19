@@ -59,22 +59,22 @@ export default function TableUser({ dataSource }) {
       },
       // { title: "Play times", field: "playTimes", type: "numeric" },
       { title: "Email", field: "email" },
-      {
-        cellStyle: {
-          width: 20,
-          maxWidth: 20,
-        },
-        headerStyle: {
-          width: 20,
-          maxWidth: 20,
-        },
-        title: "Order times",
-        field: "orderCount",
-      },
-      {
-        title: "Usually play at",
-        field: "startDay",
-      },
+      // {
+      //   cellStyle: {
+      //     width: 20,
+      //     maxWidth: 20,
+      //   },
+      //   headerStyle: {
+      //     width: 20,
+      //     maxWidth: 20,
+      //   },
+      //   title: "Order times",
+      //   field: "orderCount",
+      // },
+      // {
+      //   title: "Usually play at",
+      //   field: "startDay",
+      // },
     ],
     data: [
       {
