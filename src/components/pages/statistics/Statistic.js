@@ -149,7 +149,7 @@ const Statistic = ({
               disableToolbar
               className="mr-4"
               variant="inline"
-              format="MM/dd/yyyy"
+              format="dd/MM/yyyy"
               margin="normal"
               id="date-picker-inline"
               label="From date"
@@ -163,7 +163,7 @@ const Statistic = ({
               disableToolbar
               className="mr-4"
               variant="inline"
-              format="MM/dd/yyyy"
+              format="dd/MM/yyyy"
               margin="normal"
               id="date-picker-inline"
               label="To date"

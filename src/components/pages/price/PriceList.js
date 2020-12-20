@@ -227,17 +227,17 @@ const PriceList = ({
         }}
         actions={
           !isAdmin && [
-            {
-              icon: () => <FileCopyIcon style={{ color: "#79a3b1" }} />,
-              tooltip: "Copy price value from sub ground",
-              onClick: (event, rowData) => {
-                // TODO DO IT LATER
-                // DROP DOWN SELECT TO CHOOSE OTHER SUB GROUND
-                // console.log("d00000000000 eidt", subGround);
-                // onEdit(subGround);
-              },
-              isFreeAction: true,
-            },
+            // {
+            //   icon: () => <FileCopyIcon style={{ color: "#79a3b1" }} />,
+            //   tooltip: "Copy price value from sub ground",
+            //   onClick: (event, rowData) => {
+            //     // TODO DO IT LATER
+            //     // DROP DOWN SELECT TO CHOOSE OTHER SUB GROUND
+            //     // console.log("d00000000000 eidt", subGround);
+            //     // onEdit(subGround);
+            //   },
+            //   isFreeAction: true,
+            // },
             {
               icon: () => <Edit style={{ color: Colors.orange }} />,
               tooltip: "Edit sub ground",

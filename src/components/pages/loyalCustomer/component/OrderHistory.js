@@ -35,9 +35,14 @@ import {
   capitalizeFirstLetter,
   formatThousandVND,
 } from "../../../../utils/commonFunction";
-import { getOrdersByUserId, updateOrderStatus } from "../../../../store/actions/order";
+import {
+  getOrdersByUserId,
+  updateOrderStatus,
+} from "../../../../store/actions/order";
 import DropdownV2 from "../../../custom/DropdownV2";
-import { CsvBuilder } from 'filefy';
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+
+import { Button } from "@material-ui/core";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -86,7 +91,7 @@ const OrderHistory = ({
   }));
 
   useEffect(() => {
-    getOrdersByUserId(setLoading, userId);
+    getOrdersByUserId(setLoading, { userId, status: "all" });
   }, []);
 
   // const [orderStatus, setOrderStatus] = useState();
@@ -133,7 +138,8 @@ const OrderHistory = ({
       {
         title: "Payment",
         field: "paymentType",
-        headerStyle: {minWidth: 40}, cellStyle: {minWidth: 40},
+        headerStyle: { minWidth: 40 },
+        cellStyle: { minWidth: 40 },
         lookup: PAYMENT_TYPE,
         render: (rowData) => {
           return <span>{capitalizeFirstLetter(rowData.paymentType)}</span>;
@@ -143,12 +149,10 @@ const OrderHistory = ({
       {
         title: "Status",
         field: "status",
-        headerStyle: {minWidth: 200}, cellStyle: {minWidth: 200},
+        headerStyle: { minWidth: 200 },
+        cellStyle: { minWidth: 200 },
         editComponent: (props) => {
           const { id } = props.rowData;
-          console.log("did-----------------", props);
-          console.log("order----------------", orders);
-          console.log("rodera rray =============", orderArr);
           const oldRowStatus = orders[id]?.status;
           const statusArr = Object.keys(
             ORDER_STATUS_OPTION[oldRowStatus] || {}
@@ -212,10 +216,17 @@ const OrderHistory = ({
     ],
   });
 
-  // console.log(orderStatus);
-
   return (
     <PageLoader loading={loading}>
+      <Button
+        variant="contained"
+        color="default"
+        className="mb-4"
+        startIcon={<ArrowBackIosIcon />}
+        onClick={() => history.goBack()}
+      >
+        Go Back
+      </Button>
       <div style={{ maxWidth: `100%`, overflowX: "auto" }}>
         <MaterialTable
           icons={tableIcons}
@@ -233,52 +244,7 @@ const OrderHistory = ({
             },
             actionsColumnIndex: -1,
             exportButton: true,
-            // exportCsv: (toolbar, columns, renderData) => {
-            //   console.log('column------------------', columns)
-            //   const csvColumns = columns;
-            //   // const csvColumns = ['Sub ground name']
-          
-            //   const data = columns.map(rowData =>
-            //     csvColumns.map(columnDef => rowData[columnDef.field])
-            //   );
-
-            //   console.log(data, 'data--------------------------', renderData)
-          
-            //   const builder = new CsvBuilder(('foo') + '.csv')
-            //     .setDelimeter(',')
-            //     .setColumns(csvColumns.map(columnDef => columnDef))
-            //     .addRows(data)
-            //     .exportFile();
-          
-            //   // toolbar.setState({ exportButtonAnchorEl: null }); // this is the reason to pass the m-table-toolbar object
-            // }
           }}
-          actions={[
-            {
-              icon: () => <VisibilityIcon style={{ color: Colors.view }} />,
-              tooltip: "History",
-              onClick: (event, rowData) => {
-                history.push(`order-management/${rowData.id}`);
-              },
-            },
-          ]}
-          editable={{
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve, reject) => {
-                resolve();
-                const { status, id } = newData;
-                if (newData.status !== oldData.status) {
-                  setLoading(true);
-                  updateOrderStatus(setLoading, { id, status });
-                }
-              }),
-            isEditHidden: (rowData) =>
-              ["cancelled", "finished"].includes(rowData.status) || isAdmin,
-            // onClick: (rowData) => {
-            //   setOrderStatus(rowData.status);
-            // },
-          }}
-          // onRowClick={(event, rowData) => setOrderStatus(rowData.status)}
         />
       </div>
     </PageLoader>
@@ -288,6 +254,7 @@ const mapStateToProps = (state) => ({
   orders: state.order.orders,
   auth: state.auth,
 });
-export default connect(mapStateToProps, { getOrdersByUserId, updateOrderStatus })(
-  withRouter(OrderHistory)
-);
+export default connect(mapStateToProps, {
+  getOrdersByUserId,
+  updateOrderStatus,
+})(withRouter(OrderHistory));
