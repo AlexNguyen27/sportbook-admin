@@ -31,7 +31,6 @@ import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { formatThousandVND } from "../../../utils/commonFunction";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -261,7 +260,7 @@ const PriceList = ({
             onRowAdd: (newData) =>
               new Promise((resolve) => {
                 resolve();
-                setLoading(false);
+                setLoading(true);
                 const priceData = {
                   price: newData.price,
                   discount: newData.discount,

@@ -144,6 +144,7 @@ export const addPrice = (setLoading, priceData) => async (
       errors: errors[0].message,
     });
   }
+  setLoading(false);
 };
 
 export const deletePrice = (setLoading, id) => async (dispatch, getState) => {
