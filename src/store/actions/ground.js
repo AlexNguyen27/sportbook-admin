@@ -157,6 +157,15 @@ export const addGround = (setLoading, groundData) => async (
       timer: 1500,
     });
   } else {
+    const error = errors[0].extensions.payload
+      ? errors[0].extensions.payload
+      : errors[0].message;
+    const formatedError = {};
+    if (errors[0].extensions.payload) {
+      Object.keys(error).map((key) => {
+        formatedError[key] = error[key].message;
+      });
+    }
     logoutDispatch(dispatch, errors);
     setLoading(false);
     Swal.fire({
@@ -168,7 +177,7 @@ export const addGround = (setLoading, groundData) => async (
     });
     dispatch({
       type: GET_ERRORS,
-      errors: errors[0].message,
+      errors: { ...formatedError },
     });
   }
 };
@@ -321,11 +330,20 @@ export const updateGround = (setLoading, groundData) => async (
       title: errors[0].message || "An error occurred!",
       showConfirmButton: true,
     });
+    const error = errors[0].extensions.payload
+      ? errors[0].extensions.payload
+      : errors[0].message;
+    const formatedError = {};
+    if (errors[0].extensions.payload) {
+      Object.keys(error).map((key) => {
+        formatedError[key] = error[key].message;
+      });
+    }
     setLoading(false);
     logoutDispatch(dispatch, errors);
     dispatch({
       type: GET_ERRORS,
-      errors: errors[0].message,
+      errors: { ...formatedError },
     });
   }
 };
