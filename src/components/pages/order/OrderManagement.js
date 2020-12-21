@@ -56,10 +56,6 @@ const OrderManagement = ({ getOrders }) => {
     getOrders(setLoading, { status: "all" });
   }, []);
 
-  const handleDateChange = (date) => {
-    
-  };
-
   const onSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -116,7 +112,7 @@ const OrderManagement = ({ getOrders }) => {
         </Col>
         <Col xs={12} className="text-center">
           <Collapse in={isSearch} timeout="auto" unmountOnExit>
-          <hr />
+            <hr />
             <form onSubmit={(e) => onSubmit(e)}>
               <Row style={{ justifyContent: "center" }}>
                 <Button
@@ -150,10 +146,9 @@ const OrderManagement = ({ getOrders }) => {
                     clearable
                     inputVariant="outlined"
                     id="date-picker-inline"
-                    defaultValue={null}
                     label="From date"
                     value={selectedDate}
-                    onChange={handleDateChange}
+                    onChange={(date) => setSelectedDate(date)}
                     KeyboardButtonProps={{
                       "aria-label": "change date",
                     }}
