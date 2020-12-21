@@ -33,10 +33,12 @@ const Statistic = ({
   const [reportLoading, setReportLoading] = useState(true);
 
   const [selectedStartDate, setSelectedStartDate] = React.useState(
-    moment().subtract(7, "days")
+    moment().startOf("month")
   );
 
-  const [selectedEndDate, setSelectedEndDate] = React.useState(new Date());
+  const [selectedEndDate, setSelectedEndDate] = React.useState(
+    moment().endOf("month")
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSelectDisplayOption = (selectedDateId) => {
@@ -149,7 +151,7 @@ const Statistic = ({
               disableToolbar
               className="mr-4"
               variant="inline"
-              format="dd/MM/yyyy"
+              format="dd/MM/yyyy 00:00:00"
               margin="normal"
               id="date-picker-inline"
               label="From date"
@@ -163,10 +165,11 @@ const Statistic = ({
               disableToolbar
               className="mr-4"
               variant="inline"
-              format="dd/MM/yyyy"
+              format="dd/MM/yyyy 23:59:59"
               margin="normal"
               id="date-picker-inline"
               label="To date"
+              minDate={selectedStartDate}
               value={selectedEndDate}
               onChange={(date) => setSelectedEndDate(date)}
               KeyboardButtonProps={{

@@ -88,7 +88,7 @@ export const getReports = (setLoading, startDate, endDate) => async (
         `,
     variables: {
       startDate: moment(startDate).startOf("day").format(),
-      endDate: moment(endDate).startOf("day").format(),
+      endDate: moment(endDate).endOf("day").format(),
     },
   });
   if (!errors) {
@@ -107,5 +107,3 @@ export const getReports = (setLoading, startDate, endDate) => async (
     });
   }
 };
-
-
