@@ -226,7 +226,7 @@ const EditGroundModal = ({
       setLoading(true);
       formatedData.image = JSON.stringify(urls);
       updateGround(setLoading, formatedData);
-      closeModal();
+      // closeModal();
     }
   };
 
