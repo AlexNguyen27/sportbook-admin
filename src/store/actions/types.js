@@ -48,6 +48,7 @@ export const ADD_BENEFIT = "ADD_BENEFIT";
 
 // GROUND
 export const GET_GROUNDS = "GET_GROUNDS";
+export const GET_GROUNDS_SCHEDULE = "GET_GROUNDS_SCHEDULE";
 export const DELETE_GROUND = "DELETE_GROUND";
 export const EDIT_GROUND = "EDIT_GROUND";
 export const ADD_GROUND = "ADD_GROUND";
@@ -66,6 +67,7 @@ export const ADD_PRICE = "ADD_PRICE";
 
 // ORDER
 export const GET_ORDERS = "GET_ORDERS";
+export const GET_ORDERS_SCHEDULE = "GET_ORDERS_SCHEDULE";
 export const DELETE_ORDER = "DELETE_ORDER";
 export const EDIT_ORDER = "EDIT_ORDER";
 export const EDIT_ORDER_STATUS = "EDIT_ORDER_STATUS";

@@ -13,21 +13,21 @@ import Navbar from './components/layout/Navbar';
 import RouterList from './components/layout/RouterList';
 
 import './css/index.css';
-import { logoutUser } from './store/actions/auth';
+// import { logoutUser } from './store/actions/auth';
 
 import { BASE_URL } from './store/actions/types';
 import { globalOptions } from 'hera-js';
 globalOptions.url = BASE_URL;
 
 // Check if token is expired
-if (localStorage.token) {
-  const decoded = jwt_decode(localStorage.token.replace('Bearer ', ''));
-  const currentTime = Date.now() / 1000;
-  if (decoded.exp <= currentTime) {
-    store.dispatch(logoutUser());
-    localStorage.clear();
-  }
-}
+// if (localStorage.token) {
+//   const decoded = jwt_decode(localStorage.token.replace('Bearer ', ''));
+//   const currentTime = Date.now() / 1000;
+//   if (decoded.exp <= currentTime) {
+//     store.dispatch(logoutUser());
+//     localStorage.clear();
+//   }
+// }
 
 function App() {
   return (

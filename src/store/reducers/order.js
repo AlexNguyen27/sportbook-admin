@@ -6,12 +6,13 @@ import {
   EDIT_ORDER_STATUS,
   DELETE_ORDER,
   SAVE_SELECTED_ORDER_DETAIL,
-  
+  GET_ORDERS_SCHEDULE,
 } from "../actions/types";
 
 const initialState = {
   orders: {},
   selected_order: {},
+  orders_schedule: [],
 };
 
 export default function (state = initialState, action) {
@@ -19,7 +20,13 @@ export default function (state = initialState, action) {
   switch (type) {
     case GET_ORDERS:
       return {
+        ...state,
         orders: { ...orders },
+      };
+    case GET_ORDERS_SCHEDULE:
+      return {
+        ...state,
+        orders_schedule: [...action.orderSchedule],
       };
     case EDIT_ORDER:
     case ADD_ORDER:
@@ -36,7 +43,8 @@ export default function (state = initialState, action) {
       const { id, status } = action.orderData;
       const selectedOrder = state.orders[id];
       return {
-        ...state.orders,
+        ...state,
+        // ...state.orders,
         orders: { ...state.orders, [id]: { ...selectedOrder, status: status } },
       };
     case DELETE_ORDER:
@@ -46,11 +54,11 @@ export default function (state = initialState, action) {
         ...state,
         orders: newOrders,
       };
-      case SAVE_SELECTED_ORDER_DETAIL:
-        return {
-          ...state,
-          selected_order: action.selected_order,
-        };
+    case SAVE_SELECTED_ORDER_DETAIL:
+      return {
+        ...state,
+        selected_order: action.selected_order,
+      };
     case UNAUTHENTICATE:
       return initialState;
     default:

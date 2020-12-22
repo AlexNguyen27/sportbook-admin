@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import DateFnsUtils from "@date-io/date-fns";
-import { getOrders } from "../../../store/actions/order";
+import { getOrders, getOrdersSchedule } from "../../../store/actions/order";
 import SearchIcon from "@material-ui/icons/Search";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
@@ -18,6 +18,8 @@ import OrderList from "./component/OrderList";
 import PageLoader from "../../custom/PageLoader";
 import DropdownV2 from "../../custom/DropdownV2";
 import Collapse from "@material-ui/core/Collapse";
+import { getGroundsSchedule } from "../../../store/actions/ground";
+import CustomTimeline from "./schedule/CustomTimeline";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,7 +43,11 @@ const ORDER_STATUS = {
   finished: "Finished",
 };
 
-const OrderManagement = ({ getOrders }) => {
+const OrderManagement = ({
+  getOrders,
+  getOrdersSchedule,
+  getGroundsSchedule,
+}) => {
   const classes = useStyles();
   const [selectedDate, setSelectedDate] = React.useState(null);
   const [selectedToDate, setSelectedToDate] = React.useState(null);
@@ -49,17 +55,22 @@ const OrderManagement = ({ getOrders }) => {
   const [isSearch, setIsSearch] = useState(false);
   const [isToday, setIsToday] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
 
   const [modelAdd, setModelAdd] = useState(false);
 
   useEffect(() => {
     getOrders(setLoading, { status: "all" });
+    getGroundsSchedule(setScheduleLoading).then(() => {
+      getOrdersSchedule(setScheduleLoading, {
+        startDay: moment().format("DD/MM/YYYY"),
+      });
+    });
   }, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    // getOrders()
     getOrders(setLoading, {
       fromDate: selectedDate
         ? moment(selectedDate).startOf("days").format()
@@ -86,6 +97,19 @@ const OrderManagement = ({ getOrders }) => {
     key: key,
     value: STATUS[key],
   }));
+
+  const [selectedCalendarDate, setSelectedCalendarDate] = React.useState(
+    moment()
+  );
+
+  const handleDateChange = (date) => {
+    setSelectedCalendarDate(date);
+    setScheduleLoading(true);
+    getOrdersSchedule(setScheduleLoading, {
+      startDay: moment(date).format("DD/MM/YYYY"),
+    });
+  };
+
 
   return (
     <>
@@ -193,6 +217,38 @@ const OrderManagement = ({ getOrders }) => {
           </PageLoader>
         </Col>
       </Row>
+      <Row className="mt-4 mb-4">
+        <Col xs={12}>
+          <hr />
+          <h4>Order Scheduler</h4>
+        </Col>
+        <Col xs={12} className="text-center">
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              disableToolbar
+              className="mt-0"
+              variant="inline"
+              size="small"
+              clearable
+              format="dd/MM/yyyy 00:00:00"
+              margin="normal"
+              inputVariant="outlined"
+              id="date-picker-inline"
+              label="Date picker inline"
+              value={selectedCalendarDate}
+              onChange={handleDateChange}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </MuiPickersUtilsProvider>
+        </Col>
+        <Col xs={12}>
+          <PageLoader loading={scheduleLoading}>
+            <CustomTimeline selectedDate={selectedCalendarDate} />
+          </PageLoader>
+        </Col>
+      </Row>
       <AddOrderModal modal={modelAdd} setModal={setModelAdd} />
     </>
   );
@@ -202,6 +258,8 @@ const mapStateToProps = (state) => ({
   orders: state.order.orders,
   auth: state.auth,
 });
-export default connect(mapStateToProps, { getOrders })(
-  withRouter(OrderManagement)
-);
+export default connect(mapStateToProps, {
+  getGroundsSchedule,
+  getOrders,
+  getOrdersSchedule,
+})(withRouter(OrderManagement));

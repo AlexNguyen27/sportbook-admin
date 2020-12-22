@@ -4,10 +4,12 @@ import {
   EDIT_GROUND,
   ADD_GROUND,
   DELETE_GROUND,
+  GET_GROUNDS_SCHEDULE,
 } from "../actions/types";
 
 const initialState = {
   grounds: {},
+  scheduleDisplay: [],
 };
 
 export default function (state = initialState, action) {
@@ -15,7 +17,13 @@ export default function (state = initialState, action) {
   switch (type) {
     case GET_GROUNDS:
       return {
+        ...state,
         grounds: { ...grounds },
+      };
+    case GET_GROUNDS_SCHEDULE:
+      return {
+        ...state,
+        scheduleDisplay: [...action.scheduleDisplay],
       };
     case EDIT_GROUND:
     case ADD_GROUND:
