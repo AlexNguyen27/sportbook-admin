@@ -7,6 +7,7 @@ import {
   ADD_ORDER,
   EDIT_ORDER_STATUS,
   SAVE_SELECTED_ORDER_DETAIL,
+  GET_ORDERS_SCHEDULE,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -83,6 +84,74 @@ export const getOrders = (setLoading, filter) => async (dispatch, getState) => {
   }
 };
 
+export const getOrdersSchedule = (setLoading, filter) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+                query {
+                  orders (
+                    startDay: $startDay
+                  ) {
+                    id
+                    subGroundId
+                    userId
+                    startDay
+                    startTime
+                    endTime
+                    paymentType
+                    status
+                    discount
+                    price
+                    subGround {
+                        id
+                        name
+                        ground {
+                          id
+                          title
+                        }
+                    }
+                    user {
+                        id
+                        firstName
+                        lastName
+                        phone
+                        email
+                    }
+                    createdAt
+                    updatedAt
+                  }
+                }
+            `,
+    variables: {
+      startDay: filter?.startDay || "",
+    },
+  });
+  if (!errors) {
+    dispatch({
+      type: GET_ORDERS_SCHEDULE,
+      orderSchedule: [...data.orders],
+    });
+    setLoading(false);
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
+
 export const getOrdersByUserId = (setLoading, props) => async (
   dispatch,
   getState
@@ -132,7 +201,7 @@ export const getOrdersByUserId = (setLoading, props) => async (
             `,
     variables: {
       userId: props.userId || "",
-      status: props.status || ""
+      status: props.status || "",
     },
   });
   if (!errors) {

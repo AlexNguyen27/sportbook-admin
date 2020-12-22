@@ -8,6 +8,7 @@ import {
   DELETE_GROUND,
   EDIT_GROUND,
   CLEAR_PRICE_SUB_GROUND,
+  GET_GROUNDS_SCHEDULE,
 } from "./types";
 import { hera } from "hera-js";
 import { arrayToObject } from "../../utils/commonFunction";
@@ -80,6 +81,49 @@ export const getGrounds = (setLoading) => async (dispatch, getState) => {
   }
 };
 
+export const getGroundsSchedule = (setLoading) => async (
+  dispatch,
+  getState
+) => {
+  const { token } = getState().auth;
+
+  const { data, errors } = await hera({
+    options: {
+      url: BASE_URL,
+      headers: {
+        token,
+        "Content-Type": "application/json",
+      },
+    },
+    query: `
+              query {
+                grounds {
+                    id
+                    title 
+                    subGrounds {
+                      id
+                      name
+                    }
+                }
+              }
+          `,
+    variables: {},
+  });
+  if (!errors) {
+    dispatch({
+      type: GET_GROUNDS_SCHEDULE,
+      scheduleDisplay: [...data.grounds],
+    });
+
+    setLoading(false);
+  } else {
+    logoutDispatch(dispatch, errors);
+    dispatch({
+      type: GET_ERRORS,
+      errors: errors[0].message,
+    });
+  }
+};
 export const addGround = (setLoading, groundData) => async (
   dispatch,
   getState
