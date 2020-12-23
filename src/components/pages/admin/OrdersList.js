@@ -121,7 +121,7 @@ const OrdersList = ({ getOrders, orders }) => {
                     className="mt-0 mr-4"
                     variant="inline"
                     size="small"
-                    format="MM/dd/yyyy 00:00:00"
+                    format="dd/MM/yyyy 00:00:00"
                     margin="normal"
                     clearable={true}
                     inputVariant="outlined"
@@ -141,7 +141,7 @@ const OrdersList = ({ getOrders, orders }) => {
                     variant="inline"
                     size="small"
                     clearable={true}
-                    format="MM/dd/yyyy 23:59:59"
+                    format="dd/MM/yyyy 23:59:59"
                     margin="normal"
                     minDate={selectedDate}
                     inputVariant="outlined"

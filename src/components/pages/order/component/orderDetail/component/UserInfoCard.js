@@ -60,7 +60,7 @@ const UserInfoCard = ({ orderDetail }) => {
             {paymentType === "online"
               ? `(Wait for confirmation from the owner and cannot be guaranteed by
               Love Sport if any dispute arises)`
-              : `Guaranteed by loveSport when any dispute occurs. A 100% refund
+              : `Guaranteed by Love Sport when any dispute occurs. A 100% refund
               will be issued for cancelations made before the scheduled time.`}
           </span>
           <hr />
