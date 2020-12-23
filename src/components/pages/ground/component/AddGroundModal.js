@@ -179,7 +179,7 @@ const AddGroundModal = ({
       setLoading(true);
       formatedData.image = JSON.stringify(urls);
       addGround(setLoading, formatedData);
-      closeModal();
+      // closeModal();
     }
   };
 

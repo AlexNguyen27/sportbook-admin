@@ -27,7 +27,7 @@ const GroundDetailCard = ({ orderDetail, benefits }) => {
       return diffDay ? `(${diffDay} days from now)` : "";
     } else {
       const diffTime = moment(startTime, "HH:mm:ss").diff(moment(), "hours");
-      return diffTime ? `(${diffTime} hours from now)` : "";
+      return diffTime && diffTime > 0 ? `(${diffTime} hours from now)` : "";
     }
   };
 
@@ -90,7 +90,8 @@ const GroundDetailCard = ({ orderDetail, benefits }) => {
         {` To ${moment(endTime, "HH:mm:ss").format("HH:mm")}`}
       </p>
       <p>
-        {moment().format("dddd, DD-MM-YYYY")} {getDiffDate()}
+        {moment(startDay, "DD-MM-YYYY").format("dddd, DD-MM-YYYY")}{" "}
+        {getDiffDate()}
       </p>
       <hr />
       <Row>
