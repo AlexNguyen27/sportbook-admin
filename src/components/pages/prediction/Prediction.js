@@ -45,7 +45,7 @@ const Prediction = ({ getPredictionGround, predictions = [], getDescribe }) => {
 
   return (
     <>
-      <h4 className="mb-4">Ground: San Chao Lua</h4>
+      <h4 className="mb-4">Ground: Sân Chảo Lủa</h4>
       <SearchForm setLoading={setLoading} />
       <PageLoader loading={loading}>
         <Row>

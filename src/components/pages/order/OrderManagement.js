@@ -165,7 +165,7 @@ const OrderManagement = ({
                     className="mt-0 mr-4"
                     variant="inline"
                     size="small"
-                    format="MM/dd/yyyy 00:00:00"
+                    format="dd/MM/yyyy 00:00:00"
                     margin="normal"
                     clearable
                     inputVariant="outlined"
@@ -185,7 +185,7 @@ const OrderManagement = ({
                     variant="inline"
                     size="small"
                     clearable
-                    format="MM/dd/yyyy 23:59:59"
+                    format="dd/MM/yyyy 23:59:59"
                     margin="normal"
                     minDate={selectedDate}
                     inputVariant="outlined"
