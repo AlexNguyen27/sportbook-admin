@@ -26,7 +26,7 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
     },
     query: `
             query {
-                categories {
+                categories(status: $status) {
                     id, 
                     name,
                     status
@@ -34,7 +34,9 @@ export const getCategories = (setLoading) => async (dispatch, getState) => {
                   }
             }
         `,
-    variables: {},
+    variables: {
+      status: isAdmin ? "" : BENEFIT_STATUS.enabled,
+    },
   });
   if (!errors) {
     let categoryArr = [...data.categories];
