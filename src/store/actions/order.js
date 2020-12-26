@@ -342,6 +342,7 @@ export const updateOrderStatus = (setLoading, orderData) => async (
        ) {
         status
         message
+        cancelledIds
         }
       } 
     `,
@@ -354,12 +355,15 @@ export const updateOrderStatus = (setLoading, orderData) => async (
       type: CLEAR_ERRORS,
     });
 
-    dispatch({
-      type: EDIT_ORDER_STATUS,
-      orderData: {
-        ...orderData,
-      },
-    });
+    if (data.updateOrderStatus.status === 200) {
+      dispatch({
+        type: EDIT_ORDER_STATUS,
+        orderData: {
+          ...orderData,
+        },
+        cancelledIds: [...data.updateOrderStatus.cancelledIds],
+      });
+    }
   } else {
     Swal.fire({
       position: "center",

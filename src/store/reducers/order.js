@@ -41,11 +41,19 @@ export default function (state = initialState, action) {
 
     case EDIT_ORDER_STATUS:
       const { id, status } = action.orderData;
+      const { cancelledIds } = action;
       const selectedOrder = state.orders[id];
+
+      const newOrdersObj = {
+        ...state.orders,
+        [id]: { ...selectedOrder, status: status },
+      };
+      cancelledIds.forEach((orderId) => {
+        newOrdersObj[orderId].status = "cancelled";
+      });
       return {
         ...state,
-        // ...state.orders,
-        orders: { ...state.orders, [id]: { ...selectedOrder, status: status } },
+        orders: { ...newOrdersObj },
       };
     case DELETE_ORDER:
       const newOrders = state.orders;
