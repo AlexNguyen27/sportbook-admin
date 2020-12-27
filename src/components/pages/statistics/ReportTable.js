@@ -150,7 +150,6 @@ const ReportTable = ({ reports, dataSource }) => {
               <TableCell align="right" colSpan={2}>
                 {formatThousandVND(row.totalAmount || 0, " VND")}
               </TableCell>
-              
             </TableRow>
           ))}
 
@@ -165,7 +164,10 @@ const ReportTable = ({ reports, dataSource }) => {
             <TableCell className="font-weight-bold" colSpan={2}>
               Total Amount
             </TableCell>
-            <TableCell align="right">{ccyFormat(totalAmounts)}</TableCell>
+            <TableCell align="right">
+              {" "}
+              {formatThousandVND(totalAmounts || 0, " VND")}{" "}
+            </TableCell>
           </TableRow>
         </TableBody>
         <TableFooter>
