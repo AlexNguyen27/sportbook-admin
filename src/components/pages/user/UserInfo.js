@@ -20,11 +20,7 @@ import PageLoader from "../../custom/PageLoader";
 import TextFieldInputWithHeader from "../../custom/TextFieldInputWithheader";
 import { editUserInfo, getUserInfo } from "../../../store/actions/user";
 import DropdownV2 from "../../custom/DropdownV2";
-import {
-  GENDER,
-  ROLE,
-  USER_STATUS_DISPLAY,
-} from "../../../utils/common";
+import { GENDER, ROLE, USER_STATUS_DISPLAY } from "../../../utils/common";
 import REGIONS from "../../locales/regions.json";
 import DISTRICTS from "../../locales/districts.json";
 import WARDS from "../../locales/wards.json";
@@ -34,6 +30,10 @@ import SocialNetworkForm from "./component/SocialNetworkForm";
 import ExtraInfoForm from "./component/ExtraInfoForm";
 import MomoUpload from "./component/MomoUpload";
 import AvatarUpload from "./component/AvatarUpload";
+import VerifyPhoneModal from "./component/VerifyPhoneModal";
+import firebase from "../../../constants/firebase";
+import "firebase/auth";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -241,7 +241,6 @@ const UserInfo = ({
         email: user.email || "",
         phone: user.phone || "",
         address: user.address ? address.address : "",
-        // playRole: user.playRole || "",
         createdAt: moment(user.createdAt).format("DD/MM/YYYY HH:mm A") || "",
         updatedAt: moment(user.updatedAt).format("DD/MM/YYYY HH:mm A") || "",
       });
@@ -251,7 +250,6 @@ const UserInfo = ({
         selectedRegionCode: _.get(address, "regionCode") || "",
         selectedDistrictCode: _.get(address, "districtCode") || "",
         selectedWardCode: _.get(address, "wardCode") || "",
-        // selectedFavoriteFootKey: _.get(user, "favoriteFoot") || "",
         selectedGenderKey: _.get(user, "gender", "") || "",
       });
       setAvatar(user.avatar || imageUrl);
@@ -268,7 +266,7 @@ const UserInfo = ({
         });
       }
     } else {
-      console.log(current_user, 'd-------------------')
+      console.log(current_user, "d-------------------");
       const address = JSON.parse(_.get(current_user, "address"));
       setformData({
         firstName: _.get(current_user, "firstName") || "",
@@ -317,8 +315,26 @@ const UserInfo = ({
     setInit();
   }, [match?.params?.userId || viewType]);
 
+  const [validatePhoneSuccess, setValidatePhoneSuccess] = useState(false);
+
+  const [modalPhone, setModalPhone] = useState(false);
   const onSubmit = (e) => {
     const formatData = trimObjProperties(formData);
+
+    if (errors.confirmPhone) {
+      return;
+    }
+
+    // CHECK CONFIRM CODE
+    if (viewType === "user") {
+      if (
+        (user.phone && user.phone !== phone && !validatePhoneSuccess) ||
+        (!user.phone && !!phone.trim() && !validatePhoneSuccess) // first time update phone
+      ) {
+        handleValidatePhone();
+        return;
+      }
+    }
 
     const notRequireds = ["avatar"];
     let error = {};
@@ -331,9 +347,7 @@ const UserInfo = ({
     if (JSON.stringify(error) === "{}" && !validateEmail(email)) {
       error.email = "Email is invalid!";
     }
-    // if (!selectedFavoriteFootKey.trim()) {
-    //   error.favoriteFoot = "This field is required";
-    // }
+
     if (!selectedGenderKey.trim()) {
       error.gender = "This field is required";
     }
@@ -415,268 +429,322 @@ const UserInfo = ({
     });
   };
 
-  // const onChangeFavoriteFoot = (code) => {
-  //   setSelectedDropdownData({
-  //     ...selectedDropdownData,
-  //     selectedFavoriteFootKey: code,
-  //   });
-  // };
+  // VALIDATE PHONE WITH FIREBASE
+  const handleValidatePhone = () => {
+    try {
+      console.log("herer-----------------------", window.recaptchaVerifier);
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+          "recaptcha-container",
+          {
+            size: "invisible", // invisible
+            callback: function (response) {
+              console.log("response----------", response);
+              // reCAPTCHA solved, allow signInWithPhoneNumber.
+            },
+            "expired-callback": function () {
+              console.log("ex---------");
+              // Response expired. Ask user to solve reCAPTCHA again.
+            },
+          }
+        );
+      }
+
+      const appVerifier = window.recaptchaVerifier;
+      const formatPhone = "+84" + phone.slice(1);
+      firebase
+        .auth()
+        .signInWithPhoneNumber(formatPhone, appVerifier)
+        .then(function (confirmationResult) {
+          console.log("Success", confirmationResult);
+          // setVarificationId(confirmationResult.verificationId);
+          // SMS sent. Prompt user to type the code from the message, then sign the
+          // user in with confirmationResult.confirm(code).
+          window.confirmationResult = confirmationResult;
+          setModalPhone(true);
+        })
+        .catch(function (error) {
+          console.log("Error:" + error.code, error);
+          appVerifier.reset();
+
+          if (error.code && error.code.includes("invalid-phone-number")) {
+            dispatch({
+              type: GET_ERRORS,
+              errors: {
+                ...errors,
+                phone: "Invalid phone number",
+              },
+            });
+          }
+        });
+    } catch (error) {
+      console.log("error------------------", error);
+    }
+  };
 
   console.log("viewtype===============", viewType);
-  // console.log(isAdmin, match?.params?.userId,  authId)
   return (
-    <PageLoader loading={loading}>
-      <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Row>
-              <Col xs="3">
-                <AvatarUpload
-                  avatar={avatar}
-                  setAvatar={setAvatar}
-                  firstName={firstName}
-                  lastName={lastName}
-                  userId={viewType === "user" ? user.id : current_user.id}
-                />
-                {viewType === "user" && isManager && (
-                  <MomoUpload
-                    momoQRCode={momoQRCode}
-                    setMomoQRCode={setMomoQRCode}
+    <>
+      <PageLoader loading={loading}>
+        <VerifyPhoneModal
+          setModal={setModalPhone}
+          modal={modalPhone}
+          phone={phone}
+          onResend={handleValidatePhone}
+          setValidatePhoneSuccess={setValidatePhoneSuccess}
+        />
+        <div className={classes.root}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Row>
+                <Col xs="3">
+                  <AvatarUpload
+                    avatar={avatar}
+                    setAvatar={setAvatar}
+                    firstName={firstName}
+                    lastName={lastName}
                     userId={viewType === "user" ? user.id : current_user.id}
                   />
-                )}
-                {!isAdmin ? null : (
-                  <div className="mt-4">
-                    <DropdownV2
-                      fullWidth
-                      label="Status"
-                      value={selectedStatus.toString()}
-                      options={statusArr || []}
-                      valueBasedOnProperty="key"
-                      displayProperty="value"
-                      onChange={(status) => setSelectedStatus(status)}
-                      error={errors.status || ""}
-                      variant="outlined"
+                  {viewType === "user" && isManager && (
+                    <MomoUpload
+                      momoQRCode={momoQRCode}
+                      setMomoQRCode={setMomoQRCode}
+                      userId={viewType === "user" ? user.id : current_user.id}
                     />
-                  </div>
-                )}
-              </Col>
-
-              <Col xs="9">
-                <h4 className="text-center">User Information</h4>
-                <form onSubmit={(e) => onSubmit(e)}>
-                  <Row>
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="firstName"
-                        label="First name"
-                        fullWidth
-                        value={firstName}
-                        onChange={onChange}
-                        placeHolder="Enter first name"
-                        error={errors.firstName}
-                        variant="outlined"
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="lastName"
-                        label="Last name"
-                        fullWidth
-                        value={lastName}
-                        onChange={onChange}
-                        placeHolder="Enter last name"
-                        error={errors.lastName}
-                        variant="outlined"
-                      />
-                    </Col>
-                    <Col>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="email"
-                        label="Email"
-                        fullWidth
-                        disabled={isAdmin && match?.params?.userId !== authId}
-                        value={email}
-                        onChange={onChange}
-                        className="mt-4"
-                        placeHolder="Enter first name"
-                        error={errors.email}
-                        variant="outlined"
-                      />
-                    </Col>
-                    <Col className="mt-4">
+                  )}
+                  {!isAdmin ? null : (
+                    <div className="mt-4">
                       <DropdownV2
                         fullWidth
-                        label="Gender"
-                        value={selectedGenderKey.toString()}
-                        options={genderArr || []}
+                        label="Status"
+                        value={selectedStatus.toString()}
+                        options={statusArr || []}
                         valueBasedOnProperty="key"
                         displayProperty="value"
-                        onChange={(genderKey) => onSelectGender(genderKey)}
-                        error={errors.gender || ""}
+                        onChange={(status) => setSelectedStatus(status)}
+                        error={errors.status || ""}
                         variant="outlined"
                       />
-                    </Col>
-                  </Row>
-                  <Row className="mt-4">
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="phone"
-                        label="Phone"
-                        fullWidth
-                        value={phone}
-                        onChange={onChange}
-                        placeHolder="Enter Phone"
-                        error={errors.phone}
-                        variant="outlined"
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <DatePicker
-                          variant="inline"
-                          style={{ width: "100%", margin: 0 }}
-                          format="dd/MM/yyyy"
-                          margin="normal"
-                          id="date-picker-inline"
-                          label="Date of birth"
-                          disableFuture={true}
-                          value={selectedDate}
-                          onChange={(date) => setSelectedDate(date)}
-                          KeyboardButtonProps={{
-                            "aria-label": "change date",
-                          }}
-                          error={errors.dob}
-                        />
-                      </MuiPickersUtilsProvider>
-                    </Col>
-                  </Row>
-                  {/* ADDRESS */}
-                  <Row className="mt-4">
-                    <Col xs={4}>
-                      <DropdownV2
-                        fullWidth
-                        label="City / Province / Region"
-                        value={selectedRegionCode.toString()}
-                        options={regionArr || []}
-                        valueBasedOnProperty="code"
-                        displayProperty="name"
-                        onChange={(code) => onChangeRegion(code)}
-                      />
-                    </Col>
-                    <Col xs={4}>
-                      <DropdownV2
-                        fullWidth
-                        label="District"
-                        value={selectedDistrictCode.toString()}
-                        options={getDistricts() || []}
-                        valueBasedOnProperty="code"
-                        displayProperty="name"
-                        onChange={(code) => onChangeDistrict(code)}
-                      />
-                    </Col>
-                    <Col xs={4}>
-                      <DropdownV2
-                        fullWidth
-                        label="Ward"
-                        value={selectedWardCode.toString()}
-                        options={getWards() || []}
-                        valueBasedOnProperty="code"
-                        displayProperty="name"
-                        onChange={(code) => onChangeWard(code)}
-                      />
-                    </Col>
-                    <Col className="mt-4">
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="address"
-                        label="Address"
-                        fullWidth
-                        value={address}
-                        onChange={onChange}
-                        error={errors.address}
-                        variant="outlined"
-                      />
-                    </Col>
-                  </Row>
-                  <Row className="mt-4">
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="createdAt"
-                        label="Created Date"
-                        fullWidth
-                        value={createdAt}
-                        placeHolder="Enter created at"
-                        error={errors.createdAt}
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                        disabled
-                        variant="outlined"
-                      />
-                    </Col>
-                    <Col xs={6}>
-                      <TextFieldInputWithHeader
-                        id="outlined-multiline-flexible"
-                        name="updatedAt"
-                        label="Latest update At"
-                        fullWidth
-                        disabled
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                        value={updatedAt}
-                        placeHolder="Enter created at"
-                        variant="outlined"
-                      />
-                    </Col>
-                  </Row>
+                    </div>
+                  )}
+                </Col>
 
-                  {current_user?.role === "user" ? (
-                    <>
-                      <ExtraInfoForm
-                        formData={extraInfoForm}
-                        onChange={onChangeExtraInfoForm}
-                      />
+                <Col xs="9">
+                  <h4 className="text-center">User Information</h4>
+                  <form onSubmit={(e) => onSubmit(e)}>
+                    <Row>
+                      <Col xs={6}>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="firstName"
+                          label="First name"
+                          fullWidth
+                          value={firstName}
+                          onChange={onChange}
+                          placeHolder="Enter first name"
+                          error={errors.firstName}
+                          variant="outlined"
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="lastName"
+                          label="Last name"
+                          fullWidth
+                          value={lastName}
+                          onChange={onChange}
+                          placeHolder="Enter last name"
+                          error={errors.lastName}
+                          variant="outlined"
+                        />
+                      </Col>
+                      <Col>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="email"
+                          label="Email"
+                          fullWidth
+                          disabled={isAdmin && match?.params?.userId !== authId}
+                          value={email}
+                          onChange={onChange}
+                          className="mt-4"
+                          placeHolder="Enter first name"
+                          error={errors.email}
+                          variant="outlined"
+                        />
+                      </Col>
+                      <Col className="mt-4">
+                        <DropdownV2
+                          fullWidth
+                          label="Gender"
+                          value={selectedGenderKey.toString()}
+                          options={genderArr || []}
+                          valueBasedOnProperty="key"
+                          displayProperty="value"
+                          onChange={(genderKey) => onSelectGender(genderKey)}
+                          error={errors.gender || ""}
+                          variant="outlined"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col xs={6}>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="phone"
+                          label="Phone"
+                          fullWidth
+                          value={phone}
+                          onChange={onChange}
+                          placeHolder="Enter Phone"
+                          error={errors.phone}
+                          variant="outlined"
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <DatePicker
+                            variant="inline"
+                            style={{ width: "100%", margin: 0 }}
+                            format="dd/MM/yyyy"
+                            margin="normal"
+                            id="date-picker-inline"
+                            label="Date of birth"
+                            disableFuture={true}
+                            value={selectedDate}
+                            onChange={(date) => setSelectedDate(date)}
+                            KeyboardButtonProps={{
+                              "aria-label": "change date",
+                            }}
+                            error={errors.dob}
+                          />
+                        </MuiPickersUtilsProvider>
+                      </Col>
+                    </Row>
+                    {/* ADDRESS */}
+                    <Row className="mt-4">
+                      <Col xs={4}>
+                        <DropdownV2
+                          fullWidth
+                          label="City / Province / Region"
+                          value={selectedRegionCode.toString()}
+                          options={regionArr || []}
+                          valueBasedOnProperty="code"
+                          displayProperty="name"
+                          onChange={(code) => onChangeRegion(code)}
+                        />
+                      </Col>
+                      <Col xs={4}>
+                        <DropdownV2
+                          fullWidth
+                          label="District"
+                          value={selectedDistrictCode.toString()}
+                          options={getDistricts() || []}
+                          valueBasedOnProperty="code"
+                          displayProperty="name"
+                          onChange={(code) => onChangeDistrict(code)}
+                        />
+                      </Col>
+                      <Col xs={4}>
+                        <DropdownV2
+                          fullWidth
+                          label="Ward"
+                          value={selectedWardCode.toString()}
+                          options={getWards() || []}
+                          valueBasedOnProperty="code"
+                          displayProperty="name"
+                          onChange={(code) => onChangeWard(code)}
+                        />
+                      </Col>
+                      <Col className="mt-4">
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="address"
+                          label="Address"
+                          fullWidth
+                          value={address}
+                          onChange={onChange}
+                          error={errors.address}
+                          variant="outlined"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col xs={6}>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="createdAt"
+                          label="Created Date"
+                          fullWidth
+                          value={createdAt}
+                          placeHolder="Enter created at"
+                          error={errors.createdAt}
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          disabled
+                          variant="outlined"
+                        />
+                      </Col>
+                      <Col xs={6}>
+                        <TextFieldInputWithHeader
+                          id="outlined-multiline-flexible"
+                          name="updatedAt"
+                          label="Latest update At"
+                          fullWidth
+                          disabled
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          value={updatedAt}
+                          placeHolder="Enter created at"
+                          variant="outlined"
+                        />
+                      </Col>
+                    </Row>
+
+                    {current_user?.role === "user" ? (
+                      <>
+                        <ExtraInfoForm
+                          formData={extraInfoForm}
+                          onChange={onChangeExtraInfoForm}
+                        />
+                        <SocialNetworkForm
+                          formData={socialNetworkForm}
+                          onChange={onChangeSocialNetworkForm}
+                        />
+                      </>
+                    ) : (
                       <SocialNetworkForm
                         formData={socialNetworkForm}
                         onChange={onChangeSocialNetworkForm}
                       />
-                    </>
-                  ) : (
-                    <SocialNetworkForm
-                      formData={socialNetworkForm}
-                      onChange={onChangeSocialNetworkForm}
-                    />
-                  )}
-                </form>
-              </Col>
-            </Row>
+                    )}
+                  </form>
+                </Col>
+              </Row>
+            </Grid>
+            <Grid item xs={12} className="text-center">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={(e) => onSubmit(e)}
+              >
+                <SaveIcon className="mr-2" /> Save
+              </Button>
+              <Button
+                variant="contained"
+                className="ml-4"
+                onClick={() => onCancel()}
+              >
+                <RotateLeftIcon className="mr-2" /> Cancel
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} className="text-center">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={(e) => onSubmit(e)}
-            >
-              <SaveIcon className="mr-2" /> Save
-            </Button>
-            <Button
-              variant="contained"
-              className="ml-4"
-              onClick={() => onCancel()}
-            >
-              <RotateLeftIcon className="mr-2" /> Cancel
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
-    </PageLoader>
+        </div>
+      </PageLoader>
+    </>
   );
 };
 
