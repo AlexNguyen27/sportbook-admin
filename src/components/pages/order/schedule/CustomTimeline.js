@@ -39,14 +39,16 @@ const CustomTimeline = ({ scheduleDisplay, ordersSchedule, selectedDate }) => {
       bgColor: "#c6fcae",
     };
 
-    const childs = curr.subGrounds.map((item) => ({
-      id: item.id,
-      title: item.name,
-      parent: curr.id,
-      rightTitle: item.name,
-      root: false,
-      bgColor: "#f4b077",
-    }));
+    const childs = curr.subGrounds
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((item) => ({
+        id: item.id,
+        title: item.name,
+        parent: curr.id,
+        rightTitle: item.name,
+        root: false,
+        bgColor: "#f4b077",
+      }));
 
     return [...acc, newItem, ...childs];
   }, []);
